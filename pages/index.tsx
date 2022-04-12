@@ -1,10 +1,10 @@
-import type { NextPage } from 'next'
-import Link from 'next/link'
-import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
+import type { NextPage } from "next";
+import Link from "next/link";
+import WalletLoader from "components/WalletLoader";
+import { useSigningClient } from "contexts/cosmwasm";
 
 const Home: NextPage = () => {
-  const { walletAddress } = useSigningClient()
+  const { walletAddress } = useSigningClient();
 
   return (
     <WalletLoader>
@@ -13,24 +13,24 @@ const Home: NextPage = () => {
       </h1>
 
       <div className="mt-3 text-2xl">
-        Your wallet address is:{' '}
+        Your wallet address is:{" "}
         <pre className="font-mono break-all whitespace-pre-wrap">
           {walletAddress}
         </pre>
       </div>
 
       <div className="flex flex-wrap items-center justify-around mt-6 max-w-full sm:w-full">
-        {/* <Link href="/send" passHref> */}
+        <Link href="/scw" passHref>
           <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Create your SCW &rarr;</h3>
             <p className="mt-4 text-xl">
               Create your own Smart Contract Wallet and appoint guardians and relayers.
             </p>
           </a>
-        {/* </Link> */}
+        </Link>
       </div>
     </WalletLoader>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

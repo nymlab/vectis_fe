@@ -1,19 +1,19 @@
-import { useSigningClient } from 'contexts/cosmwasm'
-import Link from 'next/link'
-import Image from 'next/image'
-import ThemeToggle from 'components/ThemeToggle'
+import { useSigningClient } from "contexts/cosmwasm";
+import Link from "next/link";
+import Image from "next/image";
+import ThemeToggle from "components/ThemeToggle";
 
 function Nav() {
-  const { walletAddress, connectWallet, disconnect } = useSigningClient()
+  const { walletAddress, connectWallet, disconnect } = useSigningClient();
   const handleConnect = () => {
     if (walletAddress.length === 0) {
-      connectWallet()
+      connectWallet();
     } else {
-      disconnect()
+      disconnect();
     }
-  }
+  };
 
-  const PUBLIC_SITE_ICON_URL = process.env.NEXT_PUBLIC_SITE_ICON_URL || ''
+  const PUBLIC_SITE_ICON_URL = process.env.NEXT_PUBLIC_SITE_ICON_URL || "";
 
   return (
     <div className="border-b w-screen px-2 md:px-16">
@@ -45,12 +45,12 @@ function Nav() {
             className="block btn btn-outline btn-primary w-full max-w-full truncate"
             onClick={handleConnect}
           >
-            {walletAddress || 'Connect Wallet'}
+            {walletAddress || "Connect Wallet"}
           </button>
         </div>
       </nav>
     </div>
-  )
+  );
 }
 
-export default Nav
+export default Nav;

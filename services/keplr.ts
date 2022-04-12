@@ -1,29 +1,31 @@
-import { convertFromMicroDenom } from 'util/conversion'
+import { convertFromMicroDenom } from "util/conversion";
 
 // extend window with CosmJS and Keplr properties
 interface CosmosKeplrWindow extends Window {
-  keplr: any
-  getOfflineSigner: Function
+  keplr: any;
+  getOfflineSigner: Function;
 }
 
-declare let window: CosmosKeplrWindow
+declare let window: CosmosKeplrWindow;
 
 export const isKeplrInstalled = () => {
   // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
   return window.getOfflineSigner && window.keplr;
-}
+};
 
 export const connectKeplr = async () => {
   // Keplr extension injects the offline signer that is compatible with cosmJS.
   // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
   // And it also injects the helper function to `window.keplr`.
   if (!isKeplrInstalled()) {
-    throw new Error('Keplr extension is not installed. Please install it here: https://keplr.app')
+    throw new Error(
+      "Keplr extension is not installed. Please install it here: https://keplr.app"
+    );
   } else {
     if (window.keplr.experimentalSuggestChain) {
       const stakingDenom = convertFromMicroDenom(
-        process.env.NEXT_PUBLIC_STAKING_DENOM || 'ujuno'
-      )
+        process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno"
+      );
 
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -114,12 +116,14 @@ export const connectKeplr = async () => {
             average: 0.025,
             high: 0.04,
           },
-        })
+        });
       } catch {
-        throw new Error("Failed to suggest the chain to Keplr.")
+        throw new Error("Failed to suggest the chain to Keplr.");
       }
     } else {
-      throw new Error("Your installation of Keplr is outdated. Please update it.")
+      throw new Error(
+        "Your installation of Keplr is outdated. Please update it."
+      );
     }
   }
-}
+};

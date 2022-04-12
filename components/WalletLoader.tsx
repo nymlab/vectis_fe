@@ -1,41 +1,47 @@
-import { ReactNode } from 'react'
-import { useSigningClient } from 'contexts/cosmwasm'
-import Loader from './Loader'
-import Alert, { IconError } from './Alert'
+import { ReactNode } from "react";
+import { useSigningClient } from "contexts/cosmwasm";
+import Loader from "./Loader";
+import Alert, { IconError } from "./Alert";
 
 type WalletLoaderProps = {
-  children: ReactNode
-  loading?: boolean
-}
+  children: ReactNode;
+  loading?: boolean;
+};
 
-export default function WalletLoader({ children, loading = false }: WalletLoaderProps) {
+export default function WalletLoader({
+  children,
+  loading = false,
+}: WalletLoaderProps) {
   const {
     walletAddress,
     loading: clientLoading,
     error,
     connectWallet,
-  } = useSigningClient()
+  } = useSigningClient();
 
   if (loading || clientLoading) {
     return (
       <div className="flex justify-center">
         <Loader />
       </div>
-    )
+    );
   }
 
-  if (walletAddress === '') {
+  if (walletAddress === "") {
     return (
       <div className="max-w-full">
         <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="link link-primary link-hover" href="https://github.com/nymlab/vectis">
+          Welcome to{" "}
+          <a
+            className="link link-primary link-hover"
+            href="https://github.com/nymlab/vectis"
+          >
             Vectis
           </a>
         </h1>
 
         <p className="mt-3 text-2xl">
-          Get started by installing{' '}
+          Get started by installing{" "}
           <a
             className="pl-1 link link-primary link-hover"
             href="https://keplr.app/"
@@ -51,25 +57,26 @@ export default function WalletLoader({ children, loading = false }: WalletLoader
           >
             <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
             <p className="mt-4 text-xl">
-              Get your Keplr wallet connected now and start using it with Vectis.
+              Get your Keplr wallet connected now and start using it with
+              Vectis.
             </p>
           </button>
         </div>
 
         {error && (
           <div className="mt-5">
-            <Alert type="error" icon={<IconError/>}>
-              <span>Couldn't connect to your Keplr wallet. Reason: {error.message}</span>
+            <Alert type="error" icon={<IconError />}>
+              Error! {error.message}
             </Alert>
           </div>
         )}
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <code>{JSON.stringify(error)}</code>
+    return <code>{JSON.stringify(error)}</code>;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
