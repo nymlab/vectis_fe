@@ -8,13 +8,17 @@ interface CosmosKeplrWindow extends Window {
 
 declare let window: CosmosKeplrWindow
 
+export const isKeplrInstalled = () => {
+  // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
+  return window.getOfflineSigner && window.keplr;
+}
+
 export const connectKeplr = async () => {
   // Keplr extension injects the offline signer that is compatible with cosmJS.
   // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
   // And it also injects the helper function to `window.keplr`.
-  // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
-  if (!window.getOfflineSigner || !window.keplr) {
-    alert('Please install keplr extension')
+  if (!isKeplrInstalled()) {
+    throw new Error('Keplr extension is not installed. Please install it here: https://keplr.app')
   } else {
     if (window.keplr.experimentalSuggestChain) {
       const stakingDenom = convertFromMicroDenom(
@@ -112,10 +116,10 @@ export const connectKeplr = async () => {
           },
         })
       } catch {
-        alert('Failed to suggest the chain')
+        throw new Error("Failed to suggest the chain to Keplr.")
       }
     } else {
-      alert('Please use the recent version of keplr extension')
+      throw new Error("Your installation of Keplr is outdated. Please update it.")
     }
   }
 }

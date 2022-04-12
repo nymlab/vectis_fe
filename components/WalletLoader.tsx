@@ -1,14 +1,14 @@
 import { ReactNode } from 'react'
 import { useSigningClient } from 'contexts/cosmwasm'
 import Loader from './Loader'
+import Alert, { IconError } from './Alert'
 
-function WalletLoader({
-  children,
-  loading = false,
-}: {
+type WalletLoaderProps = {
   children: ReactNode
   loading?: boolean
-}) {
+}
+
+export default function WalletLoader({ children, loading = false }: WalletLoaderProps) {
   const {
     walletAddress,
     loading: clientLoading,
@@ -55,6 +55,14 @@ function WalletLoader({
             </p>
           </button>
         </div>
+
+        {error && (
+          <div className="mt-5">
+            <Alert type="error" icon={<IconError/>}>
+              <span>Couldn't connect to your Keplr wallet. Reason: {error.message}</span>
+            </Alert>
+          </div>
+        )}
       </div>
     )
   }
@@ -65,5 +73,3 @@ function WalletLoader({
 
   return <>{children}</>
 }
-
-export default WalletLoader

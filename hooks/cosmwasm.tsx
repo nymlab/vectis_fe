@@ -16,8 +16,7 @@ const PUBLIC_CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState('')
-  const [signingClient, setSigningClient] =
-    useState<SigningCosmWasmClient | null>(null)
+  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
@@ -49,6 +48,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       setLoading(false)
     } catch (error) {
       setError(error)
+      setLoading(false)
     }
   }
 
