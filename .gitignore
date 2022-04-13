@@ -46,3 +46,6 @@ yarn-error.log*
 
 # macos
 .DS_Store
+
+# idea
+/.idea

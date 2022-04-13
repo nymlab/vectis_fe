@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { ReactNode, useEffect } from "react";
 import { useSigningClient } from "contexts/cosmwasm";
 import Loader from "./Loader";
 import Alert, { IconError } from "./Alert";
@@ -18,6 +19,16 @@ export default function WalletLoader({
     error,
     connectWallet,
   } = useSigningClient();
+
+  useEffect(() => {
+    if (!!localStorage.getItem("walletAddress")) {
+      connectToWallet();
+    }
+  }, [])
+
+  function connectToWallet() {
+    connectWallet();
+  }
 
   if (loading || clientLoading) {
     return (
@@ -53,7 +64,7 @@ export default function WalletLoader({
         <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
           <button
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
-            onClick={connectWallet}
+            onClick={connectToWallet}
           >
             <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
             <p className="mt-4 text-xl">

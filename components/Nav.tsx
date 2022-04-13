@@ -42,7 +42,7 @@ function Nav() {
         <ThemeToggle />
         <div className="flex flex-grow lg:flex-grow-0 max-w-full">
           <button
-            className="block btn btn-outline btn-primary w-full max-w-full truncate"
+            className="block btn btn-outline btn-primary w-full max-w-full truncate tooltip"
             onClick={handleConnect}
           >
             {walletAddress || "Connect Wallet"}
