@@ -86,7 +86,13 @@ export default function WalletLoader({
   }
 
   if (error) {
-    return <code>{JSON.stringify(error)}</code>;
+    return (
+      <div className="mt-5">
+        <Alert type="error" icon={<IconError />}>
+          Error! {error.message}
+        </Alert>
+      </div>
+    )
   }
 
   return <>{children}</>;
