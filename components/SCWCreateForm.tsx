@@ -1,6 +1,7 @@
 import { useSigningClient } from "contexts/cosmwasm";
 import { useArrayState } from "hooks/useArrayState";
 import { useEffect, useState } from "react";
+import { createVectisWallet } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import Alert, { IconError, IconSuccess } from "./Alert";
 
@@ -9,6 +10,7 @@ const PUBLIC_STAKING_DENOM = process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno";
 export default function SCWCreateForm() {
   const { walletAddress, signingClient } = useSigningClient();
 
+  // Form state hooks
   const {
     array: guardians,
     setItem: setGuardian,
@@ -22,19 +24,28 @@ export default function SCWCreateForm() {
     removeItem: removeRelayer,
   } = useArrayState("");
   const [proxyInitialFunds, setProxyInitialFunds] = useState("");
-
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
+  // Generic state hooks
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+
   useEffect(() => {
+    // Update validation errors
+    const ve = { ...validationErrors };
+
     if (proxyInitialFunds) {
-      const ve = { ...validationErrors };
       delete ve["proxyInitialFunds"];
-      setValidationErrors(ve);
     }
-  }, [proxyInitialFunds]);
+
+    Object.keys(validationErrors).filter(k => k !== "proxyInitialFunds").forEach(key => {
+      const [ k, i ] = key.split(".");
+      ((k === "guardians" && guardians[i]) || (k === "relayers" && relayers[i])) && delete ve[key];
+    });
+
+    setValidationErrors(ve);
+  }, [proxyInitialFunds, guardians, relayers]);
 
   function createSCW() {
     console.log({ guardians, relayers, proxyInitialFunds });
@@ -47,12 +58,14 @@ export default function SCWCreateForm() {
     guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = true));
     relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = true));
 
-    console.log(ve);
+    console.log("Validation errors: ", ve);
     setValidationErrors(ve);
     if (Object.keys(ve).length > 0) {
       // There are some validation errors, don't proceed
       return;
     }
+
+    // createVectisWallet()
   }
 
   function valueHasValidationError(key: string): boolean {
