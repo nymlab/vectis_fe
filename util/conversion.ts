@@ -1,3 +1,4 @@
+import { env } from "env";
 import { Coin } from "@cosmjs/amino";
 
 export function convertMicroDenomToDenom(amount: number | string) {
@@ -36,12 +37,12 @@ export const zeroVotingCoin = {
 
 export const zeroStakingCoin = {
   amount: "0",
-  denom: process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno",
+  denom: env.stakingDenom,
 };
 
 export function coin(amount: number): Coin {
   return {
     amount: convertDenomToMicroDenom(amount),
-    denom: process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno",
+    denom: env.stakingDenom,
   }
 }

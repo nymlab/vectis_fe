@@ -8,8 +8,7 @@ import { useSigningClient } from "contexts/cosmwasm";
 
 import WalletLoader from "components/WalletLoader";
 import SCWCreateForm from "components/SCWCreateForm";
-
-const PUBLIC_STAKING_DENOM = process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno";
+import { env } from "env";
 
 const SCW: NextPage = () => {
   const { walletAddress, signingClient } = useSigningClient();
@@ -23,7 +22,7 @@ const SCW: NextPage = () => {
     setError("");
 
     signingClient
-      .getBalance(walletAddress, PUBLIC_STAKING_DENOM)
+      .getBalance(walletAddress, env.stakingDenom)
       .then((response: any) => {
         const { amount, denom }: { amount: number; denom: string } = response;
         setBalance(

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { connectKeplr } from "services/keplr";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { env } from "env";
 
 export interface ISigningCosmWasmClientContext {
   walletAddress: string;
@@ -10,9 +11,6 @@ export interface ISigningCosmWasmClientContext {
   connectWallet: any;
   disconnect: Function;
 }
-
-const PUBLIC_RPC_ENDPOINT = process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || "";
-const PUBLIC_CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState("");
@@ -27,16 +25,14 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       await connectKeplr();
 
       // enable website to access kepler
-      await (window as any).keplr.enable(PUBLIC_CHAIN_ID);
+      await (window as any).keplr.enable(env.chainId);
 
       // get offline signer for signing txs
-      const offlineSigner = await (window as any).getOfflineSigner(
-        PUBLIC_CHAIN_ID
-      );
+      const offlineSigner = await (window as any).getOfflineSigner(env.chainId);
 
       // make client
       const client = await SigningCosmWasmClient.connectWithSigner(
-        PUBLIC_RPC_ENDPOINT,
+        env.chainRpcEndpoint,
         offlineSigner
       );
       setSigningClient(client);

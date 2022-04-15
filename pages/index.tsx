@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import WalletLoader from "components/WalletLoader";
 import { useSigningClient } from "contexts/cosmwasm";
+import { env } from "env";
 
 const Home: NextPage = () => {
   const { walletAddress } = useSigningClient();
@@ -9,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <WalletLoader>
       <h1 className="text-6xl font-bold">
-        Welcome to Vectis on {process.env.NEXT_PUBLIC_CHAIN_NAME}!
+        Welcome to Vectis on {env.chainName}!
       </h1>
 
       <div className="mt-3 text-2xl">

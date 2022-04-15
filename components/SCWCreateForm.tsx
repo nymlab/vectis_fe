@@ -1,11 +1,11 @@
 import { useSigningClient } from "contexts/cosmwasm";
+import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useEffect, useState } from "react";
-import { createVectisWallet } from "services/vectis";
+import { createVectisWallet, getVectisWalletAddress } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
-import Alert, { IconError, IconSuccess } from "./Alert";
-
-const PUBLIC_STAKING_DENOM = process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno";
+import { AlertError, AlertSuccess } from "./Alert";
+import Loader from "./Loader";
 
 export default function SCWCreateForm() {
   const { walletAddress, signingClient } = useSigningClient();
@@ -52,9 +52,7 @@ export default function SCWCreateForm() {
     const ve = {};
 
     // Check validation errors
-    if (!proxyInitialFunds) {
-      ve["proxyInitialFunds"] = true;
-    }
+    !proxyInitialFunds && (ve["proxyInitialFunds"] = true);
     guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = true));
     relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = true));
 
@@ -65,7 +63,23 @@ export default function SCWCreateForm() {
       return;
     }
 
-    // createVectisWallet()
+    if (!signingClient) {
+      console.warn("signingClient is null, can't create SCW.");
+      return;
+    }
+
+    // Create Smart Contract Wallet
+    setIsCreating(true);
+    createVectisWallet(signingClient!, walletAddress, guardians, relayers, parseFloat(proxyInitialFunds))
+      .then(() => getVectisWalletAddress())
+      .then(address => {
+        console.log("Wallet address: ", address);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Failed to create the SCW. Check console for details.");
+      })
+      .finally(() => setIsCreating(false));
   }
 
   function valueHasValidationError(key: string): boolean {
@@ -74,6 +88,24 @@ export default function SCWCreateForm() {
 
   function arrayHasValidationError(key: string, idx: number): boolean {
     return Object.keys(validationErrors).filter(ve => ve.includes(`${key}.`)).some(ve => parseInt(ve.split(".")[1]) === idx);
+  }
+
+  if (success) {
+    return (
+      <div className="mt-4 flex flex-col w-full max-w-xl">
+        <AlertSuccess>
+          {success}
+        </AlertSuccess>
+      </div>
+    );
+  }
+
+  if (isCreating) {
+    return (
+      <div className="flex justify-center my-5">
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -186,7 +218,7 @@ export default function SCWCreateForm() {
             value={proxyInitialFunds}
           />
           <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-            {convertFromMicroDenom(PUBLIC_STAKING_DENOM)}
+            {convertFromMicroDenom(env.stakingDenom)}
           </span>
         </div>
         <button
@@ -198,16 +230,11 @@ export default function SCWCreateForm() {
         </button>
       </div>
 
-      <div className="mt-4 flex flex-col w-full max-w-xl">
-        {success && (
-          <Alert type="success" icon={<IconSuccess />}>
-            {success}
-          </Alert>
-        )}
+      <div className="my-4 flex flex-col w-full max-w-xl">
         {error && (
-          <Alert type="error" icon={<IconError />}>
+          <AlertError>
             {error}
-          </Alert>
+          </AlertError>
         )}
       </div>
     </>

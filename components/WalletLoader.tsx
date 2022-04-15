@@ -2,7 +2,7 @@
 import { ReactNode, useEffect } from "react";
 import { useSigningClient } from "contexts/cosmwasm";
 import Loader from "./Loader";
-import Alert, { IconError } from "./Alert";
+import { AlertError } from "./Alert";
 
 type WalletLoaderProps = {
   children: ReactNode;
@@ -75,10 +75,10 @@ export default function WalletLoader({
         </div>
 
         {error && (
-          <div className="mt-5">
-            <Alert type="error" icon={<IconError />}>
+          <div className="my-5">
+            <AlertError>
               Error! {error.message}
-            </Alert>
+            </AlertError>
           </div>
         )}
       </div>
@@ -87,10 +87,10 @@ export default function WalletLoader({
 
   if (error) {
     return (
-      <div className="mt-5">
-        <Alert type="error" icon={<IconError />}>
+      <div className="my-5">
+        <AlertError>
           Error! {error.message}
-        </Alert>
+        </AlertError>
       </div>
     )
   }

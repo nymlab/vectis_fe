@@ -1,3 +1,4 @@
+import { env } from "env";
 import { convertFromMicroDenom } from "util/conversion";
 
 // extend window with CosmJS and Keplr properties
@@ -23,9 +24,7 @@ export const connectKeplr = async () => {
     );
   } else {
     if (window.keplr.experimentalSuggestChain) {
-      const stakingDenom = convertFromMicroDenom(
-        process.env.NEXT_PUBLIC_STAKING_DENOM || "ujuno"
-      );
+      const stakingDenom = convertFromMicroDenom(env.stakingDenom);
 
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -36,19 +35,19 @@ export const connectKeplr = async () => {
         // If the same chain id is already registered, it will resolve and not require the user interactions.
         await window.keplr.experimentalSuggestChain({
           // Chain-id of the Cosmos SDK chain.
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+          chainId: env.chainId,
           // The name of the chain to be displayed to the user.
-          chainName: process.env.NEXT_PUBLIC_CHAIN_NAME,
+          chainName: env.chainName,
           // RPC endpoint of the chain.
-          rpc: process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT,
+          rpc: env.chainRpcEndpoint,
           // REST endpoint of the chain.
-          rest: process.env.NEXT_PUBLIC_CHAIN_REST_ENDPOINT,
+          rest: env.chainRestEndpoint,
           // Staking coin information
           stakeCurrency: {
             // Coin denomination to be displayed to the user.
             coinDenom: stakingDenom,
             // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-            coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+            coinMinimalDenom: env.stakingDenom,
             // # of decimal points to convert minimal denomination to user-facing denomination.
             coinDecimals: 6,
             // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -66,12 +65,12 @@ export const connectKeplr = async () => {
           },
           // Bech32 configuration to show the address to user.
           bech32Config: {
-            bech32PrefixAccAddr: process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX,
-            bech32PrefixAccPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}pub`,
-            bech32PrefixValAddr: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoper`,
-            bech32PrefixValPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoperpub`,
-            bech32PrefixConsAddr: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valcons`,
-            bech32PrefixConsPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valconspub`,
+            bech32PrefixAccAddr: env.chainPrefix,
+            bech32PrefixAccPub: `${env.chainPrefix}pub`,
+            bech32PrefixValAddr: `${env.chainPrefix}valoper`,
+            bech32PrefixValPub: `${env.chainPrefix}valoperpub`,
+            bech32PrefixConsAddr: `${env.chainPrefix}valcons`,
+            bech32PrefixConsPub: `${env.chainPrefix}valconspub`,
           },
           // List of all coin/tokens used in this chain.
           currencies: [
@@ -79,7 +78,7 @@ export const connectKeplr = async () => {
               // Coin denomination to be displayed to the user.
               coinDenom: stakingDenom,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+              coinMinimalDenom: env.stakingDenom,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -93,7 +92,7 @@ export const connectKeplr = async () => {
               // Coin denomination to be displayed to the user.
               coinDenom: stakingDenom,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+              coinMinimalDenom: env.stakingDenom,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.

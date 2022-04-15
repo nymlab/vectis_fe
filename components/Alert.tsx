@@ -1,10 +1,7 @@
 import { ReactNode } from "react";
 
-type AlertType = "info" | "success" | "warning" | "error";
 type AlertProps = {
   children: ReactNode;
-  type: AlertType;
-  icon?: ReactNode;
 };
 
 export function IconInfo() {
@@ -76,11 +73,22 @@ export function IconError() {
   );
 }
 
-export default function Alert({ children, type, icon }: AlertProps) {
+export function AlertSuccess({ children }: AlertProps) {
   return (
-    <div className={`alert alert-${type} shadow-lg`}>
+    <div className="alert alert-success shadow-lg">
       <div className="flex-1 items-center">
-        <span>{icon}</span>
+        <span><IconSuccess/></span>
+        <span className="flex-grow break-all">{children}</span>
+      </div>
+    </div>
+  );
+}
+
+export function AlertError({ children }: AlertProps) {
+  return (
+    <div className="alert alert-error shadow-lg">
+      <div className="flex-1 items-center">
+        <span><IconError/></span>
         <span className="flex-grow break-all">{children}</span>
       </div>
     </div>
