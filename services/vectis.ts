@@ -2,7 +2,6 @@ import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "util/conversion";
 import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Coin, calculateFee, GasPrice } from "@cosmjs/stargate";
-import { toBase64 } from "@cosmjs/encoding";
 
 export interface MultiSig {
   threshold_absolute_count: number;
@@ -34,7 +33,7 @@ export async function createVectisWallet(signingClient: SigningCosmWasmClient, u
 
   // Setup message
   const walletInitMsg: CreateWalletMsg = {
-    user_pubkey: toBase64(account.pubkey?.value),
+    user_pubkey: account.pubkey?.value,
     guardians: {
       addresses: guardians,
       guardians_multisig: {
