@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createVectisWallet, getVectisWalletAddress } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
+import { Input } from "./Input";
 import Loader from "./Loader";
 
 export default function SCWCreateForm() {
@@ -52,9 +53,9 @@ export default function SCWCreateForm() {
     const ve = {};
 
     // Check validation errors
-    !proxyInitialFunds && (ve["proxyInitialFunds"] = true);
-    guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = true));
-    relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = true));
+    !proxyInitialFunds && (ve["proxyInitialFunds"] = "This field is mandatory.");
+    guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = "This field is mandatory."));
+    relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = "This field is mandatory."));
 
     console.log("Validation errors: ", ve);
     setValidationErrors(ve);
@@ -74,20 +75,26 @@ export default function SCWCreateForm() {
       .then(() => getVectisWalletAddress())
       .then(address => {
         console.log("Wallet address: ", address);
+        setSuccess("Your Smart Contract Wallet has been created successfully.");
       })
       .catch(err => {
         console.error(err);
-        setError("Failed to create the SCW. Check console for details.");
+        setError("Failed to create the SCW. Check the console for details.");
       })
       .finally(() => setIsCreating(false));
   }
 
-  function valueHasValidationError(key: string): boolean {
-    return Object.keys(validationErrors).includes(key);
+  function getValueValidationError(key: string): string | undefined {
+    return validationErrors[key];
   }
 
-  function arrayHasValidationError(key: string, idx: number): boolean {
-    return Object.keys(validationErrors).filter(ve => ve.includes(`${key}.`)).some(ve => parseInt(ve.split(".")[1]) === idx);
+  function getArrayValidationError(key: string, idx: number): string {
+    const k = Object.keys(validationErrors).filter(ve => ve.includes(`${key}.`)).find(ve => parseInt(ve.split(".")[1]) === idx);
+    if (!k) {
+      return "";
+    }
+
+    return validationErrors[k];
   }
 
   if (success) {
@@ -102,7 +109,8 @@ export default function SCWCreateForm() {
 
   if (isCreating) {
     return (
-      <div className="flex justify-center my-5">
+      <div className="flex flex-col justify-center items-center my-5">
+        <p className="mb-5 text-2xl">We are creating your new <b>Smart Contract Wallet</b>.<br/>Please sign the transaction to proceed.</p>
         <Loader />
       </div>
     );
@@ -120,15 +128,7 @@ export default function SCWCreateForm() {
           className="flex w-full max-w-xl align-middle items-center space-x-3"
           key={i}
         >
-          <input
-            type="text"
-            className={`input input-bordered focus:input-primary input-lg rounded-full flex-grow font-mono text-center text-lg my-2 ${
-              arrayHasValidationError("guardians", i) ? "input-error" : ""
-            }`}
-            placeholder={`Guardian #${i + 1} address`}
-            onChange={(event) => setGuardian(i, event.target.value)}
-            value={address}
-          />
+          <Input placeholder={`Guardian #${i + 1} address`} onChange={(event) => setGuardian(i, event.target.value)} error={getArrayValidationError("guardians", i)} value={address}/>
           {
             guardians.length > 1 && (
               <button
@@ -162,15 +162,7 @@ export default function SCWCreateForm() {
       <h2 className="text-3xl font-bold my-5">2. Choose your relayers</h2>
       {relayers.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3" key={i}>
-          <input
-            type="text"
-            className={`input input-bordered focus:input-primary input-lg rounded-full flex-grow font-mono text-center text-lg my-2 ${
-              arrayHasValidationError("relayers", i) ? "input-error" : ""
-            }`}
-            placeholder={`Relayer #${i + 1} address`}
-            onChange={(event) => setRelayer(i, event.target.value)}
-            value={address}
-          />
+          <Input placeholder={`Relayer #${i + 1} address`} onChange={(event) => setRelayer(i, event.target.value)} error={getArrayValidationError("relayers", i)} value={address}/>
           {
             relayers.length > 1 && (
               <button
@@ -209,7 +201,7 @@ export default function SCWCreateForm() {
             type="number"
             id="send-amount"
             className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-              valueHasValidationError("proxyInitialFunds") ? "input-error" : ""
+              getValueValidationError("proxyInitialFunds") ? "input-error" : ""
             }`}
             placeholder="Initial funds"
             step="0.1"

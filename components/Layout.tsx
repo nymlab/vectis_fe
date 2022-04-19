@@ -22,14 +22,14 @@ export default function Layout({ children }: { children: ReactNode }) {
           className="pl-1 link link-primary link-hover"
           href="https://github.com/cosmos/cosmjs"
         >
-          CosmJS
+          Cosmos
         </a>
         <span className="pl-1"> and</span>
         <a
           className="pl-1 link link-primary link-hover"
-          href="https://keplr.app/"
+          href="https://github.com/nymlab/vectis"
         >
-          Keplr
+          Vectis
         </a>
       </footer>
     </div>

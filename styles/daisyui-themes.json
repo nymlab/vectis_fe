@@ -17,7 +17,7 @@
     "base-300": "#d1d5db",
     "base-content": "#1f2937",
     "info": "#71f0e9",
-    "success": "#65f09a",
+    "success": "#51C27C",
     "warning": "#f0df95",
     "error": "#f06c65"
   },
@@ -39,7 +39,7 @@
     "base-300": "#1d1e25",
     "base-content": "#fff",
     "info": "#71f0e9",
-    "success": "#65f09a",
+    "success": "#51C27C",
     "warning": "#f0df95",
     "error": "#f06c65"
   }

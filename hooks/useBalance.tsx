@@ -1,19 +1,13 @@
-import { useState, useEffect } from "react";
-import type { NextPage } from "next";
-import {
-  convertFromMicroDenom,
-  convertMicroDenomToDenom,
-} from "util/conversion";
+import { useEffect, useState } from "react";
 import { useSigningClient } from "contexts/cosmwasm";
-
-import WalletLoader from "components/WalletLoader";
-import SCWCreateForm from "components/SCWCreateForm";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
 import { env } from "env";
 
-const SCW: NextPage = () => {
-  const { walletAddress, signingClient } = useSigningClient();
+export const useBalance = () => {
   const [balance, setBalance] = useState("");
   const [error, setError] = useState("");
+
+  const { walletAddress, signingClient } = useSigningClient();
 
   useEffect(() => {
     if (!signingClient || walletAddress.length === 0) {
@@ -35,13 +29,8 @@ const SCW: NextPage = () => {
       });
   }, [signingClient, walletAddress]);
 
-  return (
-    <WalletLoader>
-      <p className="text-2xl">Your personal wallet has {balance}</p>
-
-      <SCWCreateForm />
-    </WalletLoader>
-  );
-};
-
-export default SCW;
+  return {
+    balance,
+    error
+  }
+}

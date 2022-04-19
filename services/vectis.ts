@@ -1,5 +1,5 @@
 import { env } from "env";
-import { coin } from "util/conversion";
+import { coin, convertMicroDenomToDenom } from "util/conversion";
 import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Coin, calculateFee, GasPrice } from "@cosmjs/stargate";
 import { toBase64 } from "@cosmjs/encoding";
@@ -29,7 +29,8 @@ export async function createVectisWallet(signingClient: SigningCosmWasmClient, u
     throw new Error(`Signer account was not found by user address ${userAddress}`);
   }
 
-  const defaultWalletCreationFee = calculateFee(500, GasPrice.fromString(env.gasPrice + env.stakingDenom));
+  const defaultWalletCreationFee = calculateFee(1_500_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
+  const walletFee = convertMicroDenomToDenom(100);
 
   // Setup message
   const walletInitMsg: CreateWalletMsg = {
@@ -38,7 +39,7 @@ export async function createVectisWallet(signingClient: SigningCosmWasmClient, u
       addresses: guardians,
       guardians_multisig: {
         threshold_absolute_count: Math.ceil(guardians.length / 2),
-        multisig_initial_funds: [coin(proxyInitialFunds * 0.05)],
+        multisig_initial_funds: [coin(0)],
       },
     },
     relayers: relayers,
@@ -50,7 +51,7 @@ export async function createVectisWallet(signingClient: SigningCosmWasmClient, u
     userAddress,
     env.contractFactoryAddress,
     { create_wallet: { create_wallet_msg: walletInitMsg } },
-    "", defaultWalletCreationFee.amount,
+    defaultWalletCreationFee, undefined, [coin(proxyInitialFunds + walletFee)]
   );
 
   console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);

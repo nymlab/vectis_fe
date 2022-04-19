@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex flex-wrap items-center justify-around mt-6 max-w-full sm:w-full">
-        <Link href="/scw" passHref>
+        <Link href="/wallets/create" passHref>
           <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Create your SCW &rarr;</h3>
             <p className="mt-4 text-xl">
