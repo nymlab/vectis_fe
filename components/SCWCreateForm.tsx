@@ -1,6 +1,7 @@
 import { useSigningClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
+import { useBalance } from "hooks/useBalance";
 import { useEffect, useState } from "react";
 import { createVectisWallet, getVectisWalletAddress } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
@@ -10,6 +11,7 @@ import Loader from "./Loader";
 
 export default function SCWCreateForm() {
   const { walletAddress, signingClient } = useSigningClient();
+  const { balance } = useBalance();
 
   // Form state hooks
   const {
@@ -36,10 +38,12 @@ export default function SCWCreateForm() {
     // Update validation errors
     const ve = { ...validationErrors };
 
-    if (proxyInitialFunds) {
+    // Errors related to initial funds
+    if (proxyInitialFunds && parseFloat(proxyInitialFunds) > 0 && parseFloat(proxyInitialFunds) < parseFloat(balance)) {
       delete ve["proxyInitialFunds"];
     }
 
+    // Errors related to guardians/relayers
     Object.keys(validationErrors).filter(k => k !== "proxyInitialFunds").forEach(key => {
       const [ k, i ] = key.split(".");
       ((k === "guardians" && guardians[i]) || (k === "relayers" && relayers[i])) && delete ve[key];
@@ -54,9 +58,18 @@ export default function SCWCreateForm() {
 
     // Check validation errors
     !proxyInitialFunds && (ve["proxyInitialFunds"] = "This field is mandatory.");
+    parseFloat(proxyInitialFunds) < 0 && (ve["proxyInitialFunds"] = "This field must be >= 0.");
+    parseFloat(proxyInitialFunds) > parseFloat(balance) && (ve["proxyInitialFunds"] = `You don't have enough ${convertFromMicroDenom(env.stakingDenom)}.`);
+
+    // Guardians/Relayers addresses are mandatory
     guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = "This field is mandatory."));
     relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = "This field is mandatory."));
 
+    // Guardians/Relayers addresses must not be equal to your own address
+    guardians.forEach((g, i) => g === walletAddress && (ve[`guardians.${i}`] = "You can't become your own guardian."));
+    relayers.forEach((r, i) => r === walletAddress && (ve[`relayers.${i}`] = "You can't become your own relayer."));
+
+    // End of validation error checking
     console.log("Validation errors: ", ve);
     setValidationErrors(ve);
     if (Object.keys(ve).length > 0) {
@@ -79,7 +92,7 @@ export default function SCWCreateForm() {
       })
       .catch(err => {
         console.error(err);
-        setError("Failed to create the SCW. Check the console for details.");
+        setError("Failed to create the proxy wallet. Check the console for details.");
       })
       .finally(() => setIsCreating(false));
   }
@@ -118,6 +131,14 @@ export default function SCWCreateForm() {
 
   return (
     <>
+      <div className="mt-4 flex flex-col w-full max-w-xl">
+        {error && (
+          <AlertError>
+            {error}
+          </AlertError>
+        )}
+      </div>
+
       <h1 className="text-5xl font-bold my-8">
         Create your Smart Contract Wallet
       </h1>
@@ -195,23 +216,30 @@ export default function SCWCreateForm() {
       </button>
 
       <h2 className="text-3xl font-bold my-5">3. Create your wallet</h2>
-      <div className="flex flex-col md:flex-row text-2xl w-full max-w-xl justify-between">
-        <div className="relative rounded-full shadow-sm md:mr-2">
-          <input
-            type="number"
-            id="send-amount"
-            className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-              getValueValidationError("proxyInitialFunds") ? "input-error" : ""
-            }`}
-            placeholder="Initial funds"
-            step="0.1"
-            min="0"
-            onChange={(event) => setProxyInitialFunds(event.target.value)}
-            value={proxyInitialFunds}
-          />
-          <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-            {convertFromMicroDenom(env.stakingDenom)}
-          </span>
+      <div className="flex flex-col md:flex-row w-full max-w-xl justify-between mb-8">
+        <div className="flex flex-col items-start">
+          <div className="relative rounded-full shadow-sm md:mr-2">
+            <input
+              type="number"
+              className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
+                getValueValidationError("proxyInitialFunds") ? "input-error" : ""
+              }`}
+              placeholder="Initial funds"
+              step="0.1"
+              min="0"
+              onChange={(event) => setProxyInitialFunds(event.target.value)}
+              value={proxyInitialFunds}
+            />
+            <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
+              {convertFromMicroDenom(env.stakingDenom)}
+            </span>
+          </div>
+          {
+            getValueValidationError("proxyInitialFunds") &&
+              <span className="pl-6 text-error font-bold">
+                {getValueValidationError("proxyInitialFunds")}
+              </span>
+          }
         </div>
         <button
           className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"
@@ -220,14 +248,6 @@ export default function SCWCreateForm() {
         >
           CREATE
         </button>
-      </div>
-
-      <div className="my-4 flex flex-col w-full max-w-xl">
-        {error && (
-          <AlertError>
-            {error}
-          </AlertError>
-        )}
       </div>
     </>
   );

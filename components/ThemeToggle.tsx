@@ -1,8 +1,8 @@
 import { themeChange } from "theme-change";
 import { useEffect, useState } from "react";
-import daisyuiThemes from "styles/daisyui-themes.json";
+import themesJson from "styles/themes.json";
 
-const themes = Object.keys(daisyuiThemes) || [""];
+const themes = Object.keys(themesJson) || [""];
 export const defaultTheme = themes[0];
 
 function ThemeToggle() {

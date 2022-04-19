@@ -1,4 +1,4 @@
-export function Input({ placeholder, value, error, onChange }) {
+export function Input({ error, ...props }) {
   return (
     <div className="flex flex-col w-full items-start my-2">
       <input
@@ -6,9 +6,7 @@ export function Input({ placeholder, value, error, onChange }) {
         className={`input input-bordered focus:input-primary input-lg rounded-full flex-grow font-mono text-center w-full text-lg ${
           error ? "input-error" : ""
         }`}
-        placeholder={placeholder}
-        onChange={onChange}
-        value={value}
+        {...props}
       />
       {
         error &&

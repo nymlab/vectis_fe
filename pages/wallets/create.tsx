@@ -13,7 +13,7 @@ const CreateWallet: NextPage = () => {
         <title>Vectis | Create Wallet</title>
       </Head>
       <WalletLoader>
-        <p className="text-2xl">Your personal wallet has {balance}</p>
+        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
 
         <SCWCreateForm/>
       </WalletLoader>
