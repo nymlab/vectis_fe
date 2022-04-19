@@ -15,7 +15,7 @@ interface Environment {
 export const env: Environment = {
   chainId: process.env.NEXT_PUBLIC_CHAIN_ID!,
   chainName: process.env.NEXT_PUBLIC_CHAIN_NAME!,
-  chainPrefix: process.env.NEXT_PUBLIC_CHAIN_NAME!,
+  chainPrefix: process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX!,
   chainRpcEndpoint: process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT!,
   chainRestEndpoint: process.env.NEXT_PUBLIC_CHAIN_REST_ENDPOINT!,
   stakingDenom: process.env.NEXT_PUBLIC_STAKING_DENOM!,
