@@ -95,7 +95,17 @@ export default function SCWCreateForm() {
         (ve[`relayers.${i}`] = "You can't become your own relayer.")
     );
 
-    // TODO: Check if guardians/relayers are unique
+    // Guardians/Relayers addresses must be unique
+    guardians.forEach((g1, i) => guardians.forEach((g2, j) => {
+      if (i !== j && g1 === g2) {
+        ve[`guardians.${i}`] = "Guardian addresses must be unique.";
+      }
+    }));
+    relayers.forEach((r1, i) => relayers.forEach((r2, j) => {
+      if (i !== j && r1 === r2) {
+        ve[`relayers.${i}`] = "Relayer addresses must be unique.";
+      }
+    }));
 
     // End of validation error checking
     console.log("Validation errors: ", ve);
