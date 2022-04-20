@@ -2,11 +2,26 @@
 
 ## Getting started
 
-This project is based on [Cosmos Contracts Starter Kit](https://github.com/CosmosContracts/starter-kit)
+This project is based on [Cosmos Contracts Starter Kit](https://github.com/CosmosContracts/starter-kit) and heavily modified.
+
+### 1. Launch local Juno node
+
+When developing this dApp locally, we always connect with a local [Juno](https://www.junonetwork.io/) node running on the same machine, with deployed contracts. In order to setup the local environment, follow these steps:
+
+```bash
+git clone https://github.com/nymlab/vectis.git
+cd vectis
+./local-juno-setup.sh
+```
+
+Assuming you have [Docker](https://www.docker.com/) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `juno-local-node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
+
+### 2. Launch Vectis dApp locally
 
 First of all, clone this project, then install dependencies:
 
 ```bash
+git clone https://github.com/nymlab/vectis_fe.git
 cd vectis_fe
 yarn install # This project uses yarn.lock
 ```
@@ -17,7 +32,7 @@ Next, setup your `.env` file by copying the example:
 cp .env.example .env.local
 ```
 
-By editing `.env.local`, you tell Vectis which chain it should use with Keplr. It can be a local node, testnet or mainnet, you decide.
+By editing `.env.local`, you tell Vectis which chain it should use with Keplr. It can be a local node, testnet or mainnet, you decide. When developing, we always use local node.
 
 Then, run the development server:
 
@@ -27,22 +42,9 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-In order to interact with a local chain, the easiest way is with docker:
-
-```sh
-docker run -it \
-  -p 26656:26656 \
-  -p 26657:26657 \
-  -e STAKE_TOKEN=ujunox \
-  ghcr.io/cosmoscontracts/juno:v2.3.1 \
-  ./setup_and_run.sh juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
-```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the dApp running locally.
 
 More information can be found [in the Juno docs here](https://docs.junonetwork.io/smart-contracts-and-junod-development/junod-local-dev-setup).
-
-## Requirements
 
 Please ensure you have the [Keplr wallet extension](https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap) installed in your Chrome based browser (Chrome, Brave, etc).
 
