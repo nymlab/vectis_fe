@@ -52,7 +52,7 @@ export async function createVectisWallet(
       addresses: guardians,
       guardians_multisig: {
         threshold_absolute_count: Math.ceil(guardians.length / 2),
-        multisig_initial_funds: [coin(0)],
+        multisig_initial_funds: [],
       },
     },
     relayers: relayers,
