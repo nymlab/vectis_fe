@@ -44,5 +44,5 @@ export function coin(amount: number): Coin {
   return {
     amount: convertDenomToMicroDenom(amount),
     denom: env.stakingDenom,
-  }
+  };
 }

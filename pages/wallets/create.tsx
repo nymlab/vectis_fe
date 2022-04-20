@@ -15,7 +15,7 @@ const CreateWallet: NextPage = () => {
       <WalletLoader>
         <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
 
-        <SCWCreateForm/>
+        <SCWCreateForm />
       </WalletLoader>
     </>
   );

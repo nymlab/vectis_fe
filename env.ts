@@ -24,4 +24,4 @@ export const env: Environment = {
   siteTitle: process.env.NEXT_PUBLIC_SITE_TITLE!,
   siteIconUrl: process.env.NEXT_PUBLIC_SITE_ICON_URL!,
   contractFactoryAddress: process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS!,
-}
+};

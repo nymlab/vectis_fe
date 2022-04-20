@@ -5,6 +5,7 @@
 This project is based on [Cosmos Contracts Starter Kit](https://github.com/CosmosContracts/starter-kit)
 
 First of all, clone this project, then install dependencies:
+
 ```bash
 cd vectis_fe
 yarn install # This project uses yarn.lock

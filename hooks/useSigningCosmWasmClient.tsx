@@ -14,7 +14,8 @@ export interface ISigningCosmWasmClientContext {
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState("");
-  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
+  const [signingClient, setSigningClient] =
+    useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
 

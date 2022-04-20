@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSigningClient } from "contexts/cosmwasm";
-import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
+import {
+  convertFromMicroDenom,
+  convertMicroDenomToDenom,
+} from "util/conversion";
 import { env } from "env";
 
 export const useBalance = () => {
@@ -14,7 +17,9 @@ export const useBalance = () => {
       ?.getBalance(walletAddress, env.stakingDenom)
       .then((response: any) => {
         const { amount, denom }: { amount: number; denom: string } = response;
-        setBalance(`${convertMicroDenomToDenom(amount)} ${convertFromMicroDenom(denom)}`);
+        setBalance(
+          `${convertMicroDenomToDenom(amount)} ${convertFromMicroDenom(denom)}`
+        );
       })
       .catch((error) => {
         setError(`Error! ${error.message}`);
@@ -34,6 +39,6 @@ export const useBalance = () => {
   return {
     balance,
     refreshBalance: fetchBalance,
-    error
-  }
-}
+    error,
+  };
+};

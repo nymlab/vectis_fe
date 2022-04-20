@@ -25,7 +25,8 @@ const Home: NextPage = () => {
           <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Create your SCW &rarr;</h3>
             <p className="mt-4 text-xl">
-              Create your own Smart Contract Wallet and appoint guardians and relayers.
+              Create your own Smart Contract Wallet and appoint guardians and
+              relayers.
             </p>
           </a>
         </Link>

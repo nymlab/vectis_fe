@@ -8,12 +8,7 @@ export function Input({ error, ...props }) {
         }`}
         {...props}
       />
-      {
-        error &&
-          <span className="pl-6 text-error font-bold">
-            {error}
-          </span>
-      }
+      {error && <span className="pl-6 text-error font-bold">{error}</span>}
     </div>
-  )
+  );
 }

@@ -10,10 +10,12 @@ const NotFound: NextPage = () => {
       </Head>
       <h1 className="text-2xl">404 | Page not found</h1>
       <span className="my-10 text-xl hover:text-primary">
-        <Link href="/" passHref>&larr; Go back to home</Link>
+        <Link href="/" passHref>
+          &larr; Go back to home
+        </Link>
       </span>
     </>
-  )
-}
+  );
+};
 
 export default NotFound;

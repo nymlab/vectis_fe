@@ -27,8 +27,11 @@ export default function WalletLoader({
 
     window.addEventListener("keplr_keystorechange", () => connectToWallet());
 
-    return () => window.removeEventListener("keplr_keystorechange", () => connectToWallet());
-  }, [])
+    return () =>
+      window.removeEventListener("keplr_keystorechange", () =>
+        connectToWallet()
+      );
+  }, []);
 
   function connectToWallet() {
     connectWallet();
@@ -80,9 +83,7 @@ export default function WalletLoader({
 
         {error && (
           <div className="my-5">
-            <AlertError>
-              Error! {error.message}
-            </AlertError>
+            <AlertError>Error! {error.message}</AlertError>
           </div>
         )}
       </div>
@@ -92,11 +93,9 @@ export default function WalletLoader({
   if (error) {
     return (
       <div className="my-5">
-        <AlertError>
-          Error! {error.message}
-        </AlertError>
+        <AlertError>Error! {error.message}</AlertError>
       </div>
-    )
+    );
   }
 
   return <>{children}</>;

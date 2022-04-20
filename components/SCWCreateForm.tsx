@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createVectisWallet, getVectisWalletAddress } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
+import { IconTrash } from "./Icon";
 import { Input } from "./Input";
 import Loader from "./Loader";
 
@@ -181,7 +182,7 @@ export default function SCWCreateForm() {
       <h2 className="text-3xl font-bold mb-5">1. Choose your guardians</h2>
       {guardians.map((address, i) => (
         <div
-          className="flex w-full max-w-xl align-middle items-center space-x-3 my-2"
+          className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2"
           key={i}
         >
           <Input
@@ -196,20 +197,7 @@ export default function SCWCreateForm() {
               type="submit"
               onClick={() => removeGuardian(i)}
             >
-              <svg
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="0" fill="none" width="24" height="24" />
-                <g>
-                  <path
-                    fill="#FFF"
-                    d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z"
-                  />
-                </g>
-              </svg>
+              <IconTrash />
             </button>
           )}
         </div>
@@ -224,7 +212,7 @@ export default function SCWCreateForm() {
       <h2 className="text-3xl font-bold my-5">2. Choose your relayers</h2>
       {relayers.map((address, i) => (
         <div
-          className="flex w-full max-w-xl align-middle items-center space-x-3 my-2"
+          className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2"
           key={i}
         >
           <Input
@@ -239,26 +227,13 @@ export default function SCWCreateForm() {
               type="submit"
               onClick={() => removeRelayer(i)}
             >
-              <svg
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="0" fill="none" width="24" height="24" />
-                <g>
-                  <path
-                    fill="#FFF"
-                    d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z"
-                  />
-                </g>
-              </svg>
+              <IconTrash />
             </button>
           )}
         </div>
       ))}
       <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full mt-2"
+        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
         type="submit"
         onClick={() => pushRelayer()}
       >
