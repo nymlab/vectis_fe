@@ -11,7 +11,7 @@ import Loader from "./Loader";
 
 export default function SCWCreateForm() {
   const { walletAddress, signingClient } = useSigningClient();
-  const { balance } = useBalance();
+  const { balance, refreshBalance } = useBalance();
 
   // Form state hooks
   const {
@@ -39,15 +39,23 @@ export default function SCWCreateForm() {
     const ve = { ...validationErrors };
 
     // Errors related to initial funds
-    if (proxyInitialFunds && parseFloat(proxyInitialFunds) > 0 && parseFloat(proxyInitialFunds) < parseFloat(balance)) {
+    if (
+      proxyInitialFunds &&
+      parseFloat(proxyInitialFunds) > 0 &&
+      parseFloat(proxyInitialFunds) < parseFloat(balance)
+    ) {
       delete ve["proxyInitialFunds"];
     }
 
     // Errors related to guardians/relayers
-    Object.keys(validationErrors).filter(k => k !== "proxyInitialFunds").forEach(key => {
-      const [ k, i ] = key.split(".");
-      ((k === "guardians" && guardians[i]) || (k === "relayers" && relayers[i])) && delete ve[key];
-    });
+    Object.keys(validationErrors)
+      .filter((k) => k !== "proxyInitialFunds")
+      .forEach((key) => {
+        const [k, i] = key.split(".");
+        ((k === "guardians" && guardians[i]) ||
+          (k === "relayers" && relayers[i])) &&
+          delete ve[key];
+      });
 
     setValidationErrors(ve);
   }, [proxyInitialFunds, guardians, relayers]);
@@ -57,17 +65,36 @@ export default function SCWCreateForm() {
     const ve = {};
 
     // Check validation errors
-    !proxyInitialFunds && (ve["proxyInitialFunds"] = "This field is mandatory.");
-    parseFloat(proxyInitialFunds) < 0 && (ve["proxyInitialFunds"] = "This field must be >= 0.");
-    parseFloat(proxyInitialFunds) > parseFloat(balance) && (ve["proxyInitialFunds"] = `You don't have enough ${convertFromMicroDenom(env.stakingDenom)}.`);
+    !proxyInitialFunds &&
+      (ve["proxyInitialFunds"] = "This field is mandatory.");
+    parseFloat(proxyInitialFunds) < 0 &&
+      (ve["proxyInitialFunds"] = "This field must be >= 0.");
+    parseFloat(proxyInitialFunds) > parseFloat(balance) &&
+      (ve["proxyInitialFunds"] = `You don't have enough ${convertFromMicroDenom(
+        env.stakingDenom
+      )}.`);
 
     // Guardians/Relayers addresses are mandatory
-    guardians.forEach((g, i) => !g && (ve[`guardians.${i}`] = "This field is mandatory."));
-    relayers.forEach((r, i) => !r && (ve[`relayers.${i}`] = "This field is mandatory."));
+    guardians.forEach(
+      (g, i) => !g && (ve[`guardians.${i}`] = "This field is mandatory.")
+    );
+    relayers.forEach(
+      (r, i) => !r && (ve[`relayers.${i}`] = "This field is mandatory.")
+    );
 
     // Guardians/Relayers addresses must not be equal to your own address
-    guardians.forEach((g, i) => g === walletAddress && (ve[`guardians.${i}`] = "You can't become your own guardian."));
-    relayers.forEach((r, i) => r === walletAddress && (ve[`relayers.${i}`] = "You can't become your own relayer."));
+    guardians.forEach(
+      (g, i) =>
+        g === walletAddress &&
+        (ve[`guardians.${i}`] = "You can't become your own guardian.")
+    );
+    relayers.forEach(
+      (r, i) =>
+        r === walletAddress &&
+        (ve[`relayers.${i}`] = "You can't become your own relayer.")
+    );
+
+    // TODO: Check if guardians/relayers are unique
 
     // End of validation error checking
     console.log("Validation errors: ", ve);
@@ -84,15 +111,24 @@ export default function SCWCreateForm() {
 
     // Create Smart Contract Wallet
     setIsCreating(true);
-    createVectisWallet(signingClient!, walletAddress, guardians, relayers, parseFloat(proxyInitialFunds))
+    createVectisWallet(
+      signingClient!,
+      walletAddress,
+      guardians,
+      relayers,
+      parseFloat(proxyInitialFunds)
+    )
       .then(() => getVectisWalletAddress())
-      .then(address => {
+      .then((address) => {
         console.log("Wallet address: ", address);
         setSuccess("Your Smart Contract Wallet has been created successfully.");
+        refreshBalance();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
-        setError("Failed to create the proxy wallet. Check the console for details.");
+        setError(
+          "Failed to create the proxy wallet. Check the console for details."
+        );
       })
       .finally(() => setIsCreating(false));
   }
@@ -102,7 +138,9 @@ export default function SCWCreateForm() {
   }
 
   function getArrayValidationError(key: string, idx: number): string {
-    const k = Object.keys(validationErrors).filter(ve => ve.includes(`${key}.`)).find(ve => parseInt(ve.split(".")[1]) === idx);
+    const k = Object.keys(validationErrors)
+      .filter((ve) => ve.includes(`${key}.`))
+      .find((ve) => parseInt(ve.split(".")[1]) === idx);
     if (!k) {
       return "";
     }
@@ -113,9 +151,7 @@ export default function SCWCreateForm() {
   if (success) {
     return (
       <div className="mt-4 flex flex-col w-full max-w-xl">
-        <AlertSuccess>
-          {success}
-        </AlertSuccess>
+        <AlertSuccess>{success}</AlertSuccess>
       </div>
     );
   }
@@ -123,7 +159,10 @@ export default function SCWCreateForm() {
   if (isCreating) {
     return (
       <div className="flex flex-col justify-center items-center my-5">
-        <p className="mb-5 text-2xl">We are creating your new <b>Smart Contract Wallet</b>.<br/>Please sign the transaction to proceed.</p>
+        <p className="mb-5 text-2xl">
+          We are creating your new <b>Smart Contract Wallet</b>.<br />
+          Please sign the transaction to proceed.
+        </p>
         <Loader />
       </div>
     );
@@ -132,45 +171,47 @@ export default function SCWCreateForm() {
   return (
     <>
       <div className="mt-4 flex flex-col w-full max-w-xl">
-        {error && (
-          <AlertError>
-            {error}
-          </AlertError>
-        )}
+        {error && <AlertError>{error}</AlertError>}
       </div>
 
       <h1 className="text-5xl font-bold my-8">
         Create your Smart Contract Wallet
       </h1>
 
-      <h2 className="text-3xl font-bold">1. Choose your guardians</h2>
+      <h2 className="text-3xl font-bold mb-5">1. Choose your guardians</h2>
       {guardians.map((address, i) => (
         <div
-          className="flex w-full max-w-xl align-middle items-center space-x-3"
+          className="flex w-full max-w-xl align-middle items-center space-x-3 my-2"
           key={i}
         >
-          <Input placeholder={`Guardian #${i + 1} address`} onChange={(event) => setGuardian(i, event.target.value)} error={getArrayValidationError("guardians", i)} value={address}/>
-          {
-            guardians.length > 1 && (
-              <button
-                className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
-                type="submit"
-                onClick={() => removeGuardian(i)}
+          <Input
+            placeholder={`Guardian #${i + 1} address`}
+            onChange={(event) => setGuardian(i, event.target.value)}
+            error={getArrayValidationError("guardians", i)}
+            value={address}
+          />
+          {guardians.length > 1 && (
+            <button
+              className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
+              type="submit"
+              onClick={() => removeGuardian(i)}
+            >
+              <svg
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  width="24px"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="0" fill="none" width="24" height="24" />
-                  <g>
-                    <path fill="#FFF" d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z" />
-                  </g>
-                </svg>
-              </button>
-            )
-          }
+                <rect x="0" fill="none" width="24" height="24" />
+                <g>
+                  <path
+                    fill="#FFF"
+                    d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z"
+                  />
+                </g>
+              </svg>
+            </button>
+          )}
         </div>
       ))}
       <button
@@ -182,33 +223,42 @@ export default function SCWCreateForm() {
 
       <h2 className="text-3xl font-bold my-5">2. Choose your relayers</h2>
       {relayers.map((address, i) => (
-        <div className="flex w-full max-w-xl align-middle items-center space-x-3" key={i}>
-          <Input placeholder={`Relayer #${i + 1} address`} onChange={(event) => setRelayer(i, event.target.value)} error={getArrayValidationError("relayers", i)} value={address}/>
-          {
-            relayers.length > 1 && (
-              <button
-                className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
-                type="submit"
-                onClick={() => removeRelayer(i)}
+        <div
+          className="flex w-full max-w-xl align-middle items-center space-x-3 my-2"
+          key={i}
+        >
+          <Input
+            placeholder={`Relayer #${i + 1} address`}
+            onChange={(event) => setRelayer(i, event.target.value)}
+            error={getArrayValidationError("relayers", i)}
+            value={address}
+          />
+          {relayers.length > 1 && (
+            <button
+              className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
+              type="submit"
+              onClick={() => removeRelayer(i)}
+            >
+              <svg
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  width="24px"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="0" fill="none" width="24" height="24" />
-                  <g>
-                    <path fill="#FFF" d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z" />
-                  </g>
-                </svg>
-              </button>
-            )
-          }
+                <rect x="0" fill="none" width="24" height="24" />
+                <g>
+                  <path
+                    fill="#FFF"
+                    d="M6.187 8h11.625l-.695 11.125C17.05 20.18 16.177 21 15.12 21H8.88c-1.057 0-1.93-.82-1.997-1.875L6.187 8zM19 5v2H5V5h3V4c0-1.105.895-2 2-2h4c1.105 0 2 .895 2 2v1h3zm-9 0h4V4h-4v1z"
+                  />
+                </g>
+              </svg>
+            </button>
+          )}
         </div>
       ))}
       <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
+        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full mt-2"
         type="submit"
         onClick={() => pushRelayer()}
       >
@@ -222,7 +272,9 @@ export default function SCWCreateForm() {
             <input
               type="number"
               className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-                getValueValidationError("proxyInitialFunds") ? "input-error" : ""
+                getValueValidationError("proxyInitialFunds")
+                  ? "input-error"
+                  : ""
               }`}
               placeholder="Initial funds"
               step="0.1"
@@ -234,12 +286,11 @@ export default function SCWCreateForm() {
               {convertFromMicroDenom(env.stakingDenom)}
             </span>
           </div>
-          {
-            getValueValidationError("proxyInitialFunds") &&
-              <span className="pl-6 text-error font-bold">
-                {getValueValidationError("proxyInitialFunds")}
-              </span>
-          }
+          {getValueValidationError("proxyInitialFunds") && (
+            <span className="pl-6 text-error font-bold">
+              {getValueValidationError("proxyInitialFunds")}
+            </span>
+          )}
         </div>
         <button
           className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"

@@ -24,6 +24,10 @@ export default function WalletLoader({
     if (!!localStorage.getItem("walletAddress")) {
       connectToWallet();
     }
+
+    window.addEventListener("keplr_keystorechange", () => connectToWallet());
+
+    return () => window.removeEventListener("keplr_keystorechange", () => connectToWallet());
   }, [])
 
   function connectToWallet() {
