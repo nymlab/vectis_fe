@@ -2,15 +2,7 @@ import { useState } from "react";
 import { connectKeplr } from "services/keplr";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { env } from "env";
-
-export interface ISigningCosmWasmClientContext {
-  walletAddress: string;
-  signingClient: SigningCosmWasmClient | null;
-  loading: boolean;
-  error: any;
-  connectWallet: any;
-  disconnect: Function;
-}
+import { ISigningCosmWasmClientContext } from "contexts/cosmwasm";
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState("");

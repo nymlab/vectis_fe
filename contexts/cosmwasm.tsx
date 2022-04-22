@@ -1,8 +1,15 @@
 import { createContext, useContext, ReactNode } from "react";
-import {
-  useSigningCosmWasmClient,
-  ISigningCosmWasmClientContext,
-} from "hooks/useSigningCosmWasmClient";
+import { useSigningCosmWasmClient } from "hooks/useSigningCosmWasmClient";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+
+export interface ISigningCosmWasmClientContext {
+  walletAddress: string;
+  signingClient: SigningCosmWasmClient | null;
+  loading: boolean;
+  error: any;
+  connectWallet: any;
+  disconnect: Function;
+}
 
 let CosmWasmContext: any;
 let { Provider } = (CosmWasmContext =

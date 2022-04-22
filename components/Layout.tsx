@@ -27,9 +27,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         <span className="pl-1"> and</span>
         <a
           className="pl-1 link link-primary link-hover"
-          href="https://github.com/nymlab/vectis"
+          href="https://www.keplr.app"
         >
-          Vectis
+          Keplr
         </a>
       </footer>
     </div>

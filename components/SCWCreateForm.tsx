@@ -3,7 +3,7 @@ import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useEffect, useState } from "react";
-import { createVectisWallet, getVectisWalletAddress } from "services/vectis";
+import { createVectisWallet, queryVectisWalletsOfUser } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
 import { IconTrash } from "./Icon";
@@ -133,9 +133,9 @@ export default function SCWCreateForm() {
       relayers,
       parseFloat(proxyInitialFunds)
     )
-      .then(() => getVectisWalletAddress())
-      .then((address) => {
-        console.log("Wallet address: ", address);
+      .then(() => queryVectisWalletsOfUser(walletAddress))
+      .then((addresses) => {
+        console.log("Wallet address: ", addresses[0]);
         setSuccess("Your Smart Contract Wallet has been created successfully.");
         refreshBalance();
       })
@@ -173,13 +173,10 @@ export default function SCWCreateForm() {
 
   if (isCreating) {
     return (
-      <div className="flex flex-col justify-center items-center my-5">
-        <p className="mb-5 text-2xl">
-          We are creating your new <b>Smart Contract Wallet</b>.<br />
-          Please sign the transaction to proceed.
-        </p>
-        <Loader />
-      </div>
+      <Loader>
+        We are creating your new <b>Smart Contract Wallet</b>.<br />
+        Please sign the transaction to proceed.
+      </Loader>
     );
   }
 

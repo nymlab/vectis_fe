@@ -75,14 +75,27 @@ export async function createVectisWallet(
   );
 }
 
-export async function getVectisWalletAddress() {
+export async function queryVectisWalletsOfUser(
+  userAddress: string
+): Promise<string[]> {
   const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
   const { wallets } = await client.queryContractSmart(
     env.contractFactoryAddress,
     {
-      wallets: {},
+      wallets_of: { user: userAddress, start_after: null, limit: null },
     }
   );
 
-  return wallets?.[0];
+  return wallets;
+}
+
+export async function queryVectisWalletInfo(
+  walletAddress: string
+): Promise<any> {
+  const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
+  const info = await client.queryContractSmart(walletAddress, {
+    info: {},
+  });
+
+  console.log(info);
 }

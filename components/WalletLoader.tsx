@@ -39,9 +39,9 @@ export default function WalletLoader({
 
   if (loading || clientLoading) {
     return (
-      <div className="flex justify-center">
-        <Loader />
-      </div>
+      <Loader>
+        Connecting to your <b>Keplr Wallet</b>...
+      </Loader>
     );
   }
 

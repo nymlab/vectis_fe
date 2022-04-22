@@ -22,7 +22,7 @@ export function AlertError({ children }: AlertProps) {
   return (
     <div className="alert alert-error shadow-lg">
       <div className="flex-1 items-center">
-        <span>
+        <span className="mr-5">
           <IconError />
         </span>
         <span className="flex-grow break-all">{children}</span>
