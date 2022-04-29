@@ -1,6 +1,7 @@
-// https://codepen.io/chris__sev/pen/JjRqOxa
+import { ReactNode } from "react";
 
-function Loader({ children }) {
+type LoaderProps = { children?: ReactNode };
+function Loader({ children }: LoaderProps) {
   return (
     <div className="flex flex-col justify-center items-center my-5">
       <p className="mb-5 text-2xl">{children}</p>

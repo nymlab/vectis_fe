@@ -5,6 +5,10 @@ import themesJson from "styles/themes.json";
 const themes = Object.keys(themesJson) || [""];
 export const defaultTheme = themes[0];
 
+export function isDarkMode(): boolean {
+  return document.documentElement.getAttribute("data-theme") === "vectisDark";
+}
+
 function ThemeToggle() {
   const [theme, setTheme] = useState(defaultTheme);
   useEffect(() => {

@@ -15,10 +15,26 @@ export interface CreateWalletMsg {
   user_pubkey: string;
   guardians: {
     addresses: string[];
-    guardians_multisig: MultiSig | null;
+    guardians_multisig?: MultiSig;
   };
   relayers: string[];
   proxy_initial_funds: Coin[];
+}
+
+export interface WalletInfo {
+  balance: Coin;
+  code_id: number;
+  guardians: string[];
+  is_frozen: boolean;
+  multisig_address?: string;
+  multisig_code_id?: number;
+  nonce: number;
+  relayers: string[];
+  user_addr: string;
+  version: {
+    contract: string;
+    version: string;
+  };
 }
 
 export async function createVectisWallet(
@@ -26,7 +42,8 @@ export async function createVectisWallet(
   userAddress: string,
   guardians: string[],
   relayers: string[],
-  proxyInitialFunds: number
+  proxyInitialFunds: number,
+  multisigThreshold?: number
 ) {
   if (!env.contractFactoryAddress) {
     throw new Error("Factory address is missing in environment");
@@ -50,10 +67,12 @@ export async function createVectisWallet(
     user_pubkey: account.pubkey?.value,
     guardians: {
       addresses: guardians,
-      guardians_multisig: {
-        threshold_absolute_count: Math.ceil(guardians.length / 2),
-        multisig_initial_funds: [],
-      },
+      ...(multisigThreshold && {
+        guardians_multisig: {
+          threshold_absolute_count: multisigThreshold,
+          multisig_initial_funds: [],
+        },
+      }),
     },
     relayers: relayers,
     proxy_initial_funds: [coin(proxyInitialFunds)],
@@ -91,11 +110,16 @@ export async function queryVectisWalletsOfUser(
 
 export async function queryVectisWalletInfo(
   walletAddress: string
-): Promise<any> {
+): Promise<WalletInfo> {
   const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
   const info = await client.queryContractSmart(walletAddress, {
     info: {},
   });
 
-  console.log(info);
+  const balance = await client.getBalance(walletAddress, env.stakingDenom);
+
+  return {
+    ...info,
+    balance,
+  };
 }
