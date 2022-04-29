@@ -37,6 +37,15 @@ export interface WalletInfo {
   };
 }
 
+export interface BankMsg {
+  readonly bank: {
+    send: {
+      readonly to_address: string;
+      readonly amount: readonly Coin[];
+    };
+  };
+}
+
 export async function createVectisWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
@@ -122,4 +131,38 @@ export async function queryVectisWalletInfo(
     ...info,
     balance,
   };
+}
+
+export async function sendFundsToWallet(
+  signingClient: SigningCosmWasmClient,
+  fromAddress: string,
+  proxyWalletAddress: string,
+  toAddress: string,
+  amount: number
+) {
+  const sendMsg: BankMsg = {
+    bank: {
+      send: {
+        to_address: toAddress,
+        amount: [coin(amount)],
+      },
+    },
+  };
+
+  const defaultExecuteFee = calculateFee(
+    1_200_000,
+    GasPrice.fromString(env.gasPrice + env.stakingDenom)
+  );
+
+  const res = await signingClient.execute(
+    fromAddress,
+    proxyWalletAddress,
+    { execute: { msgs: [sendMsg] } },
+    defaultExecuteFee
+  );
+
+  console.log(
+    `Executed send funds transaction with hash ${res.transactionHash}. Logs:`,
+    res.logs
+  );
 }

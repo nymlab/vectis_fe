@@ -134,9 +134,7 @@ export default function SCWCreateForm() {
       relayers,
       parseFloat(proxyInitialFunds)
     )
-      .then(() => queryVectisWalletsOfUser(walletAddress))
-      .then((addresses) => {
-        console.log("Wallet address: ", addresses[0]);
+      .then(() => {
         setSuccess("Your Smart Contract Wallet has been created successfully.");
         refreshBalance();
       })

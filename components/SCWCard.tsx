@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { queryVectisWalletInfo, WalletInfo } from "services/vectis";
+import {
+  queryVectisWalletInfo,
+  sendFundsToWallet,
+  WalletInfo,
+} from "services/vectis";
 import { AlertError } from "./Alert";
 import { IconChip } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
@@ -8,9 +12,12 @@ import {
   convertFromMicroDenom,
   convertMicroDenomToDenom,
 } from "util/conversion";
+import { useSigningClient } from "contexts/cosmwasm";
 
 type SCWCardProps = { title?: string; address: string };
 function SCWCard({ title, address }: SCWCardProps) {
+  const { walletAddress: userAddress, signingClient } = useSigningClient();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
@@ -28,8 +35,21 @@ function SCWCard({ title, address }: SCWCardProps) {
     navigator.clipboard.writeText(address);
   }
 
+  function test() {
+    sendFundsToWallet(
+      signingClient!,
+      userAddress,
+      address,
+      "juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y",
+      50
+    );
+  }
+
   return (
-    <div className="card w-96 bg-base-100 border-2 shadow-xl transition-shadow hover:shadow-2xl hover:cursor-pointer">
+    <div
+      className="card w-96 bg-base-100 border-2 shadow-xl transition-shadow hover:shadow-2xl hover:cursor-pointer"
+      onClick={test}
+    >
       <div className="card-body">
         <p
           onClick={copyAddress}
