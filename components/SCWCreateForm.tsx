@@ -2,6 +2,7 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createVectisWallet, queryVectisWalletsOfUser } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
@@ -167,6 +168,11 @@ export default function SCWCreateForm() {
     return (
       <div className="mt-4 flex flex-col w-full max-w-xl">
         <AlertSuccess>{success}</AlertSuccess>
+        <span className="my-5 text-primary hover:underline">
+          <Link href="/wallets" passHref={true}>
+            Go to your Smart Contract Wallets &rarr;
+          </Link>
+        </span>
       </div>
     );
   }

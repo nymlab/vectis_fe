@@ -3,19 +3,14 @@ import Loader from "components/Loader";
 import SCWCard from "components/SCWCard";
 import WalletLoader from "components/WalletLoader";
 import { useVectis } from "contexts/vectis";
+import { useBalance } from "hooks/useBalance";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
 
 const ListWallets: NextPage = () => {
   const { proxyWallets, loading, error } = useVectis();
-
-  useEffect(() => {
-    if (!proxyWallets?.length) {
-      return;
-    }
-  }, [proxyWallets]);
+  const { balance } = useBalance();
 
   return (
     <>
@@ -23,18 +18,19 @@ const ListWallets: NextPage = () => {
         <title>Vectis | Wallets</title>
       </Head>
       <WalletLoader>
-        <p className="text-3xl my-10">Your Smart Contract Wallets</p>
+        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
+        <h1 className="text-5xl font-bold my-8">Your Smart Contract Wallets</h1>
 
         {loading ? (
           <Loader>Querying your Smart Contract Wallets...</Loader>
         ) : (
-          proxyWallets.map((address, i) => (
-            <SCWCard
-              key={i}
-              title={`Smart Contract Wallet #${i + 1}`}
-              address={address}
-            />
-          ))
+          <div className="flex flex-col md:flex-row">
+            {proxyWallets.map((address, i) => (
+              <div key={i} className="m-5">
+                <SCWCard title={`Smart Contract Wallet`} address={address} />
+              </div>
+            ))}
+          </div>
         )}
 
         <Link href="/wallets/create" passHref={true}>

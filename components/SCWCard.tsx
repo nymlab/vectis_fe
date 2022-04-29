@@ -4,6 +4,10 @@ import { AlertError } from "./Alert";
 import { IconChip } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
 import Loader from "./Loader";
+import {
+  convertFromMicroDenom,
+  convertMicroDenomToDenom,
+} from "util/conversion";
 
 type SCWCardProps = { title?: string; address: string };
 function SCWCard({ title, address }: SCWCardProps) {
@@ -34,7 +38,7 @@ function SCWCard({ title, address }: SCWCardProps) {
         >
           {address}
         </p>
-        <h2 className="card-title flex space-x-2 align-middle text-left my-3">
+        <h2 className="card-title flex space-x-2 items-center text-left my-3">
           <IconChip fill={isDarkMode() ? "#FFF" : "#000"} />
           <p>{title || "Smart Contract Wallet"}</p>
         </h2>
@@ -53,7 +57,8 @@ function SCWCard({ title, address }: SCWCardProps) {
             </p>
 
             <h2 className="mt-5 text-2xl font-bold">
-              {walletInfo?.balance.amount} {walletInfo?.balance.denom}
+              {convertMicroDenomToDenom(walletInfo?.balance.amount ?? 0)}{" "}
+              {convertFromMicroDenom(walletInfo?.balance.denom ?? "")}
             </h2>
           </div>
         )}
