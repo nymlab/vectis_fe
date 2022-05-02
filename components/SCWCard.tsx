@@ -36,13 +36,14 @@ function SCWCard({ title, address }: SCWCardProps) {
   }
 
   function test() {
-    sendFundsToWallet(
-      signingClient!,
-      userAddress,
-      address,
-      "juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y",
-      50
-    );
+    console.log(walletInfo);
+    // sendFundsToWallet(
+    //   signingClient!,
+    //   userAddress,
+    //   address,
+    //   "juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y",
+    //   50
+    // );
   }
 
   return (
@@ -72,7 +73,7 @@ function SCWCard({ title, address }: SCWCardProps) {
               relayers: {walletInfo?.relayers.length}
             </p>
             <p>
-              Frozen: {walletInfo?.is_frozen ? "yes" : "no"} | MultiSig:{" "}
+              Frozen: {walletInfo?.is_frozen ? "yes" : "no"} | Multisig:{" "}
               {walletInfo?.multisig_address ? "yes" : "no"}
             </p>
 
