@@ -8,13 +8,11 @@ import { AlertError } from "./Alert";
 import { IconChip } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
 import Loader from "./Loader";
-import {
-  convertFromMicroDenom,
-  convertMicroDenomToDenom,
-} from "util/conversion";
+import { convertFromMicroDenom } from "util/conversion";
 import { useSigningClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { Input } from "./Input";
+import TokenAmount from "./TokenAmount";
 
 type SCWCardProps = { title?: string; address: string };
 function SCWCard({ title, address }: SCWCardProps) {
@@ -53,7 +51,7 @@ function SCWCard({ title, address }: SCWCardProps) {
   return (
     <>
       <div className="perspective transition-shadow relative group">
-        <div className="w-96 h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl hover:cursor-pointer transition-transform duration-700 preserve-3d group-hover:rotate-y-180">
+        <div className="w-96 h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl hover:cursor-pointer transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
           <div className="card-body w-96 h-56 absolute backface-hidden">
             <h2 className="card-title flex space-x-2 items-center text-left my-3">
               <IconChip fill={isDarkMode() ? "#FFF" : "#000"} />
@@ -74,8 +72,7 @@ function SCWCard({ title, address }: SCWCardProps) {
                 </p>
 
                 <h2 className="mt-5 text-2xl font-bold">
-                  {convertMicroDenomToDenom(walletInfo?.balance.amount ?? 0)}{" "}
-                  {convertFromMicroDenom(walletInfo?.balance.denom ?? "")}
+                  <TokenAmount token={walletInfo?.balance} />
                 </h2>
               </div>
             )}
@@ -123,11 +120,14 @@ function SCWCard({ title, address }: SCWCardProps) {
           >
             ✕
           </label>
-          <h3 className="text-lg font-bold">
+          <h3 className="text-xl font-bold">
             Send funds to address through wallet
           </h3>
+          <h4 className="text-lg">
+            Available inside wallet: <TokenAmount token={walletInfo?.balance} />
+          </h4>
           <div className="flex flex-col items-center">
-            <div className="my-5">
+            <div className="my-5 w-full">
               <Input
                 placeholder="Receiver address"
                 onChange={(event) => setReceiverAddress(event.target.value)}
@@ -136,7 +136,7 @@ function SCWCard({ title, address }: SCWCardProps) {
                 autocomplete="false"
               />
             </div>
-            <div className="relative rounded-full shadow-sm">
+            <div className="relative rounded-full shadow-sm w-full">
               <input
                 type="number"
                 className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg`}

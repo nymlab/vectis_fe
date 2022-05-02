@@ -2,8 +2,8 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useValidationErrors } from "hooks/useValidationErrors";
+import { useState } from "react";
 import { createVectisWallet } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
@@ -31,93 +31,81 @@ export default function SCWCreateForm() {
   const [proxyInitialFunds, setProxyInitialFunds] = useState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
-  const [validationErrors, setValidationErrors] = useState({});
+
+  const {
+    getValueValidationError,
+    getArrayValidationError,
+    checkValidationErrors,
+  } = useValidationErrors({
+    validators: [
+      {
+        key: "proxyInitialFunds",
+        value: proxyInitialFunds,
+        message: "This field is mandatory",
+        validate: () => !!proxyInitialFunds,
+      },
+      {
+        key: "proxyInitialFunds",
+        value: proxyInitialFunds,
+        message: "This field must be >= 0",
+        validate: () => parseFloat(proxyInitialFunds) > 0,
+      },
+      {
+        key: "proxyInitialFunds",
+        message: `You don't have enough ${convertFromMicroDenom(
+          env.stakingDenom
+        )}`,
+        value: proxyInitialFunds,
+        validate: () => parseFloat(proxyInitialFunds) < parseFloat(balance),
+      },
+      {
+        key: "guardians",
+        value: guardians,
+        message: "This field is mandatory",
+        validate: (g) => !!g,
+      },
+      {
+        key: "relayers",
+        value: relayers,
+        message: "This field is mandatory",
+        validate: (r) => !!r,
+      },
+      {
+        key: "guardians",
+        value: guardians,
+        message: "You can't become your own guardian",
+        validate: (g) => g !== walletAddress,
+      },
+      {
+        key: "relayers",
+        value: relayers,
+        message: "You can't become your own relayer",
+        validate: (r) => r !== walletAddress,
+      },
+      {
+        key: "guardians",
+        value: guardians,
+        message: "Guardian addresses must be unique",
+        validate: (g1, i) => !guardians.some((g2, j) => i !== j && g1 === g2),
+      },
+      {
+        key: "relayers",
+        value: relayers,
+        message: "Relayer addresses must be unique",
+        validate: (r1, i) => !relayers.some((r2, j) => i !== j && r1 === r2),
+      },
+    ],
+  });
 
   // Generic state hooks
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
-  useEffect(() => {
-    // Update validation errors
-    const ve = { ...validationErrors };
-
-    // Errors related to initial funds
-    if (
-      proxyInitialFunds &&
-      parseFloat(proxyInitialFunds) > 0 &&
-      parseFloat(proxyInitialFunds) < parseFloat(balance)
-    ) {
-      delete ve["proxyInitialFunds"];
-    }
-
-    // Errors related to guardians/relayers
-    Object.keys(validationErrors)
-      .filter((k) => k !== "proxyInitialFunds")
-      .forEach((key) => {
-        const [k, i] = key.split(".");
-        ((k === "guardians" && guardians[i]) ||
-          (k === "relayers" && relayers[i])) &&
-          delete ve[key];
-      });
-
-    setValidationErrors(ve);
-  }, [proxyInitialFunds, guardians, relayers]);
-
   function createSCW() {
     console.log({ guardians, relayers, proxyInitialFunds });
-    const ve = {};
 
-    // Check validation errors
-    !proxyInitialFunds &&
-      (ve["proxyInitialFunds"] = "This field is mandatory.");
-    parseFloat(proxyInitialFunds) < 0 &&
-      (ve["proxyInitialFunds"] = "This field must be >= 0.");
-    parseFloat(proxyInitialFunds) > parseFloat(balance) &&
-      (ve["proxyInitialFunds"] = `You don't have enough ${convertFromMicroDenom(
-        env.stakingDenom
-      )}.`);
-
-    // Guardians/Relayers addresses are mandatory
-    guardians.forEach(
-      (g, i) => !g && (ve[`guardians.${i}`] = "This field is mandatory.")
-    );
-    relayers.forEach(
-      (r, i) => !r && (ve[`relayers.${i}`] = "This field is mandatory.")
-    );
-
-    // Guardians/Relayers addresses must not be equal to your own address
-    guardians.forEach(
-      (g, i) =>
-        g === walletAddress &&
-        (ve[`guardians.${i}`] = "You can't become your own guardian.")
-    );
-    relayers.forEach(
-      (r, i) =>
-        r === walletAddress &&
-        (ve[`relayers.${i}`] = "You can't become your own relayer.")
-    );
-
-    // Guardians/Relayers addresses must be unique
-    guardians.forEach((g1, i) =>
-      guardians.forEach((g2, j) => {
-        if (i !== j && g1 === g2) {
-          ve[`guardians.${i}`] = "Guardian addresses must be unique.";
-        }
-      })
-    );
-    relayers.forEach((r1, i) =>
-      relayers.forEach((r2, j) => {
-        if (i !== j && r1 === r2) {
-          ve[`relayers.${i}`] = "Relayer addresses must be unique.";
-        }
-      })
-    );
-
-    // End of validation error checking
-    console.log("Validation errors: ", ve);
-    setValidationErrors(ve);
-    if (Object.keys(ve).length > 0) {
+    if (!checkValidationErrors()) {
       // There are some validation errors, don't proceed
       return;
     }
@@ -148,21 +136,6 @@ export default function SCWCreateForm() {
         );
       })
       .finally(() => setIsCreating(false));
-  }
-
-  function getValueValidationError(key: string): string | undefined {
-    return validationErrors[key];
-  }
-
-  function getArrayValidationError(key: string, idx: number): string {
-    const k = Object.keys(validationErrors)
-      .filter((ve) => ve.includes(`${key}.`))
-      .find((ve) => parseInt(ve.split(".")[1]) === idx);
-    if (!k) {
-      return "";
-    }
-
-    return validationErrors[k];
   }
 
   function handleRemoveGuardian(i: number) {
