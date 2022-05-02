@@ -177,9 +177,7 @@ export default function SCWCreateForm() {
       <div className="mt-4 flex flex-col w-full max-w-xl">
         <AlertSuccess>{success}</AlertSuccess>
         <span className="my-5 text-primary hover:underline">
-          <Link href="/wallets" passHref={true}>
-            Go to your Smart Contract Wallets &rarr;
-          </Link>
+          <a href="/wallets">Go to your Smart Contract Wallets &rarr;</a>
         </span>
       </div>
     );
