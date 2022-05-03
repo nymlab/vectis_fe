@@ -10,7 +10,7 @@ import Link from "next/link";
 
 const ListWallets: NextPage = () => {
   const { proxyWallets, loading, error } = useVectis();
-  const { balance } = useBalance();
+  const { balance, refreshBalance } = useBalance();
 
   return (
     <>
@@ -24,10 +24,14 @@ const ListWallets: NextPage = () => {
         {loading ? (
           <Loader>Querying your Smart Contract Wallets...</Loader>
         ) : (
-          <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col md:grid md:grid-cols-3">
             {proxyWallets.map((address, i) => (
               <div key={i} className="m-5">
-                <SCWCard title={`Smart Contract Wallet`} address={address} />
+                <SCWCard
+                  title={`Smart Contract Wallet`}
+                  address={address}
+                  onRefresh={refreshBalance}
+                />
               </div>
             ))}
           </div>

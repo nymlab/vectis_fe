@@ -5,7 +5,7 @@ import SCWCreateForm from "components/SCWCreateForm";
 import Head from "next/head";
 
 const CreateWallet: NextPage = () => {
-  const { balance } = useBalance();
+  const { balance, refreshBalance } = useBalance();
 
   return (
     <>
@@ -15,7 +15,7 @@ const CreateWallet: NextPage = () => {
       <WalletLoader>
         <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
 
-        <SCWCreateForm />
+        <SCWCreateForm onRefresh={refreshBalance} />
       </WalletLoader>
     </>
   );

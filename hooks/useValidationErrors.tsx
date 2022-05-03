@@ -97,10 +97,15 @@ export const useValidationErrors = ({
     return true;
   }
 
+  function clearValidationErrors() {
+    setValidationErrors({});
+  }
+
   return {
     validationErrors,
     getValueValidationError,
     getArrayValidationError,
     checkValidationErrors,
+    clearValidationErrors,
   };
 };

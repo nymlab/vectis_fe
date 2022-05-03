@@ -1,73 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  queryVectisWalletInfo,
-  sendFundsToWallet,
-  WalletInfo,
-} from "services/vectis";
-import { AlertError, AlertSuccess } from "./Alert";
+import { queryVectisWalletInfo, WalletInfo } from "services/vectis";
+import { AlertError } from "./Alert";
 import { IconChip } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
 import Loader from "./Loader";
-import { convertFromMicroDenom } from "util/conversion";
-import { useSigningClient } from "contexts/cosmwasm";
-import { env } from "env";
-import { Input } from "./Input";
 import TokenAmount from "./TokenAmount";
-import { useValidationErrors } from "hooks/useValidationErrors";
+import SendFundsModal from "./modals/SendFundsModal";
 
-type SCWCardProps = { title?: string; address: string };
-function SCWCard({ title, address }: SCWCardProps) {
-  const { walletAddress: userAddress, signingClient } = useSigningClient();
+type SCWCardProps = {
+  address: string;
+  title?: string;
+  onRefresh?: () => void;
+};
 
+export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
   const [refresh, setRefresh] = useState(false);
-
-  const [receiverAddress, setReceiverAddress] = useState("");
-  const [amountToSend, setAmountToSend] = useState("");
-  const { getValueValidationError, checkValidationErrors } =
-    useValidationErrors({
-      validators: [
-        {
-          key: "receiverAddress",
-          value: receiverAddress,
-          message: "This field is mandatory",
-          validate: () => !!receiverAddress,
-        },
-        {
-          key: "receiverAddress",
-          value: receiverAddress,
-          message: "Can't send funds to your own SCW",
-          validate: () => receiverAddress !== address,
-        },
-        {
-          key: "amountToSend",
-          value: amountToSend,
-          message: "This field is mandatory",
-          validate: () => !!amountToSend,
-        },
-        {
-          key: "amountToSend",
-          value: amountToSend,
-          message: "This field must be > 0",
-          validate: () => parseFloat(amountToSend) > 0,
-        },
-        {
-          key: "amountToSend",
-          value: amountToSend,
-          message: `This SCW doesn't have enough ${convertFromMicroDenom(
-            env.stakingDenom
-          )}`,
-          validate: () =>
-            parseFloat(amountToSend) < (walletInfo?.balance.amount ?? 0),
-        },
-      ],
-    });
-
-  const [isSending, setIsSending] = useState(false);
-  const [sendSuccess, setSendSuccess] = useState("");
-  const [sendError, setSendError] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -82,38 +32,9 @@ function SCWCard({ title, address }: SCWCardProps) {
     navigator.clipboard.writeText(address);
   }
 
-  function sendFunds() {
-    if (!checkValidationErrors()) {
-      return;
-    }
-
-    setIsSending(true);
-    sendFundsToWallet(
-      signingClient!,
-      userAddress,
-      address,
-      receiverAddress,
-      parseFloat(amountToSend)
-    )
-      .then(() => {
-        setSendSuccess(
-          `Successfully sent ${amountToSend} ${convertFromMicroDenom(
-            env.stakingDenom
-          )}!`
-        );
-        setRefresh(!refresh);
-      })
-      .catch((err) =>
-        setSendError(`Failed to send funds to receiver. Error: ${err}`)
-      )
-      .finally(() => setIsSending(false));
-  }
-
-  function handleCloseModal() {
-    setReceiverAddress("");
-    setAmountToSend("");
-    setSendSuccess("");
-    setSendError("");
+  function doRefresh() {
+    setRefresh(!refresh);
+    onRefresh?.();
   }
 
   return (
@@ -153,7 +74,7 @@ function SCWCard({ title, address }: SCWCardProps) {
           </div>
 
           <div className="w-96 h-56 absolute rotate-y-180 backface-hidden">
-            <div className="w-[99%] ml-[3px] p-2 mt-10 bg-base-content">
+            <div className="ml-[3px] p-2 mt-10 bg-base-content text-left">
               <p
                 onClick={copyAddress}
                 className="text-left text-base-100 text-[0.7rem] hover:underline hover:text-primary hover:cursor-pointer transition-colors tooltip"
@@ -179,92 +100,11 @@ function SCWCard({ title, address }: SCWCardProps) {
         </div>
       </div>
 
-      <input
-        type="checkbox"
-        id={`send-modal-${address}`}
-        className="modal-toggle"
+      <SendFundsModal
+        wallet={walletInfo}
+        walletAddress={address}
+        onSentFunds={doRefresh}
       />
-      <div className="modal">
-        <div className="modal-box relative">
-          <label
-            htmlFor={`send-modal-${address}`}
-            onClick={handleCloseModal}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </label>
-          <h3 className="text-xl font-bold">
-            Send funds to address through wallet
-          </h3>
-          <h4 className="text-lg">
-            Available inside wallet: <TokenAmount token={walletInfo?.balance} />
-          </h4>
-          <div className="flex flex-col items-center">
-            {!isSending ? (
-              <>
-                <div className="my-5 w-full">
-                  <Input
-                    placeholder="Receiver address"
-                    onChange={(event) => setReceiverAddress(event.target.value)}
-                    error={getValueValidationError("receiverAddress")}
-                    value={receiverAddress}
-                    autoComplete="off"
-                  />
-                </div>
-                <div className="flex flex-col w-full items-start">
-                  <div className="relative rounded-full shadow-sm w-full">
-                    <input
-                      type="number"
-                      className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-                        getValueValidationError("amountToSend")
-                          ? "input-error"
-                          : ""
-                      }`}
-                      placeholder="Amount to send"
-                      step="0.1"
-                      min="0"
-                      onChange={(event) => setAmountToSend(event.target.value)}
-                      value={amountToSend}
-                    />
-                    <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-                      {convertFromMicroDenom(env.stakingDenom)}
-                    </span>
-                  </div>
-                  {getValueValidationError("amountToSend") && (
-                    <span className="pl-6 text-error font-bold">
-                      {getValueValidationError("amountToSend")}
-                    </span>
-                  )}
-                </div>
-                <div
-                  className="btn btn-primary mt-5 text-xl rounded-full"
-                  onClick={sendFunds}
-                >
-                  Send
-                </div>
-              </>
-            ) : (
-              <>
-                <Loader>Sending funds to the receiver...</Loader>
-              </>
-            )}
-
-            {sendSuccess && (
-              <div className="mt-4 flex flex-col w-full max-w-xl">
-                <AlertSuccess>{sendSuccess}</AlertSuccess>
-              </div>
-            )}
-
-            {sendError && (
-              <div className="mt-4 flex flex-col w-full max-w-xl">
-                <AlertError>{sendError}</AlertError>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
     </>
   );
 }
-
-export default SCWCard;

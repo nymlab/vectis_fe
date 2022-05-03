@@ -11,7 +11,11 @@ import { IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
 import Loader from "./Loader";
 
-export default function SCWCreateForm() {
+type SCWCreateFormProps = {
+  onRefresh?: () => void;
+};
+
+export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
   const { walletAddress, signingClient } = useSigningClient();
   const { balance, refreshBalance } = useBalance();
 
@@ -128,6 +132,7 @@ export default function SCWCreateForm() {
       .then(() => {
         setSuccess("Your Smart Contract Wallet has been created successfully.");
         refreshBalance();
+        onRefresh?.();
       })
       .catch((err) => {
         console.error(err);
