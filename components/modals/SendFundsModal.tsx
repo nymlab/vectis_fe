@@ -7,10 +7,7 @@ import { env } from "env";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { sendFundsToWallet, WalletInfo } from "services/vectis";
-import {
-  convertFromMicroDenom,
-  convertMicroDenomToDenom,
-} from "util/conversion";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
 
 type SendFundsModalProps = {
   wallet: WalletInfo | null;
@@ -18,20 +15,12 @@ type SendFundsModalProps = {
   onSentFunds: () => void;
 };
 
-export default function SendFundsModal({
-  wallet,
-  walletAddress,
-  onSentFunds,
-}: SendFundsModalProps) {
+export default function SendFundsModal({ wallet, walletAddress, onSentFunds }: SendFundsModalProps) {
   const { walletAddress: userAddress, signingClient } = useSigningClient();
 
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amountToSend, setAmountToSend] = useState("");
-  const {
-    getValueValidationError,
-    checkValidationErrors,
-    clearValidationErrors,
-  } = useValidationErrors({
+  const { getValueValidationError, checkValidationErrors, clearValidationErrors } = useValidationErrors({
     validators: [
       {
         key: "receiverAddress",
@@ -60,12 +49,8 @@ export default function SendFundsModal({
       {
         key: "amountToSend",
         value: amountToSend,
-        message: `This SCW doesn't have enough ${convertFromMicroDenom(
-          env.stakingDenom
-        )}`,
-        validate: () =>
-          parseFloat(amountToSend) <
-          convertMicroDenomToDenom(wallet?.balance.amount ?? 0),
+        message: `This SCW doesn't have enough ${convertFromMicroDenom(env.stakingDenom)}`,
+        validate: () => parseFloat(amountToSend) < convertMicroDenomToDenom(wallet?.balance.amount ?? 0),
       },
     ],
   });
@@ -80,25 +65,13 @@ export default function SendFundsModal({
     }
 
     setIsSending(true);
-    sendFundsToWallet(
-      signingClient!,
-      userAddress,
-      walletAddress,
-      receiverAddress,
-      parseFloat(amountToSend)
-    )
+    sendFundsToWallet(signingClient!, userAddress, walletAddress, receiverAddress, parseFloat(amountToSend))
       .then(() => {
-        setSendSuccess(
-          `Successfully sent ${amountToSend} ${convertFromMicroDenom(
-            env.stakingDenom
-          )}!`
-        );
+        setSendSuccess(`Successfully sent ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)}!`);
         setAmountToSend("");
         onSentFunds();
       })
-      .catch((err) =>
-        setSendError(`Failed to send funds to receiver. Error: ${err}`)
-      )
+      .catch((err) => setSendError(`Failed to send funds to receiver. Error: ${err}`))
       .finally(() => setIsSending(false));
   }
 
@@ -112,11 +85,7 @@ export default function SendFundsModal({
 
   return (
     <>
-      <input
-        type="checkbox"
-        id={`send-modal-${walletAddress}`}
-        className="modal-toggle"
-      />
+      <input type="checkbox" id={`send-modal-${walletAddress}`} className="modal-toggle" />
       <div className="modal">
         <div className="modal-box relative">
           <label
@@ -126,9 +95,7 @@ export default function SendFundsModal({
           >
             ✕
           </label>
-          <h3 className="text-xl font-bold">
-            Send funds to address through wallet
-          </h3>
+          <h3 className="text-xl font-bold">Send funds to address through wallet</h3>
           <h4 className="text-lg">
             Available inside wallet: <TokenAmount token={wallet?.balance} />
           </h4>
@@ -149,9 +116,7 @@ export default function SendFundsModal({
                     <input
                       type="number"
                       className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-                        getValueValidationError("amountToSend")
-                          ? "input-error"
-                          : ""
+                        getValueValidationError("amountToSend") ? "input-error" : ""
                       }`}
                       placeholder="Amount to send"
                       step="0.1"
@@ -164,15 +129,10 @@ export default function SendFundsModal({
                     </span>
                   </div>
                   {getValueValidationError("amountToSend") && (
-                    <span className="pl-6 text-error font-bold">
-                      {getValueValidationError("amountToSend")}
-                    </span>
+                    <span className="pl-6 text-error font-bold">{getValueValidationError("amountToSend")}</span>
                   )}
                 </div>
-                <div
-                  className="btn btn-primary mt-5 text-xl rounded-full"
-                  onClick={sendFunds}
-                >
+                <div className="btn btn-primary mt-5 text-xl rounded-full" onClick={sendFunds}>
                   Send
                 </div>
               </>

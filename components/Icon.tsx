@@ -72,12 +72,7 @@ export function IconError() {
 
 export function IconTrash() {
   return (
-    <svg
-      width="24px"
-      height="24px"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" fill="none" width="24" height="24" />
       <g>
         <path

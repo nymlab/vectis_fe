@@ -52,8 +52,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
             ) : (
               <div className="text-left">
                 <p>
-                  No. of guardians: {walletInfo?.guardians.length} | No. of
-                  relayers: {walletInfo?.relayers.length}
+                  No. of guardians: {walletInfo?.guardians.length} | No. of relayers: {walletInfo?.relayers.length}
                 </p>
                 <p>
                   Frozen: {walletInfo?.is_frozen ? "yes" : "no"} | Multisig:{" "}
@@ -66,18 +65,14 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
               </div>
             )}
 
-            {error && (
-              <AlertError>
-                Failed to retrieve SCW infos. {error.message}
-              </AlertError>
-            )}
+            {error && <AlertError>Failed to retrieve SCW infos. {error.message}</AlertError>}
           </div>
 
           <div className="w-96 h-56 absolute rotate-y-180 backface-hidden">
-            <div className="ml-[3px] p-2 mt-10 bg-base-content text-left">
+            <div className="ml-[3px] p-2 mt-10 bg-base-content text-center">
               <p
                 onClick={copyAddress}
-                className="text-left text-base-100 text-[0.7rem] hover:underline hover:text-primary hover:cursor-pointer transition-colors tooltip"
+                className="text-center text-base-100 text-[0.6rem] hover:underline hover:text-primary hover:cursor-pointer transition-colors tooltip"
                 data-tip="Copy wallet address"
               >
                 {address}
@@ -85,26 +80,19 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
             </div>
 
             <div className="card-body">
-              <div className="flex space-x-2 mt-7">
-                <label
-                  htmlFor={`send-modal-${address}`}
-                  className="btn modal-button btn-outline btn-primary"
-                >
-                  Send
+              <div className="flex justify-end space-x-2 mt-12">
+                <label htmlFor={`send-modal-${address}`} className="btn modal-button btn-primary btn-sm">
+                  Transfer
                 </label>
-                <button className="btn btn-outline btn-primary">Charge</button>
-                <button className="btn btn-outline btn-primary">Manage</button>
+                <button className="btn btn-primary btn-sm">Charge</button>
+                <button className="btn btn-primary btn-sm">Manage</button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <SendFundsModal
-        wallet={walletInfo}
-        walletAddress={address}
-        onSentFunds={doRefresh}
-      />
+      <SendFundsModal wallet={walletInfo} walletAddress={address} onSentFunds={doRefresh} />
     </>
   );
 }

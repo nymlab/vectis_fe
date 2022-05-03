@@ -14,11 +14,7 @@ export interface ArrayValidator<T = string> {
   validate: (value?: T, idx?: number) => boolean;
 }
 
-export const useValidationErrors = ({
-  validators,
-}: {
-  validators: (Validator | ArrayValidator)[];
-}) => {
+export const useValidationErrors = ({ validators }: { validators: (Validator | ArrayValidator)[] }) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(
@@ -30,8 +26,7 @@ export const useValidationErrors = ({
       validators.forEach((validator) => {
         if (validator.value instanceof Array) {
           validator.value.forEach((e, i) => {
-            !validator.validate(e, i) &&
-              blacklist.push(`${validator.key}.${i}`);
+            !validator.validate(e, i) && blacklist.push(`${validator.key}.${i}`);
           });
           return;
         }
@@ -73,8 +68,7 @@ export const useValidationErrors = ({
             return;
           }
 
-          !validator.validate(e, i) &&
-            (ve[`${validator.key}.${i}`] = validator.message);
+          !validator.validate(e, i) && (ve[`${validator.key}.${i}`] = validator.message);
         });
         return;
       }

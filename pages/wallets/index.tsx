@@ -27,20 +27,14 @@ const ListWallets: NextPage = () => {
           <div className="flex flex-col md:grid md:grid-cols-3">
             {proxyWallets.map((address, i) => (
               <div key={i} className="m-5">
-                <SCWCard
-                  title={`Smart Contract Wallet`}
-                  address={address}
-                  onRefresh={refreshBalance}
-                />
+                <SCWCard title={`Smart Contract Wallet`} address={address} onRefresh={refreshBalance} />
               </div>
             ))}
           </div>
         )}
 
         <Link href="/wallets/create" passHref={true}>
-          <button className="btn btn-primary text-xl rounded-full my-10">
-            Create new wallet
-          </button>
+          <button className="btn btn-primary text-xl rounded-full my-10">Create new wallet</button>
         </Link>
 
         {error && (

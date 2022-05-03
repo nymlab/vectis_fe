@@ -12,24 +12,18 @@ export interface ISigningCosmWasmClientContext {
 }
 
 let CosmWasmContext: any;
-let { Provider } = (CosmWasmContext =
-  createContext<ISigningCosmWasmClientContext>({
-    walletAddress: "",
-    signingClient: null,
-    loading: false,
-    error: null,
-    connectWallet: () => {},
-    disconnect: () => {},
-  }));
+let { Provider } = (CosmWasmContext = createContext<ISigningCosmWasmClientContext>({
+  walletAddress: "",
+  signingClient: null,
+  loading: false,
+  error: null,
+  connectWallet: () => {},
+  disconnect: () => {},
+}));
 
-export const useSigningClient = (): ISigningCosmWasmClientContext =>
-  useContext(CosmWasmContext);
+export const useSigningClient = (): ISigningCosmWasmClientContext => useContext(CosmWasmContext);
 
-export const SigningCosmWasmProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const SigningCosmWasmProvider = ({ children }: { children: ReactNode }) => {
   const value = useSigningCosmWasmClient();
   return <Provider value={value}>{children}</Provider>;
 };

@@ -6,8 +6,7 @@ import { ISigningCosmWasmClientContext } from "contexts/cosmwasm";
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState("");
-  const [signingClient, setSigningClient] =
-    useState<SigningCosmWasmClient | null>(null);
+  const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
 
@@ -24,10 +23,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       const offlineSigner = await (window as any).getOfflineSigner(env.chainId);
 
       // make client
-      const client = await SigningCosmWasmClient.connectWithSigner(
-        env.chainRpcEndpoint,
-        offlineSigner
-      );
+      const client = await SigningCosmWasmClient.connectWithSigner(env.chainRpcEndpoint, offlineSigner);
       setSigningClient(client);
 
       // get user address

@@ -12,15 +12,10 @@ const Home: NextPage = () => {
 
   return (
     <WalletLoader>
-      <h1 className="text-6xl font-bold">
-        Welcome to Vectis on {env.chainName}!
-      </h1>
+      <h1 className="text-6xl font-bold">Welcome to Vectis on {env.chainName}!</h1>
 
       <div className="mt-3 text-2xl">
-        Your wallet address is:{" "}
-        <pre className="font-mono break-all whitespace-pre-wrap">
-          {walletAddress}
-        </pre>
+        Your wallet address is: <pre className="font-mono break-all whitespace-pre-wrap">{walletAddress}</pre>
       </div>
 
       {proxyWallets.length > 0 ? (
@@ -28,9 +23,7 @@ const Home: NextPage = () => {
           <Link href="/wallets" passHref>
             <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
               <h3 className="text-2xl font-bold">Manage your SCWs &rarr;</h3>
-              <p className="mt-4 text-xl">
-                View your Smart Contract Wallets and perform operations on them.
-              </p>
+              <p className="mt-4 text-xl">View your Smart Contract Wallets and perform operations on them.</p>
             </a>
           </Link>
         </div>
@@ -39,10 +32,7 @@ const Home: NextPage = () => {
           <Link href="/wallets/create" passHref>
             <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
               <h3 className="text-2xl font-bold">Create your SCW &rarr;</h3>
-              <p className="mt-4 text-xl">
-                Create your own Smart Contract Wallet and appoint guardians and
-                relayers.
-              </p>
+              <p className="mt-4 text-xl">Create your own Smart Contract Wallet and appoint guardians and relayers.</p>
             </a>
           </Link>
         </div>

@@ -7,9 +7,7 @@ export interface IVectisContext {
   proxyWallets: string[];
   loading: boolean;
   error: any;
-  fetchWalletsInfo:
-    | ((addresses: string[]) => Promise<{ [key: string]: WalletInfo }>)
-    | null;
+  fetchWalletsInfo: ((addresses: string[]) => Promise<{ [key: string]: WalletInfo }>) | null;
 }
 
 let VectisContext: any;

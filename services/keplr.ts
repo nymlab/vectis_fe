@@ -19,9 +19,7 @@ export const connectKeplr = async () => {
   // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
   // And it also injects the helper function to `window.keplr`.
   if (!isKeplrInstalled()) {
-    throw new Error(
-      "Keplr extension is not installed. Please install it here: https://keplr.app"
-    );
+    throw new Error("Keplr extension is not installed. Please install it here: https://keplr.app");
   } else {
     if (window.keplr.experimentalSuggestChain) {
       const stakingDenom = convertFromMicroDenom(env.stakingDenom);
@@ -120,9 +118,7 @@ export const connectKeplr = async () => {
         throw new Error("Failed to suggest the chain to Keplr.");
       }
     } else {
-      throw new Error(
-        "Your installation of Keplr is outdated. Please update it."
-      );
+      throw new Error("Your installation of Keplr is outdated. Please update it.");
     }
   }
 };

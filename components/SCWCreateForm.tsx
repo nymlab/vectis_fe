@@ -26,21 +26,12 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
     pushItem: pushGuardian,
     removeItem: removeGuardian,
   } = useArrayState("");
-  const {
-    array: relayers,
-    setItem: setRelayer,
-    pushItem: pushRelayer,
-    removeItem: removeRelayer,
-  } = useArrayState("");
+  const { array: relayers, setItem: setRelayer, pushItem: pushRelayer, removeItem: removeRelayer } = useArrayState("");
   const [proxyInitialFunds, setProxyInitialFunds] = useState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
 
-  const {
-    getValueValidationError,
-    getArrayValidationError,
-    checkValidationErrors,
-  } = useValidationErrors({
+  const { getValueValidationError, getArrayValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
       {
         key: "proxyInitialFunds",
@@ -56,9 +47,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       },
       {
         key: "proxyInitialFunds",
-        message: `You don't have enough ${convertFromMicroDenom(
-          env.stakingDenom
-        )}`,
+        message: `You don't have enough ${convertFromMicroDenom(env.stakingDenom)}`,
         value: proxyInitialFunds,
         validate: () => parseFloat(proxyInitialFunds) < parseFloat(balance),
       },
@@ -136,9 +125,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       })
       .catch((err) => {
         console.error(err);
-        setError(
-          "Failed to create the proxy wallet. Check the console for details."
-        );
+        setError("Failed to create the proxy wallet. Check the console for details.");
       })
       .finally(() => setIsCreating(false));
   }
@@ -172,20 +159,13 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
   return (
     <>
-      <div className="mt-4 flex flex-col w-full max-w-xl">
-        {error && <AlertError>{error}</AlertError>}
-      </div>
+      <div className="mt-4 flex flex-col w-full max-w-xl">{error && <AlertError>{error}</AlertError>}</div>
 
-      <h1 className="text-5xl font-bold my-8">
-        Create your Smart Contract Wallet
-      </h1>
+      <h1 className="text-5xl font-bold my-8">Create your Smart Contract Wallet</h1>
 
       <h2 className="text-3xl font-bold mb-5">1. Choose your guardians</h2>
       {guardians.map((address, i) => (
-        <div
-          className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2"
-          key={i}
-        >
+        <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
             placeholder={`Guardian #${i + 1} address`}
             onChange={(event) => setGuardian(i, event.target.value)}
@@ -242,9 +222,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
             value={multisigThreshold}
             className="range range-primary mt-2"
             step={1}
-            onChange={(event) =>
-              setMultisigThreshold(parseInt(event.target.value))
-            }
+            onChange={(event) => setMultisigThreshold(parseInt(event.target.value))}
           />
           <div className="w-full flex justify-between text-sm px-2">
             {guardians.map((_, i) => (
@@ -256,10 +234,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
       <h2 className="text-3xl font-bold my-5">2. Choose your relayers</h2>
       {relayers.map((address, i) => (
-        <div
-          className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2"
-          key={i}
-        >
+        <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
             placeholder={`Relayer #${i + 1} address`}
             onChange={(event) => setRelayer(i, event.target.value)}
@@ -292,9 +267,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
             <input
               type="number"
               className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
-                getValueValidationError("proxyInitialFunds")
-                  ? "input-error"
-                  : ""
+                getValueValidationError("proxyInitialFunds") ? "input-error" : ""
               }`}
               placeholder="Initial funds"
               step="0.1"
@@ -307,9 +280,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
             </span>
           </div>
           {getValueValidationError("proxyInitialFunds") && (
-            <span className="pl-6 text-error font-bold">
-              {getValueValidationError("proxyInitialFunds")}
-            </span>
+            <span className="pl-6 text-error font-bold">{getValueValidationError("proxyInitialFunds")}</span>
           )}
         </div>
         <button

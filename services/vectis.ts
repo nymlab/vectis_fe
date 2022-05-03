@@ -1,9 +1,6 @@
 import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "util/conversion";
-import {
-  CosmWasmClient,
-  SigningCosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate";
+import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Coin, calculateFee, GasPrice } from "@cosmjs/stargate";
 
 export interface MultiSig {
@@ -60,15 +57,10 @@ export async function createVectisWallet(
 
   const account = await signingClient.getAccount(userAddress);
   if (!account) {
-    throw new Error(
-      `Signer account was not found by user address ${userAddress}`
-    );
+    throw new Error(`Signer account was not found by user address ${userAddress}`);
   }
 
-  const defaultWalletCreationFee = calculateFee(
-    1_500_000,
-    GasPrice.fromString(env.gasPrice + env.stakingDenom)
-  );
+  const defaultWalletCreationFee = calculateFee(1_500_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
   const walletFee = convertMicroDenomToDenom(100);
 
   // Setup message
@@ -97,29 +89,19 @@ export async function createVectisWallet(
     [coin(proxyInitialFunds + walletFee)]
   );
 
-  console.log(
-    `Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`,
-    res.logs
-  );
+  console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
 
-export async function queryVectisWalletsOfUser(
-  userAddress: string
-): Promise<string[]> {
+export async function queryVectisWalletsOfUser(userAddress: string): Promise<string[]> {
   const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
-  const { wallets } = await client.queryContractSmart(
-    env.contractFactoryAddress,
-    {
-      wallets_of: { user: userAddress, start_after: null, limit: null },
-    }
-  );
+  const { wallets } = await client.queryContractSmart(env.contractFactoryAddress, {
+    wallets_of: { user: userAddress, start_after: null, limit: null },
+  });
 
   return wallets;
 }
 
-export async function queryVectisWalletInfo(
-  walletAddress: string
-): Promise<WalletInfo> {
+export async function queryVectisWalletInfo(walletAddress: string): Promise<WalletInfo> {
   const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
   const info = await client.queryContractSmart(walletAddress, {
     info: {},
@@ -149,10 +131,7 @@ export async function sendFundsToWallet(
     },
   };
 
-  const defaultExecuteFee = calculateFee(
-    1_200_000,
-    GasPrice.fromString(env.gasPrice + env.stakingDenom)
-  );
+  const defaultExecuteFee = calculateFee(1_200_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
 
   const res = await signingClient.execute(
     fromAddress,
@@ -161,8 +140,5 @@ export async function sendFundsToWallet(
     defaultExecuteFee
   );
 
-  console.log(
-    `Executed send funds transaction with hash ${res.transactionHash}. Logs:`,
-    res.logs
-  );
+  console.log(`Executed send funds transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }

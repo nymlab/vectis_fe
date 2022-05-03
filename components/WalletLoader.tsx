@@ -9,16 +9,8 @@ type WalletLoaderProps = {
   loading?: boolean;
 };
 
-export default function WalletLoader({
-  children,
-  loading = false,
-}: WalletLoaderProps) {
-  const {
-    walletAddress,
-    loading: clientLoading,
-    error,
-    connectWallet,
-  } = useSigningClient();
+export default function WalletLoader({ children, loading = false }: WalletLoaderProps) {
+  const { walletAddress, loading: clientLoading, error, connectWallet } = useSigningClient();
 
   useEffect(() => {
     if (!!localStorage.getItem("walletAddress")) {
@@ -27,10 +19,7 @@ export default function WalletLoader({
 
     window.addEventListener("keplr_keystorechange", () => connectToWallet());
 
-    return () =>
-      window.removeEventListener("keplr_keystorechange", () =>
-        connectToWallet()
-      );
+    return () => window.removeEventListener("keplr_keystorechange", () => connectToWallet());
   }, []);
 
   function connectToWallet() {
@@ -50,20 +39,14 @@ export default function WalletLoader({
       <div className="max-w-full">
         <h1 className="text-6xl font-bold">
           Welcome to{" "}
-          <a
-            className="link link-primary link-hover"
-            href="https://github.com/nymlab/vectis"
-          >
+          <a className="link link-primary link-hover" href="https://github.com/nymlab/vectis">
             Vectis
           </a>
         </h1>
 
         <p className="mt-3 text-2xl">
           Get started by installing{" "}
-          <a
-            className="pl-1 link link-primary link-hover"
-            href="https://keplr.app/"
-          >
+          <a className="pl-1 link link-primary link-hover" href="https://keplr.app/">
             Keplr wallet
           </a>
         </p>
@@ -74,10 +57,7 @@ export default function WalletLoader({
             onClick={connectToWallet}
           >
             <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Get your Keplr wallet connected now and start using it with
-              Vectis.
-            </p>
+            <p className="mt-4 text-xl">Get your Keplr wallet connected now and start using it with Vectis.</p>
           </button>
         </div>
 
