@@ -12,7 +12,7 @@ export function AlertSuccess({ children }: AlertProps) {
         <span>
           <IconSuccess />
         </span>
-        <span className="flex-grow break-all">{children}</span>
+        <span className="flex-grow break-words">{children}</span>
       </div>
     </div>
   );
@@ -25,7 +25,7 @@ export function AlertError({ children }: AlertProps) {
         <span className="mr-5">
           <IconError />
         </span>
-        <span className="flex-grow break-all">{children}</span>
+        <span className="flex-grow break-words">{children}</span>
       </div>
     </div>
   );

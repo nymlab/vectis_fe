@@ -16,17 +16,17 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
     try {
       await connectKeplr();
 
-      // enable website to access kepler
+      // Enable website to access Keplr
       await (window as any).keplr.enable(env.chainId);
 
-      // get offline signer for signing txs
+      // Get offline signer for signing txs
       const offlineSigner = await (window as any).getOfflineSigner(env.chainId);
 
-      // make client
+      // Make client
       const client = await SigningCosmWasmClient.connectWithSigner(env.chainRpcEndpoint, offlineSigner);
       setSigningClient(client);
 
-      // get user address
+      // Get user address
       const [{ address }] = await offlineSigner.getAccounts();
       setWalletAddress(address);
 

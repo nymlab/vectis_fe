@@ -6,6 +6,7 @@ import { isDarkMode } from "./ThemeToggle";
 import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
+import ChargeWalletModal from "./modals/ChargeWalletModal";
 
 type SCWCardProps = {
   address: string;
@@ -84,7 +85,9 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 <label htmlFor={`send-modal-${address}`} className="btn modal-button btn-primary btn-sm">
                   Transfer
                 </label>
-                <button className="btn btn-primary btn-sm">Charge</button>
+                <label htmlFor={`charge-modal-${address}`} className="btn modal-button btn-primary btn-sm">
+                  Charge
+                </label>
                 <button className="btn btn-primary btn-sm">Manage</button>
               </div>
             </div>
@@ -92,7 +95,8 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
         </div>
       </div>
 
-      <SendFundsModal wallet={walletInfo} walletAddress={address} onSentFunds={doRefresh} />
+      <SendFundsModal walletInfo={walletInfo} walletAddress={address} onSentFunds={doRefresh} />
+      <ChargeWalletModal walletInfo={walletInfo} walletAddress={address} onChargeDone={doRefresh} />
     </>
   );
 }

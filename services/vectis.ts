@@ -115,7 +115,7 @@ export async function queryVectisWalletInfo(walletAddress: string): Promise<Wall
   };
 }
 
-export async function sendFundsToWallet(
+export async function transferFundsFromWallet(
   signingClient: SigningCosmWasmClient,
   fromAddress: string,
   proxyWalletAddress: string,
