@@ -24,7 +24,10 @@ const ListWallets: NextPage = () => {
         {loading ? (
           <Loader>Querying your Smart Contract Wallets...</Loader>
         ) : (
-          <div className="flex flex-col md:grid md:grid-cols-3">
+          <div
+            className={`flex flex-col md:grid`}
+            style={{ gridTemplateColumns: `repeat(${Math.min(proxyWallets.length, 3)}, minmax(0, 1fr))` }}
+          >
             {proxyWallets.map((address, i) => (
               <div key={i} className="m-5">
                 <SCWCard title={`Smart Contract Wallet`} address={address} onRefresh={refreshBalance} />

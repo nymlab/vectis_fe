@@ -1,47 +1,10 @@
+import { WalletInfoWithBalance } from "contexts/vectis";
+import { ProxyClient } from "./../types/ProxyContract";
+import { Coin, CreateWalletMsg, FactoryClient } from "./../types/FactoryContract";
 import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "util/conversion";
-import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { Coin, calculateFee, GasPrice } from "@cosmjs/stargate";
-
-export interface MultiSig {
-  threshold_absolute_count: number;
-  multisig_initial_funds: Coin[];
-}
-
-export interface CreateWalletMsg {
-  user_pubkey: string;
-  guardians: {
-    addresses: string[];
-    guardians_multisig?: MultiSig;
-  };
-  relayers: string[];
-  proxy_initial_funds: Coin[];
-}
-
-export interface WalletInfo {
-  balance: Coin;
-  code_id: number;
-  guardians: string[];
-  is_frozen: boolean;
-  multisig_address?: string;
-  multisig_code_id?: number;
-  nonce: number;
-  relayers: string[];
-  user_addr: string;
-  version: {
-    contract: string;
-    version: string;
-  };
-}
-
-export interface BankMsg {
-  readonly bank: {
-    send: {
-      readonly to_address: string;
-      readonly amount: readonly Coin[];
-    };
-  };
-}
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
 export async function createVectisWallet(
   signingClient: SigningCosmWasmClient,
@@ -60,11 +23,13 @@ export async function createVectisWallet(
     throw new Error(`Signer account was not found by user address ${userAddress}`);
   }
 
-  const defaultWalletCreationFee = calculateFee(1_500_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
+  const factoryClient = new FactoryClient(signingClient, userAddress, env.contractFactoryAddress);
+
+  const defaultWalletCreationFee = await factoryClient.fee();
   const walletFee = convertMicroDenomToDenom(100);
 
-  // Setup message
-  const walletInitMsg: CreateWalletMsg = {
+  // Create wallet message
+  const createWalletMsg: CreateWalletMsg = {
     user_pubkey: account.pubkey?.value,
     guardians: {
       addresses: guardians,
@@ -79,12 +44,10 @@ export async function createVectisWallet(
     proxy_initial_funds: [coin(proxyInitialFunds)],
   };
 
-  // Create wallet
-  const res = await signingClient.execute(
-    userAddress,
-    env.contractFactoryAddress,
-    { create_wallet: { create_wallet_msg: walletInitMsg } },
-    defaultWalletCreationFee,
+  // Execute wallet creation
+  const res = await factoryClient.createWallet(
+    { createWalletMsg },
+    Number(defaultWalletCreationFee.amount),
     undefined,
     [coin(proxyInitialFunds + walletFee)]
   );
@@ -92,26 +55,28 @@ export async function createVectisWallet(
   console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
 
-export async function queryVectisWalletsOfUser(userAddress: string): Promise<string[]> {
-  const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
-  const { wallets } = await client.queryContractSmart(env.contractFactoryAddress, {
-    wallets_of: { user: userAddress, start_after: null, limit: null },
-  });
+export async function queryVectisWalletsOfUser(
+  signingClient: SigningCosmWasmClient,
+  userAddress: string
+): Promise<string[]> {
+  const factoryClient = new FactoryClient(signingClient, userAddress, env.contractFactoryAddress);
+  const { wallets } = await factoryClient.walletsOf({ user: userAddress });
 
   return wallets;
 }
 
-export async function queryVectisWalletInfo(walletAddress: string): Promise<WalletInfo> {
-  const client = await CosmWasmClient.connect(env.chainRpcEndpoint);
-  const info = await client.queryContractSmart(walletAddress, {
-    info: {},
-  });
-
-  const balance = await client.getBalance(walletAddress, env.stakingDenom);
+export async function queryVectisWalletInfo(
+  signingClient: SigningCosmWasmClient,
+  userAddress: string,
+  proxyWalletAddress: string
+): Promise<WalletInfoWithBalance> {
+  const proxyClient = new ProxyClient(signingClient, userAddress, proxyWalletAddress);
+  const info = await proxyClient.info();
+  const balance = await signingClient.getBalance(proxyWalletAddress, env.stakingDenom);
 
   return {
     ...info,
-    balance,
+    balance: balance as Coin,
   };
 }
 
@@ -122,21 +87,22 @@ export async function transferFundsFromWallet(
   toAddress: string,
   amount: number
 ) {
-  const sendMsg: BankMsg = {
-    bank: {
-      send: {
-        to_address: toAddress,
-        amount: [coin(amount)],
-      },
-    },
-  };
-
+  const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
   const defaultExecuteFee = calculateFee(1_200_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
 
-  const res = await signingClient.execute(
-    fromAddress,
-    proxyWalletAddress,
-    { execute: { msgs: [sendMsg] } },
+  const res = await proxyClient.execute(
+    {
+      msgs: [
+        {
+          bank: {
+            send: {
+              to_address: toAddress,
+              amount: [coin(amount)],
+            },
+          },
+        },
+      ],
+    },
     defaultExecuteFee
   );
 

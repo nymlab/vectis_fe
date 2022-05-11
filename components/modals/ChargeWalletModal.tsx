@@ -5,16 +5,22 @@ import { env } from "env";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { WalletInfo } from "services/vectis";
+import { WalletInfo } from "types/FactoryContract";
 import { coin, convertFromMicroDenom } from "util/conversion";
 
 type ChargeWalletModalProps = {
   walletInfo: WalletInfo | null;
   walletAddress: string;
   onChargeDone: () => void;
+  onClose?: () => void;
 };
 
-export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeDone }: ChargeWalletModalProps) {
+export default function ChargeWalletModal({
+  walletInfo,
+  walletAddress,
+  onChargeDone,
+  onClose,
+}: ChargeWalletModalProps) {
   const { balance } = useBalance();
   const { walletAddress: userAddress, signingClient } = useSigningClient();
 
@@ -70,6 +76,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
     setSendSuccess("");
     setSendError("");
     clearValidationErrors();
+    onClose?.();
   }
 
   return (
@@ -84,7 +91,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
           >
             ✕
           </label>
-          <h3 className="text-xl font-bold">Charge your wallet</h3>
+          <h3 className="text-xl font-bold">Charge your Smart Contract Wallet</h3>
           <h4 className="text-lg">Available inside your personal wallet: {balance}</h4>
           <div className="flex flex-col items-center">
             {!isSending ? (

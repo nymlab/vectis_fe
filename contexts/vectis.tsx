@@ -1,13 +1,15 @@
 import { useVectisClient } from "hooks/useVectisClient";
 import { createContext, useContext, ReactNode } from "react";
-import { WalletInfo } from "services/vectis";
+import { Coin, WalletInfo } from "types/FactoryContract";
 import { useSigningClient } from "./cosmwasm";
+
+export type WalletInfoWithBalance = WalletInfo & { balance: Coin };
 
 export interface IVectisContext {
   proxyWallets: string[];
   loading: boolean;
   error: any;
-  fetchWalletsInfo: ((addresses: string[]) => Promise<{ [key: string]: WalletInfo }>) | null;
+  fetchWalletsInfo: ((addresses: string[]) => Promise<{ [key: string]: WalletInfoWithBalance }>) | null;
 }
 
 let VectisContext: any;

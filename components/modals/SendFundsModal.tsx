@@ -3,19 +3,21 @@ import { Input } from "components/Input";
 import Loader from "components/Loader";
 import TokenAmount from "components/TokenAmount";
 import { useSigningClient } from "contexts/cosmwasm";
+import { WalletInfoWithBalance } from "contexts/vectis";
 import { env } from "env";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { transferFundsFromWallet, WalletInfo } from "services/vectis";
+import { transferFundsFromWallet } from "services/vectis";
 import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
 
 type SendFundsModalProps = {
-  walletInfo: WalletInfo | null;
+  walletInfo: WalletInfoWithBalance | null;
   walletAddress: string;
   onSentFunds: () => void;
+  onClose?: () => void;
 };
 
-export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds }: SendFundsModalProps) {
+export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds, onClose }: SendFundsModalProps) {
   const { walletAddress: userAddress, signingClient } = useSigningClient();
 
   const [receiverAddress, setReceiverAddress] = useState("");
@@ -81,6 +83,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds 
     setSendSuccess("");
     setSendError("");
     clearValidationErrors();
+    onClose?.();
   }
 
   return (

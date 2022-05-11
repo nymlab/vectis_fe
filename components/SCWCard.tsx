@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { queryVectisWalletInfo, WalletInfo } from "services/vectis";
+import { queryVectisWalletInfo } from "services/vectis";
 import { AlertError } from "./Alert";
 import { IconChip } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
@@ -7,6 +7,8 @@ import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
 import ChargeWalletModal from "./modals/ChargeWalletModal";
+import { WalletInfoWithBalance } from "contexts/vectis";
+import { useSigningClient } from "contexts/cosmwasm";
 
 type SCWCardProps = {
   address: string;
@@ -15,15 +17,20 @@ type SCWCardProps = {
 };
 
 export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
+  const { signingClient, walletAddress } = useSigningClient();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any>(null);
-  const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
+  const [walletInfo, setWalletInfo] = useState<WalletInfoWithBalance | null>(null);
   const [refresh, setRefresh] = useState(false);
+
+  const [modalSendOpen, setModalSendOpen] = useState(false);
+  const [modalChargeOpen, setModalChargeOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
-    queryVectisWalletInfo(address)
+    queryVectisWalletInfo(signingClient!, walletAddress, address)
       .then((info) => setWalletInfo(info))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
@@ -82,10 +89,18 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
 
             <div className="card-body">
               <div className="flex justify-end space-x-2 mt-12">
-                <label htmlFor={`send-modal-${address}`} className="btn modal-button btn-primary btn-sm">
+                <label
+                  htmlFor={`send-modal-${address}`}
+                  className="btn modal-button btn-primary btn-sm"
+                  onClick={() => setModalSendOpen(true)}
+                >
                   Transfer
                 </label>
-                <label htmlFor={`charge-modal-${address}`} className="btn modal-button btn-primary btn-sm">
+                <label
+                  htmlFor={`charge-modal-${address}`}
+                  className="btn modal-button btn-primary btn-sm"
+                  onClick={() => setModalChargeOpen(true)}
+                >
                   Charge
                 </label>
                 <button className="btn btn-primary btn-sm">Manage</button>
@@ -95,8 +110,22 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
         </div>
       </div>
 
-      <SendFundsModal walletInfo={walletInfo} walletAddress={address} onSentFunds={doRefresh} />
-      <ChargeWalletModal walletInfo={walletInfo} walletAddress={address} onChargeDone={doRefresh} />
+      {modalSendOpen && (
+        <SendFundsModal
+          walletInfo={walletInfo}
+          walletAddress={address}
+          onSentFunds={doRefresh}
+          onClose={() => setModalSendOpen(false)}
+        />
+      )}
+      {modalChargeOpen && (
+        <ChargeWalletModal
+          walletInfo={walletInfo}
+          walletAddress={address}
+          onChargeDone={doRefresh}
+          onClose={() => setModalChargeOpen(false)}
+        />
+      )}
     </>
   );
 }

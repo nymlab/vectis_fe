@@ -3,6 +3,7 @@ import { connectKeplr } from "services/keplr";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { env } from "env";
 import { ISigningCosmWasmClientContext } from "contexts/cosmwasm";
+import { GasPrice } from "@cosmjs/stargate";
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState("");
@@ -23,7 +24,9 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       const offlineSigner = await (window as any).getOfflineSigner(env.chainId);
 
       // Make client
-      const client = await SigningCosmWasmClient.connectWithSigner(env.chainRpcEndpoint, offlineSigner);
+      const client = await SigningCosmWasmClient.connectWithSigner(env.chainRpcEndpoint, offlineSigner, {
+        gasPrice: GasPrice.fromString(env.gasPrice + env.stakingDenom),
+      });
       setSigningClient(client);
 
       // Get user address
