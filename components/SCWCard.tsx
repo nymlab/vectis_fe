@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { queryVectisWalletInfo } from "services/vectis";
+import { queryProxyWalletInfo } from "services/vectis";
 import { AlertError } from "./Alert";
-import { IconChip } from "./Icon";
+import { IconChip, IconFreeze, IconSignature } from "./Icon";
 import { isDarkMode } from "./ThemeToggle";
 import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
@@ -30,7 +30,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
   useEffect(() => {
     setLoading(true);
 
-    queryVectisWalletInfo(signingClient!, walletAddress, address)
+    queryProxyWalletInfo(signingClient!, walletAddress, address)
       .then((info) => setWalletInfo(info))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
@@ -59,16 +59,15 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
               <Loader />
             ) : (
               <div className="text-left">
-                <p>
-                  No. of guardians: {walletInfo?.guardians.length} | No. of relayers: {walletInfo?.relayers.length}
-                </p>
-                <p>
-                  Frozen: {walletInfo?.is_frozen ? "yes" : "no"} | Multisig:{" "}
-                  {walletInfo?.multisig_address ? "yes" : "no"}
-                </p>
+                <p>Guardians: {walletInfo?.guardians.length}</p>
+                <p>Relayers: {walletInfo?.relayers.length}</p>
 
-                <h2 className="mt-5 text-2xl font-bold">
+                <h2 className="mt-5 text-[1.65rem] font-bold flex items-center justify-between">
                   <TokenAmount token={walletInfo?.balance} />
+                  <p className="flex space-x-2">
+                    {walletInfo?.is_frozen && <IconFreeze fill={isDarkMode() ? "#FFF" : "#000"} />}
+                    {walletInfo?.multisig_address && <IconSignature fill={isDarkMode() ? "#FFF" : "#000"} />}
+                  </p>
                 </h2>
               </div>
             )}

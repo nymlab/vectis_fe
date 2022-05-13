@@ -7,7 +7,7 @@ import { WalletInfoWithBalance } from "contexts/vectis";
 import { env } from "env";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { transferFundsFromWallet } from "services/vectis";
+import { transferFundsFromProxyWallet } from "services/vectis";
 import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
 
 type SendFundsModalProps = {
@@ -67,7 +67,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
     }
 
     setIsSending(true);
-    transferFundsFromWallet(signingClient!, userAddress, walletAddress, receiverAddress, parseFloat(amountToSend))
+    transferFundsFromProxyWallet(signingClient!, userAddress, walletAddress, receiverAddress, parseFloat(amountToSend))
       .then(() => {
         setSendSuccess(`Successfully sent ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)}!`);
         setAmountToSend("");

@@ -1,7 +1,7 @@
 import { useSigningClient } from "contexts/cosmwasm";
 import { IVectisContext, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
-import { queryVectisWalletInfo, queryVectisWalletsOfUser } from "services/vectis";
+import { queryProxyWalletInfo, queryProxyWalletsOfUser } from "services/vectis";
 
 export const useVectisClient = (walletAddress: string): IVectisContext => {
   const { walletAddress: userAddress, signingClient } = useSigningClient();
@@ -18,7 +18,7 @@ export const useVectisClient = (walletAddress: string): IVectisContext => {
     setLoading(true);
     setError(null);
 
-    queryVectisWalletsOfUser(signingClient!, walletAddress)
+    queryProxyWalletsOfUser(signingClient!, walletAddress)
       .then((wallets) => setProxyWallets(wallets))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
@@ -28,7 +28,7 @@ export const useVectisClient = (walletAddress: string): IVectisContext => {
     const infos = await Promise.all(
       addresses.map(async (address) => ({
         address,
-        info: await queryVectisWalletInfo(signingClient!, userAddress, address),
+        info: await queryProxyWalletInfo(signingClient!, userAddress, address),
       }))
     );
     return infos.reduce((acc, cur) => ({ ...acc, [cur.address]: cur.info }), {});

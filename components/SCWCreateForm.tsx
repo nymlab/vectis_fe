@@ -4,7 +4,7 @@ import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { createVectisWallet } from "services/vectis";
+import { createProxyWallet } from "services/vectis";
 import { convertFromMicroDenom } from "util/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
 import { IconInfo, IconTrash } from "./Icon";
@@ -110,7 +110,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
     // Create Smart Contract Wallet
     setIsCreating(true);
-    createVectisWallet(
+    createProxyWallet(
       signingClient!,
       walletAddress,
       guardians,

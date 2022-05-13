@@ -4,9 +4,8 @@ import { Coin, CreateWalletMsg, FactoryClient } from "./../types/FactoryContract
 import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "util/conversion";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
-export async function createVectisWallet(
+export async function createProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
   guardians: string[],
@@ -55,7 +54,7 @@ export async function createVectisWallet(
   console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
 
-export async function queryVectisWalletsOfUser(
+export async function queryProxyWalletsOfUser(
   signingClient: SigningCosmWasmClient,
   userAddress: string
 ): Promise<string[]> {
@@ -65,7 +64,7 @@ export async function queryVectisWalletsOfUser(
   return wallets;
 }
 
-export async function queryVectisWalletInfo(
+export async function queryProxyWalletInfo(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
   proxyWalletAddress: string
@@ -80,7 +79,7 @@ export async function queryVectisWalletInfo(
   };
 }
 
-export async function transferFundsFromWallet(
+export async function transferFundsFromProxyWallet(
   signingClient: SigningCosmWasmClient,
   fromAddress: string,
   proxyWalletAddress: string,
@@ -88,23 +87,29 @@ export async function transferFundsFromWallet(
   amount: number
 ) {
   const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
-  const defaultExecuteFee = calculateFee(1_200_000, GasPrice.fromString(env.gasPrice + env.stakingDenom));
 
-  const res = await proxyClient.execute(
-    {
-      msgs: [
-        {
-          bank: {
-            send: {
-              to_address: toAddress,
-              amount: [coin(amount)],
-            },
+  const res = await proxyClient.execute({
+    msgs: [
+      {
+        bank: {
+          send: {
+            to_address: toAddress,
+            amount: [coin(amount)],
           },
         },
-      ],
-    },
-    defaultExecuteFee
-  );
+      },
+    ],
+  });
 
   console.log(`Executed send funds transaction with hash ${res.transactionHash}. Logs:`, res.logs);
+}
+
+export async function toggleProxyWalletFreezeStatus(
+  signingClient: SigningCosmWasmClient,
+  guardianAddress: string,
+  proxyWalletAddress: string
+) {
+  const proxyClient = new ProxyClient(signingClient, guardianAddress, proxyWalletAddress);
+  const res = await proxyClient.revertFreezeStatus();
+  console.log(`Executed revert freeze status transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
