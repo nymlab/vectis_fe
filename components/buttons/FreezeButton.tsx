@@ -2,7 +2,7 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useState } from "react";
 import { toggleProxyWalletFreezeStatus } from "services/vectis";
-import Loader from "./Loader";
+import Loader from "../Loader";
 
 type FreezeButtonProps = {
   proxyWalletAddress: string;
@@ -20,12 +20,11 @@ export default function FreezeButton({
   onError,
 }: FreezeButtonProps) {
   const { signingClient, walletAddress } = useSigningClient();
-
   const [loading, setLoading] = useState(false);
 
+  // This function should be called only if the proxy wallet is NOT multisig
+  // Otherwise it will error out
   function toggleFreezeStatus() {
-    // This function should be called only if the proxy wallet is NOT multisig
-    // Otherwise it will error out
     onStart?.();
     setLoading(true);
     toggleProxyWalletFreezeStatus(signingClient!, walletAddress, proxyWalletAddress)
@@ -40,7 +39,7 @@ export default function FreezeButton({
 
   if (proxyWalletInfo.multisig_address) {
     return (
-      <button className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow">
+      <button className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2">
         REQUEST FREEZE
       </button>
     );
@@ -48,7 +47,7 @@ export default function FreezeButton({
 
   return (
     <button
-      className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow"
+      className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
       onClick={toggleFreezeStatus}
     >
       {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}

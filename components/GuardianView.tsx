@@ -5,7 +5,8 @@ import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { queryProxyWalletInfo } from "services/vectis";
-import FreezeButton from "./FreezeButton";
+import FreezeButton from "./buttons/FreezeButton";
+import RotateKeyButton from "./buttons/RotateKeyButton";
 import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 
@@ -17,8 +18,8 @@ export default function GuardianView() {
   const [error, setError] = useState<any>(null);
 
   const [walletInfo, setWalletInfo] = useState<WalletInfoWithBalance | null>(null);
-  const [freezeSuccess, setFreezeSuccess] = useState("");
-  const [freezeError, setFreezeError] = useState<Error | null>(null);
+  const [success, setSuccess] = useState("");
+  const [operationError, setOperationError] = useState<Error | null>(null);
 
   const { getValueValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
@@ -58,15 +59,19 @@ export default function GuardianView() {
   }
 
   function onFreezeStart() {
-    setFreezeSuccess("");
-    setFreezeError(null);
+    setSuccess("");
+    setOperationError(null);
   }
   async function onFreezeSuccess() {
     await fetchSCW();
-    setFreezeSuccess(`${walletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`);
+    setSuccess(`${walletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`);
   }
   function onFreezeError(error: Error) {
-    setFreezeError(error);
+    setOperationError(error);
+  }
+
+  function onKeyRotation() {
+    fetchSCW();
   }
 
   if (fetchingSCW) {
@@ -105,7 +110,7 @@ export default function GuardianView() {
       {walletInfo && (
         <div className="border-2 rounded-lg p-5">
           <h1 className="text-3xl font-bold mb-5">Smart Contract Wallet</h1>
-          <div className="flex flex-col items-start text-xl">
+          <div className="flex flex-col items-start text-xl mb-3">
             <p>
               Owner:{" "}
               <a
@@ -130,16 +135,21 @@ export default function GuardianView() {
             onSuccess={onFreezeSuccess}
             onError={onFreezeError}
           />
+          <RotateKeyButton
+            proxyWalletAddress={proxyWalletAddress}
+            proxyWalletInfo={walletInfo}
+            onKeyRotation={onKeyRotation}
+          />
 
-          {freezeSuccess && (
+          {success && (
             <div className="mt-5">
-              <AlertSuccess>{freezeSuccess}</AlertSuccess>
+              <AlertSuccess>{success}</AlertSuccess>
             </div>
           )}
 
-          {freezeError && (
+          {operationError && (
             <div className="mt-5">
-              <AlertError>Error! {freezeError.message}</AlertError>
+              <AlertError>Error! {operationError.message}</AlertError>
             </div>
           )}
         </div>

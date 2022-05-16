@@ -113,3 +113,14 @@ export async function toggleProxyWalletFreezeStatus(
   const res = await proxyClient.revertFreezeStatus();
   console.log(`Executed revert freeze status transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
+
+export async function rotateUserKey(
+  signingClient: SigningCosmWasmClient,
+  guardianAddress: string,
+  proxyWalletAddress: string,
+  newUserAddress: string
+) {
+  const proxyClient = new ProxyClient(signingClient, guardianAddress, proxyWalletAddress);
+  const res = await proxyClient.rotateUserKey({ newUserAddress });
+  console.log(`Executed key rotation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
+}
