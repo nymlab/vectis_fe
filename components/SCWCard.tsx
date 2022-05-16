@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { queryProxyWalletInfo } from "services/vectis";
 import { AlertError } from "./Alert";
 import { IconChip, IconFreeze, IconSignature } from "./Icon";
-import { isDarkMode } from "./ThemeToggle";
+import { WalletInfoWithBalance } from "contexts/vectis";
+import { useSigningClient } from "contexts/cosmwasm";
 import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
 import ChargeWalletModal from "./modals/ChargeWalletModal";
-import { WalletInfoWithBalance } from "contexts/vectis";
-import { useSigningClient } from "contexts/cosmwasm";
 
 type SCWCardProps = {
   address: string;
@@ -48,10 +47,10 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
   return (
     <>
       <div className="perspective transition-shadow relative group">
-        <div className="w-96 h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl hover:cursor-pointer transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
+        <div className="w-96 h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
           <div className="card-body w-96 h-56 absolute backface-hidden">
             <h2 className="card-title flex space-x-2 items-center text-left my-3">
-              <IconChip fill={isDarkMode() ? "#FFF" : "#000"} />
+              <IconChip />
               <p>{title || "Smart Contract Wallet"}</p>
             </h2>
 
@@ -65,8 +64,8 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 <h2 className="mt-5 text-[1.65rem] font-bold flex items-center justify-between">
                   <TokenAmount token={walletInfo?.balance} />
                   <p className="flex space-x-2">
-                    {walletInfo?.is_frozen && <IconFreeze fill={isDarkMode() ? "#FFF" : "#000"} />}
-                    {walletInfo?.multisig_address && <IconSignature fill={isDarkMode() ? "#FFF" : "#000"} />}
+                    {walletInfo?.is_frozen && <IconFreeze />}
+                    {walletInfo?.multisig_address && <IconSignature />}
                   </p>
                 </h2>
               </div>
@@ -90,14 +89,14 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
               <div className="flex justify-end space-x-2 mt-12">
                 <label
                   htmlFor={`send-modal-${address}`}
-                  className="btn modal-button btn-primary btn-sm"
+                  className={`btn modal-button btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
                   onClick={() => setModalSendOpen(true)}
                 >
                   Transfer
                 </label>
                 <label
                   htmlFor={`charge-modal-${address}`}
-                  className="btn modal-button btn-primary btn-sm"
+                  className={`btn modal-button btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
                   onClick={() => setModalChargeOpen(true)}
                 >
                   Charge
