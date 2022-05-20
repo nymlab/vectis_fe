@@ -1,4 +1,4 @@
-# Vectis dApp
+# Vectis DApp
 
 ## Getting started
 
@@ -14,9 +14,9 @@ cd vectis
 ./local-juno-setup.sh
 ```
 
-Assuming you have [Docker](https://www.docker.com/) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `juno-local-node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
+Assuming you have [Docker](https://www.docker.com) and [Rust](https://rustup.rs) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `juno-local-node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
 
-### 2. Launch Vectis dApp locally
+### 2. Launch Vectis DApp locally
 
 First of all, clone this project, then install dependencies:
 
