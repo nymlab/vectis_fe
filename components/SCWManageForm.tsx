@@ -112,7 +112,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
           setEnableMultisig(true);
           signingClient
             ?.queryContractSmart(info.multisig_address!, { threshold: {} })
-            .then(({ weight }) => setMultisigThreshold(weight))
+            .then(({ absolute_count }) => setMultisigThreshold(absolute_count.weight ?? 1))
             .catch((err) => {
               console.error(err);
               setLoadingError(err);
