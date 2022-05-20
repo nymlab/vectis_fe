@@ -1,10 +1,10 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
 import { useSigningClient } from "contexts/cosmwasm";
-import { WalletInfoWithBalance } from "contexts/vectis";
+import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { queryProxyWalletInfo } from "services/vectis";
+import { queryProxyWalletInfo, queryProxyWalletMSProposals } from "services/vectis";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
 import Loader from "./Loader";
@@ -18,6 +18,7 @@ export default function GuardianView() {
   const [error, setError] = useState<any>(null);
 
   const [walletInfo, setWalletInfo] = useState<WalletInfoWithBalance | null>(null);
+  const [walletActiveProposals, setWalletActiveProposals] = useState<Proposal[]>([]);
   const [success, setSuccess] = useState("");
   const [operationError, setOperationError] = useState<Error | null>(null);
 
@@ -48,6 +49,11 @@ export default function GuardianView() {
           setError(new Error("You are not a guardian of this Smart Contract Wallet."));
           return;
         }
+        if (info.multisig_address) {
+          queryProxyWalletMSProposals(signingClient!, info.multisig_address)
+            .then((props) => setWalletActiveProposals(props))
+            .catch(console.error);
+        }
 
         setWalletInfo(info);
       })
@@ -62,9 +68,9 @@ export default function GuardianView() {
     setSuccess("");
     setOperationError(null);
   }
-  async function onFreezeSuccess() {
+  async function onFreezeSuccess(msg: string) {
     await fetchSCW();
-    setSuccess(`${walletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`);
+    setSuccess(msg);
   }
   function onFreezeError(error: Error) {
     setOperationError(error);

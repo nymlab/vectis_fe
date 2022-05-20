@@ -17,12 +17,16 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </main>
       <footer className="flex items-center justify-center w-full h-24 border-t">
-        Powered by{" "}
-        <a className="pl-1 link link-primary link-hover" href="https://github.com/cosmos/cosmjs">
+        Vectis ©{" "}
+        <a className="pl-1 link link-primary link-hover" href="https://www.nymlab.it" target="_blank">
+          Nymlab
+        </a>
+        <span className="pl-1">{new Date().getFullYear()} | Powered by </span>
+        <a className="pl-1 link link-primary link-hover" href="https://cosmos.network" target="_blank">
           Cosmos
         </a>
         <span className="pl-1"> and</span>
-        <a className="pl-1 link link-primary link-hover" href="https://www.keplr.app">
+        <a className="pl-1 link link-primary link-hover" href="https://www.keplr.app" target="_blank">
           Keplr
         </a>
       </footer>

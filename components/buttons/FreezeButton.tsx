@@ -1,14 +1,18 @@
 import { useSigningClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useState } from "react";
-import { toggleProxyWalletFreezeStatus } from "services/vectis";
+import {
+  executeProxyWalletMSProposal,
+  proposeToggleProxyWalletFreezeStatus,
+  toggleProxyWalletFreezeStatus,
+} from "services/vectis";
 import Loader from "../Loader";
 
 type FreezeButtonProps = {
   proxyWalletAddress: string;
   proxyWalletInfo: WalletInfoWithBalance;
   onStart?: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (msg: string) => void;
   onError?: (err: Error) => void;
 };
 
@@ -28,8 +32,31 @@ export default function FreezeButton({
     onStart?.();
     setLoading(true);
     toggleProxyWalletFreezeStatus(signingClient!, walletAddress, proxyWalletAddress)
-      .then(() => onSuccess?.())
+      .then(() =>
+        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`)
+      )
       .catch((err) => onError?.(err))
+      .finally(() => setLoading(false));
+  }
+
+  // This function should be called only if the proxy wallet IS multisig
+  function proposeToggleFreezeStatus() {
+    if (!proxyWalletInfo.multisig_address) {
+      console.warn("Tried to call proposeToggleFreezeStatus on a non-multisig wallet.");
+      return;
+    }
+
+    onStart?.();
+    setLoading(true);
+    proposeToggleProxyWalletFreezeStatus(signingClient!, walletAddress, proxyWalletInfo.multisig_address!)
+      //executeProxyWalletMSProposal(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, 1)
+      .then(() =>
+        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed correctly!`)
+      )
+      .catch((err) => {
+        console.error(err);
+        onError?.(err);
+      })
       .finally(() => setLoading(false));
   }
 
@@ -39,8 +66,11 @@ export default function FreezeButton({
 
   if (proxyWalletInfo.multisig_address) {
     return (
-      <button className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2">
-        REQUEST FREEZE
+      <button
+        className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
+        onClick={proposeToggleFreezeStatus}
+      >
+        PROPOSE FREEZE
       </button>
     );
   }

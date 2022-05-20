@@ -22,5 +22,6 @@ export function useArrayState<T>(initialValue: T) {
     setItem,
     pushItem,
     removeItem,
+    setArray,
   };
 }

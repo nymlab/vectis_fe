@@ -8,6 +8,7 @@ import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
 import ChargeWalletModal from "./modals/ChargeWalletModal";
+import Link from "next/link";
 
 type SCWCardProps = {
   address: string;
@@ -101,7 +102,11 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 >
                   Charge
                 </label>
-                <button className="btn btn-primary btn-sm">Manage</button>
+                <label className="btn btn-primary btn-sm">
+                  <Link href={`/wallets/manage/${address}`} passHref={true}>
+                    Manage
+                  </Link>
+                </label>
               </div>
             </div>
           </div>

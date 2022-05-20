@@ -175,7 +175,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           {guardians.length > 1 && (
             <button
               className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
-              type="submit"
+              type="button"
               onClick={() => handleRemoveGuardian(i)}
             >
               <IconTrash />
@@ -204,7 +204,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           <span className="ml-2">
             <div
               className="tooltip"
-              data-tip="If enabled, allows for a threshold of required guardian signatures to be defined for key rotation operations (following CW3)"
+              data-tip="If enabled, allows for a threshold of required guardian signatures to be defined for wallet operations (following CW3)"
             >
               <IconInfo />
             </div>
@@ -226,7 +226,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           />
           <div className="w-full flex justify-between text-sm px-2">
             {guardians.map((_, i) => (
-              <span>{i + 1}</span>
+              <span key={i}>{i + 1}</span>
             ))}
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           {relayers.length > 1 && (
             <button
               className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
-              type="submit"
+              type="button"
               onClick={() => removeRelayer(i)}
             >
               <IconTrash />
@@ -254,7 +254,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       ))}
       <button
         className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
-        type="submit"
+        type="button"
         onClick={() => pushRelayer()}
       >
         ADD RELAYER
@@ -285,7 +285,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         </div>
         <button
           className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"
-          type="submit"
+          type="button"
           onClick={createSCW}
         >
           CREATE
