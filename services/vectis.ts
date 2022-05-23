@@ -165,24 +165,34 @@ export async function toggleProxyWalletFreezeStatus(
  * @param guardianAddress
  * @param proxyWalletMultisigAddress
  */
-export async function proposeToggleProxyWalletFreezeStatus(
+export async function proposeProxyWalletOperation(
   signingClient: SigningCosmWasmClient,
   guardianAddress: string,
-  proxyWalletMultisigAddress: string
+  proxyWalletMultisigAddress: string,
+  operation: "TOGGLE_FREEZE" | "ROTATE_KEY",
+  newUserAddress?: string
 ) {
-  const revertFreezeStatusMsg: CosmosMsg = {
+  let message = {};
+  switch (operation) {
+    case "TOGGLE_FREEZE":
+      message = {
+        revert_freeze_status: {},
+      };
+      break;
+    case "ROTATE_KEY":
+      message = {
+        rotate_user_key: {
+          new_user_address: newUserAddress,
+        },
+      };
+      break;
+  }
+
+  const msg: CosmosMsg = {
     wasm: {
       execute: {
         contract_addr: proxyWalletMultisigAddress!,
-        msg: toBase64(
-          toUtf8(
-            JSON.stringify({
-              execute: {
-                revert_freeze_status: {},
-              },
-            })
-          )
-        ),
+        msg: toBase64(toUtf8(JSON.stringify(message))),
         funds: [],
       },
     },
@@ -191,7 +201,7 @@ export async function proposeToggleProxyWalletFreezeStatus(
     propose: {
       title: "Revert freeze status",
       description: "Need to revert freeze status",
-      msgs: [revertFreezeStatusMsg],
+      msgs: [msg],
       latest: null,
     },
   };

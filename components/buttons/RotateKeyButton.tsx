@@ -11,19 +11,6 @@ type RotateKeyButtonProps = {
 export default function RotateKeyButton({ proxyWalletAddress, proxyWalletInfo, onKeyRotation }: RotateKeyButtonProps) {
   const [rotateKeyModalOpen, setRotateKeyModalOpen] = useState(false);
 
-  if (proxyWalletInfo?.multisig_address) {
-    return (
-      <>
-        <label
-          className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
-          onClick={() => {}}
-        >
-          PROPOSE KEY ROTATION
-        </label>
-      </>
-    );
-  }
-
   return (
     <>
       <label
@@ -31,7 +18,7 @@ export default function RotateKeyButton({ proxyWalletAddress, proxyWalletInfo, o
         className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
         onClick={() => setRotateKeyModalOpen(true)}
       >
-        ROTATE KEY
+        {proxyWalletInfo?.multisig_address ? "PROPOSE KEY ROTATION" : "ROTATE KEY"}
       </label>
 
       {rotateKeyModalOpen && (

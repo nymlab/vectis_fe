@@ -30,7 +30,13 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
     removeItem: removeGuardian,
     setArray: setGuardians,
   } = useArrayState("");
-  const { array: relayers, setItem: setRelayer, setArray: setRelayers, pushItem: pushRelayer } = useArrayState("");
+  const {
+    array: relayers,
+    setItem: setRelayer,
+    pushItem: pushRelayer,
+    removeItem: removeRelayer,
+    setArray: setRelayers,
+  } = useArrayState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
 
@@ -201,6 +207,11 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
   }
 
   function handleRemoveRelayer(i: number) {
+    if (!isOriginalRelayer(relayers[i])) {
+      removeRelayer(i);
+      return;
+    }
+
     updateRelayers(i, removeRelayerFromProxyWallet);
   }
 

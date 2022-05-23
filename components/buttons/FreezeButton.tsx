@@ -3,7 +3,7 @@ import { WalletInfoWithBalance } from "contexts/vectis";
 import { useState } from "react";
 import {
   executeProxyWalletMSProposal,
-  proposeToggleProxyWalletFreezeStatus,
+  proposeProxyWalletOperation,
   toggleProxyWalletFreezeStatus,
 } from "services/vectis";
 import Loader from "../Loader";
@@ -48,7 +48,7 @@ export default function FreezeButton({
 
     onStart?.();
     setLoading(true);
-    proposeToggleProxyWalletFreezeStatus(signingClient!, walletAddress, proxyWalletInfo.multisig_address!)
+    proposeProxyWalletOperation(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, "TOGGLE_FREEZE")
       //executeProxyWalletMSProposal(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, 1)
       .then(() =>
         onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed correctly!`)

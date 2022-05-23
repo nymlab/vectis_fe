@@ -34,7 +34,14 @@ export default function GuardianView() {
   });
 
   function copyAddress(address: string) {
-    navigator.clipboard.writeText(address);
+    navigator.clipboard?.writeText(address);
+  }
+
+  function walletHasFreezeProposal() {
+    return walletActiveProposals.find((p) => p.title.toLowerCase().includes("freeze"));
+  }
+  function walletHasKeyRotationProposal() {
+    return walletActiveProposals.find((p) => p.title.toLowerCase().includes("key"));
   }
 
   function fetchSCW() {
@@ -132,6 +139,8 @@ export default function GuardianView() {
             <p>
               Balance: <TokenAmount token={walletInfo.balance} />
             </p>
+            {walletHasFreezeProposal() && <p>Proposal to freeze wallet is active</p>}
+            {walletHasKeyRotationProposal() && <p>Proposal to rotate owner key is active</p>}
           </div>
 
           <FreezeButton
