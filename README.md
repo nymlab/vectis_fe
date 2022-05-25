@@ -16,6 +16,8 @@ cd vectis
 
 Assuming you have [Docker](https://www.docker.com) and [Rust](https://rustup.rs) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `juno-local-node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
 
+**IMPORTANT**: While running all the tests, some Factory contracts will be deployed on your local node. The addresses of these contracts will be printed in your terminal while the tests are running, so watch out for them! You will need them later.
+
 ### 2. Launch Vectis DApp locally
 
 First of all, clone this project, then install dependencies:
@@ -33,6 +35,8 @@ cp .env.example .env.local
 ```
 
 By editing `.env.local`, you tell Vectis which chain it should use with Keplr. It can be a local node, testnet or mainnet, you decide. When developing, we always use local node.
+
+**When using a local node, it is important to ensure that you are providing the right Factory contract address to the FE.**. Doing so is easy, just copy one of the addresses you got from the terminal and put it inside `.env.local` under the `NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS` key. Please **do not modify `.env.example`** as that's just a blueprint for environment variables.
 
 Then, run the development server:
 
