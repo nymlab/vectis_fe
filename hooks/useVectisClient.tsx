@@ -7,7 +7,7 @@ export const useVectisClient = (walletAddress: string): IVectisContext => {
   const { walletAddress: userAddress, signingClient } = useSigningClient();
   const [proxyWallets, setProxyWallets] = useState<string[]>([]);
 
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

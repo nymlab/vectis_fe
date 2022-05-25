@@ -254,7 +254,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
       <h2 className="text-xl my-5">
         Here you can modify the appointed guardians and relayers.
         <br />
-        Optionally, you can also enable multisig for this wallet.
+        Optionally, you can also enable or disable multisig for this wallet.
       </h2>
 
       <h2 className="text-3xl font-bold mb-5">Update your guardians</h2>

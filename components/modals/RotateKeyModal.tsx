@@ -46,6 +46,7 @@ export default function RotateKeyModal({ walletInfo, walletAddress, onKeyRotatio
       return;
     }
 
+    setError(null);
     setIsRotating(true);
     rotateUserKey(signingClient!, userAddress, walletAddress, newOwnerAddress)
       .then(() => {

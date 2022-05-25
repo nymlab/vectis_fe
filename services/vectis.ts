@@ -322,6 +322,14 @@ export async function updateProxyWalletGuardians(
   console.log(`Executed update guardians transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
 
+/**
+ * Adds a new relayer to a proxy wallet.
+ *
+ * @param signingClient
+ * @param userAddress
+ * @param proxyWalletAddress
+ * @param newRelayerAddress
+ */
 export async function addRelayerToProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
@@ -333,6 +341,14 @@ export async function addRelayerToProxyWallet(
   console.log(`Executed add relayer transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
 
+/**
+ * Removes a relayer from a proxy wallet.
+ *
+ * @param signingClient
+ * @param userAddress
+ * @param proxyWalletAddress
+ * @param relayerAddress
+ */
 export async function removeRelayerFromProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,

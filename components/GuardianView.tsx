@@ -15,7 +15,7 @@ export default function GuardianView() {
 
   const [proxyWalletAddress, setProxyWalletAddress] = useState("");
   const [fetchingSCW, setFetchingSCW] = useState(false);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const [walletInfo, setWalletInfo] = useState<WalletInfoWithBalance | null>(null);
   const [walletActiveProposals, setWalletActiveProposals] = useState<Proposal[]>([]);
@@ -49,6 +49,7 @@ export default function GuardianView() {
       return;
     }
 
+    setError(null);
     setFetchingSCW(true);
     return queryProxyWalletInfo(signingClient!, walletAddress, proxyWalletAddress)
       .then((info) => {
@@ -85,6 +86,7 @@ export default function GuardianView() {
 
   function onKeyRotation() {
     fetchSCW();
+    setSuccess("Key rotation performed successfully!");
   }
 
   if (fetchingSCW) {

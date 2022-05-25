@@ -20,7 +20,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
   const { signingClient, walletAddress } = useSigningClient();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfoWithBalance | null>(null);
   const [refresh, setRefresh] = useState(false);
 
