@@ -5,16 +5,23 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { rotateUserKey } from "services/vectis";
+import { proposeProxyWalletOperation, rotateUserKey } from "services/vectis";
 
 type RotateKeyModalProps = {
-  walletInfo: WalletInfoWithBalance | null;
-  walletAddress: string;
+  proxyWalletInfo: WalletInfoWithBalance | null;
+  proxyWalletAddress: string;
   onKeyRotation?: (newAddr: string) => void;
+  onKeyRotationProposal?: (newAddr: string) => void;
   onClose?: () => void;
 };
 
-export default function RotateKeyModal({ walletInfo, walletAddress, onKeyRotation, onClose }: RotateKeyModalProps) {
+export default function RotateKeyModal({
+  proxyWalletInfo,
+  proxyWalletAddress,
+  onKeyRotation,
+  onKeyRotationProposal,
+  onClose,
+}: RotateKeyModalProps) {
   const { signingClient, walletAddress: userAddress } = useSigningClient();
 
   const [newOwnerAddress, setNewOwnerAddress] = useState("");
@@ -48,13 +55,41 @@ export default function RotateKeyModal({ walletInfo, walletAddress, onKeyRotatio
 
     setError(null);
     setIsRotating(true);
-    rotateUserKey(signingClient!, userAddress, walletAddress, newOwnerAddress)
+    rotateUserKey(signingClient!, userAddress, proxyWalletAddress, newOwnerAddress)
       .then(() => {
         setSuccess(`Key rotation has been executed correctly!`);
         setNewOwnerAddress("");
         onKeyRotation?.(newOwnerAddress);
       })
       .catch((err) => setError(err))
+      .finally(() => setIsRotating(false));
+  }
+
+  // This function should be called only if the proxy wallet IS multisig
+  function proposeKeyRotation() {
+    if (!proxyWalletInfo?.multisig_address) {
+      console.warn("Tried to call proposeKeyRotation on a non-multisig wallet.");
+      return;
+    }
+
+    setIsRotating(true);
+    proposeProxyWalletOperation(
+      signingClient!,
+      userAddress,
+      proxyWalletAddress,
+      proxyWalletInfo.multisig_address!,
+      "ROTATE_KEY",
+      newOwnerAddress
+    )
+      .then(() => {
+        setSuccess(`Rotate key operation was proposed successfully!`);
+        setNewOwnerAddress("");
+        onKeyRotationProposal?.(newOwnerAddress);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err);
+      })
       .finally(() => setIsRotating(false));
   }
 
@@ -71,7 +106,9 @@ export default function RotateKeyModal({ walletInfo, walletAddress, onKeyRotatio
             ✕
           </label>
 
-          <h3 className="text-xl font-bold mb-5">Rotate wallet owner key</h3>
+          <h3 className="text-xl font-bold mb-5">
+            {proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}
+          </h3>
           <div className="flex flex-col items-center">
             {!isRotating ? (
               <>
@@ -86,13 +123,18 @@ export default function RotateKeyModal({ walletInfo, walletAddress, onKeyRotatio
                     />
                   </div>
                 </div>
-                <div className="btn btn-primary mt-5 text-xl rounded-full" onClick={rotateKey}>
-                  Rotate key
+                <div
+                  className="btn btn-primary mt-5 text-xl rounded-full"
+                  onClick={proxyWalletInfo?.multisig_address ? proposeKeyRotation : rotateKey}
+                >
+                  {proxyWalletInfo?.multisig_address ? "Propose key rotation" : "Rotate key"}
                 </div>
               </>
             ) : (
               <>
-                <Loader>Performing key rotation...</Loader>
+                <Loader>
+                  {proxyWalletInfo?.multisig_address ? "Proposing key rotation..." : "Performing key rotation..."}
+                </Loader>
               </>
             )}
           </div>

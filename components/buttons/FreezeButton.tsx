@@ -68,10 +68,15 @@ export default function FreezeButton({
 
     onStart?.();
     setLoading(true);
-    proposeProxyWalletOperation(signingClient!, userAddress, proxyWalletInfo.multisig_address!, "TOGGLE_FREEZE")
-      //executeProxyWalletMSProposal(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, 1)
+    proposeProxyWalletOperation(
+      signingClient!,
+      userAddress,
+      proxyWalletAddress,
+      proxyWalletInfo.multisig_address!,
+      "TOGGLE_FREEZE"
+    )
       .then(() =>
-        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed correctly!`)
+        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed successfully!`)
       )
       .catch((err) => {
         console.error(err);

@@ -62,7 +62,7 @@ export default function GuardianView() {
         }
         if (info.multisig_address) {
           queryProposals(signingClient!, info.multisig_address!)
-            .then((props) => setWalletActiveProposals(props))
+            .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed")))
             .catch(console.error);
         }
 
@@ -158,7 +158,8 @@ export default function GuardianView() {
                 data-tip="Show proposal details"
                 onClick={() => toggleProposalDetailsModal(getWalletFreezeProposal()!)}
               >
-                Proposal to freeze wallet {getWalletFreezeProposal()?.status === "passed" ? "has passed" : "is active"}
+                Proposal to {walletInfo.is_frozen ? "unfreeze" : "freeze"} wallet{" "}
+                {getWalletFreezeProposal()?.status === "passed" ? "has passed" : "is active"}
               </label>
             )}
             {getWalletKeyRotationProposal() && (
@@ -187,6 +188,7 @@ export default function GuardianView() {
             proxyWalletInfo={walletInfo}
             keyRotationProposal={getWalletKeyRotationProposal()}
             onKeyRotation={onKeyRotation}
+            onKeyRotationProposal={fetchSCW}
           />
 
           {success && (
@@ -211,6 +213,7 @@ export default function GuardianView() {
               key={id}
               multisigAddress={walletInfo?.multisig_address!}
               proposal={proposal}
+              onExecute={fetchSCW}
               onClose={() => toggleProposalDetailsModal(proposal)}
             />
           )

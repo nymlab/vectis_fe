@@ -16,7 +16,7 @@ type AggregatedVoteInfo = {
 
 type ProposalDetailsModal = {
   multisigAddress: Addr;
-  proposal: Proposal;
+  proposal?: Proposal;
   onExecute?: () => void;
   onClose?: () => void;
 };
@@ -39,12 +39,16 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
   };
 
   useEffect(() => {
+    if (!proposal) {
+      return;
+    }
+
     setLoading(true);
     queryProposalVoteList(signingClient!, multisigAddress, proposal.id)
       .then((votes) => setVoteList(votes))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
-  }, [proposal.id, multisigAddress]);
+  }, [proposal?.id, multisigAddress]);
 
   function handleCloseModal() {
     onClose?.();
@@ -60,7 +64,7 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
           weight: acc.weight + cur.weight,
         }),
         {
-          proposal_id: proposal.id,
+          proposal_id: proposal?.id,
           voters: [],
           vote: vote,
           weight: 0,
@@ -69,6 +73,10 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
   }
 
   function execute() {
+    if (!proposal) {
+      return;
+    }
+
     setIsExecuting(true);
     executeProposal(signingClient!, userAddress, multisigAddress, proposal.id)
       .then(() => {
@@ -80,6 +88,10 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
         setExecuteError(err);
       })
       .finally(() => setIsExecuting(false));
+  }
+
+  if (!proposal) {
+    return <></>;
   }
 
   return (
