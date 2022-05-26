@@ -1,4 +1,4 @@
-import { Proposal } from "./../contexts/vectis";
+import { Proposal, VoteInfo } from "./../contexts/vectis";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "./../types/ProxyContract";
 import { Coin, CreateWalletMsg, FactoryClient } from "./../types/FactoryContract";
@@ -163,23 +163,31 @@ export async function toggleProxyWalletFreezeStatus(
  *
  * @param signingClient
  * @param guardianAddress
- * @param proxyWalletMultisigAddress
+ * @param multisigAddress
+ * @param operation
+ * @param newUserAddress Optional - Provide if operation is ROTATE_KEY
  */
 export async function proposeProxyWalletOperation(
   signingClient: SigningCosmWasmClient,
   guardianAddress: string,
-  proxyWalletMultisigAddress: string,
+  multisigAddress: string,
   operation: "TOGGLE_FREEZE" | "ROTATE_KEY",
   newUserAddress?: string
 ) {
-  let message = {};
+  let title = "",
+    description = "",
+    message = {};
   switch (operation) {
     case "TOGGLE_FREEZE":
+      title = "Revert freeze status";
+      description = "Need to revert freeze status";
       message = {
         revert_freeze_status: {},
       };
       break;
     case "ROTATE_KEY":
+      title = "Rotate key";
+      description = "Need to rotate owner key";
       message = {
         rotate_user_key: {
           new_user_address: newUserAddress,
@@ -191,7 +199,7 @@ export async function proposeProxyWalletOperation(
   const msg: CosmosMsg = {
     wasm: {
       execute: {
-        contract_addr: proxyWalletMultisigAddress!,
+        contract_addr: multisigAddress!,
         msg: toBase64(toUtf8(JSON.stringify(message))),
         funds: [],
       },
@@ -199,28 +207,60 @@ export async function proposeProxyWalletOperation(
   };
   const proposal: ExecuteMsg = {
     propose: {
-      title: "Revert freeze status",
-      description: "Need to revert freeze status",
+      title,
+      description,
       msgs: [msg],
       latest: null,
     },
   };
-  await signingClient.execute(guardianAddress, proxyWalletMultisigAddress, proposal, "auto");
+  await signingClient.execute(guardianAddress, multisigAddress, proposal, "auto");
+}
+
+/**
+ * Returns the list of proposals currently active in a CW3 contract.
+ *
+ * @param signingClient
+ * @param multisigAddress
+ */
+export async function queryProposals(
+  signingClient: SigningCosmWasmClient,
+  multisigAddress: string
+): Promise<Proposal[]> {
+  const queryProps: QueryMsg = { list_proposals: {} };
+  const { proposals } = await signingClient.queryContractSmart(multisigAddress, queryProps);
+  return proposals;
+}
+
+/**
+ * Returns the list of votes for a CW3 proposal.
+ *
+ * @param signingClient
+ * @param multisigAddress
+ * @param proposalId
+ */
+export async function queryProposalVoteList(
+  signingClient: SigningCosmWasmClient,
+  multisigAddress: string,
+  proposalId: number
+): Promise<VoteInfo[]> {
+  const queryProps = { list_votes: { proposal_id: proposalId } };
+  const { votes } = await signingClient.queryContractSmart(multisigAddress, queryProps);
+  return votes;
 }
 
 /**
  * Votes on a multisig proposal.
  *
  * @param signingClient
- * @param guardianAddress
- * @param proxyWalletMultisigAddress
+ * @param senderAddress
+ * @param multisigAddress
  * @param proposalId
  * @param vote
  */
-export async function voteProxyWalletMSProposal(
+export async function voteProposal(
   signingClient: SigningCosmWasmClient,
-  guardianAddress: string,
-  proxyWalletMultisigAddress: string,
+  senderAddress: string,
+  multisigAddress: string,
   proposalId: number,
   vote: Vote
 ) {
@@ -230,21 +270,21 @@ export async function voteProxyWalletMSProposal(
       vote,
     },
   };
-  await signingClient.execute(guardianAddress, proxyWalletMultisigAddress, executeVote, "auto");
+  await signingClient.execute(senderAddress, multisigAddress, executeVote, "auto");
 }
 
 /**
  * Executes a multisig proposal, given that it has passed.
  *
  * @param signingClient
- * @param guardianAddress
- * @param proxyWalletMultisigAddress
+ * @param senderAddress
+ * @param multisigAddress
  * @param proposalId
  */
-export async function executeProxyWalletMSProposal(
+export async function executeProposal(
   signingClient: SigningCosmWasmClient,
-  guardianAddress: string,
-  proxyWalletMultisigAddress: string,
+  senderAddress: string,
+  multisigAddress: string,
   proposalId: number
 ) {
   const execute: ExecuteMsg = {
@@ -252,22 +292,7 @@ export async function executeProxyWalletMSProposal(
       proposal_id: proposalId,
     },
   };
-  await signingClient.execute(guardianAddress, proxyWalletMultisigAddress, execute, "auto");
-}
-
-/**
- * Returns the list of proposals currently active in a multisig proxy wallet.
- *
- * @param signingClient
- * @param proxyWalletMultisigAddress
- */
-export async function queryProxyWalletMSProposals(
-  signingClient: SigningCosmWasmClient,
-  proxyWalletMultisigAddress: string
-): Promise<Proposal[]> {
-  const queryProps: QueryMsg = { list_proposals: {} };
-  const { proposals } = await signingClient.queryContractSmart(proxyWalletMultisigAddress, queryProps);
-  return proposals;
+  await signingClient.execute(senderAddress, multisigAddress, execute, "auto");
 }
 
 /**

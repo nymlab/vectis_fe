@@ -1,14 +1,20 @@
 import RotateKeyModal from "components/modals/RotateKeyModal";
-import { WalletInfoWithBalance } from "contexts/vectis";
+import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useState } from "react";
 
 type RotateKeyButtonProps = {
   proxyWalletAddress: string;
   proxyWalletInfo: WalletInfoWithBalance;
+  keyRotationProposal?: Proposal;
   onKeyRotation: (newAddr: string) => void;
 };
 
-export default function RotateKeyButton({ proxyWalletAddress, proxyWalletInfo, onKeyRotation }: RotateKeyButtonProps) {
+export default function RotateKeyButton({
+  proxyWalletAddress,
+  proxyWalletInfo,
+  keyRotationProposal,
+  onKeyRotation,
+}: RotateKeyButtonProps) {
   const [rotateKeyModalOpen, setRotateKeyModalOpen] = useState(false);
 
   return (

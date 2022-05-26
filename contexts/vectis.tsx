@@ -1,3 +1,4 @@
+import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import { useVectisClient } from "hooks/useVectisClient";
 import { createContext, useContext, ReactNode } from "react";
 import { Coin, WalletInfo } from "types/FactoryContract";
@@ -5,10 +6,12 @@ import { WasmMsg } from "types/ProxyContract";
 import { useSigningClient } from "./cosmwasm";
 
 export type WalletInfoWithBalance = WalletInfo & { balance: Coin };
+
 export type Proposal = {
   id: number;
   title: string;
   description: string;
+  status: string;
   expires: {
     at_time: string;
   };
@@ -21,6 +24,13 @@ export type Proposal = {
       total_weight: number;
     };
   };
+};
+
+export type VoteInfo = {
+  proposal_id: number;
+  voter: string;
+  vote: Vote;
+  weight: number;
 };
 
 export interface IVectisContext {
