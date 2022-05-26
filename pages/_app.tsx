@@ -4,7 +4,7 @@ import Layout from "components/Layout";
 import { SigningCosmWasmProvider } from "contexts/cosmwasm";
 import { VectisProvider } from "contexts/vectis";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function VectisApp({ Component, pageProps }: AppProps) {
   return (
     <SigningCosmWasmProvider>
       <VectisProvider>
@@ -15,4 +15,4 @@ function MyApp({ Component, pageProps }: AppProps) {
     </SigningCosmWasmProvider>
   );
 }
-export default MyApp;
+export default VectisApp;

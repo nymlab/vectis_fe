@@ -75,7 +75,10 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
         setExecuteSuccess("Proposal was executed successfully!");
         onExecute?.();
       })
-      .catch((err) => setExecuteError(err))
+      .catch((err) => {
+        console.error(err);
+        setExecuteError(err);
+      })
       .finally(() => setIsExecuting(false));
   }
 
@@ -96,7 +99,10 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
             <p>Title: {proposal.title}</p>
             <p>Description: {proposal.description}</p>
             {/* <p>Expires: {proposal.expires.at_time}</p> */}
-            <p>Approval Threshold: {proposal.threshold.absolute_count.total_weight} positive votes</p>
+            <p>
+              Approval Threshold: {proposal.threshold.absolute_count.weight} positive vote
+              {proposal.threshold.absolute_count.weight === 1 ? "" : "s"}
+            </p>
             <p>Status: {proposal.status}</p>
             {loading && <Loader>Fetching proposal votes...</Loader>}
             {!loading && error && (
@@ -114,8 +120,9 @@ export default function ProposalDetailsModal({ multisigAddress, proposal, onExec
                       <p className="text-red-600">NO: {groupVoteListByVote(voteList, "no").weight}</p>
                       <p className="text-gray-600">ABSTAIN: {groupVoteListByVote(voteList, "abstain").weight}</p>
                     </div>
-                    {voteList.map((v) => (
+                    {voteList.map((v, i) => (
                       <div
+                        key={i}
                         className={`flex w-full my-3 border-2 rounded-lg p-5 items-center justify-between ${
                           voteColors[v.vote]
                         }`}
