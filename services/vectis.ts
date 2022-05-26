@@ -163,6 +163,7 @@ export async function toggleProxyWalletFreezeStatus(
  *
  * @param signingClient
  * @param guardianAddress
+ * @param proxyWalletAddress
  * @param multisigAddress
  * @param operation
  * @param newUserAddress Optional - Provide if operation is ROTATE_KEY
@@ -170,6 +171,7 @@ export async function toggleProxyWalletFreezeStatus(
 export async function proposeProxyWalletOperation(
   signingClient: SigningCosmWasmClient,
   guardianAddress: string,
+  proxyWalletAddress: string,
   multisigAddress: string,
   operation: "TOGGLE_FREEZE" | "ROTATE_KEY",
   newUserAddress?: string
@@ -199,7 +201,7 @@ export async function proposeProxyWalletOperation(
   const msg: CosmosMsg = {
     wasm: {
       execute: {
-        contract_addr: multisigAddress!,
+        contract_addr: proxyWalletAddress,
         msg: toBase64(toUtf8(JSON.stringify(message))),
         funds: [],
       },
