@@ -1,9 +1,11 @@
+import VoteModal from "components/modals/VoteModal";
 import { useSigningClient } from "contexts/cosmwasm";
-import { WalletInfoWithBalance } from "contexts/vectis";
-import { useState } from "react";
+import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
+import { useEffect, useState } from "react";
 import {
-  executeProxyWalletMSProposal,
+  executeProposal,
   proposeProxyWalletOperation,
+  queryProposalVoteList,
   toggleProxyWalletFreezeStatus,
 } from "services/vectis";
 import Loader from "../Loader";
@@ -11,6 +13,7 @@ import Loader from "../Loader";
 type FreezeButtonProps = {
   proxyWalletAddress: string;
   proxyWalletInfo: WalletInfoWithBalance;
+  freezeProposal?: Proposal;
   onStart?: () => void;
   onSuccess?: (msg: string) => void;
   onError?: (err: Error) => void;
@@ -19,19 +22,36 @@ type FreezeButtonProps = {
 export default function FreezeButton({
   proxyWalletAddress,
   proxyWalletInfo,
+  freezeProposal,
   onStart,
   onSuccess,
   onError,
 }: FreezeButtonProps) {
-  const { signingClient, walletAddress } = useSigningClient();
+  const { signingClient, walletAddress: userAddress } = useSigningClient();
   const [loading, setLoading] = useState(false);
+  const [alreadyVoted, setAlreadyVoted] = useState(false);
+  const [voteModalOpen, setVoteModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!freezeProposal) {
+      return;
+    }
+
+    fetchVoteList();
+  }, [freezeProposal]);
+
+  function fetchVoteList() {
+    queryProposalVoteList(signingClient!, proxyWalletInfo.multisig_address!, freezeProposal!.id)
+      .then((votes) => setAlreadyVoted(!!votes.find((v) => v.voter === userAddress)))
+      .catch(console.error);
+  }
 
   // This function should be called only if the proxy wallet is NOT multisig
   // Otherwise it will error out
   function toggleFreezeStatus() {
     onStart?.();
     setLoading(true);
-    toggleProxyWalletFreezeStatus(signingClient!, walletAddress, proxyWalletAddress)
+    toggleProxyWalletFreezeStatus(signingClient!, userAddress, proxyWalletAddress)
       .then(() =>
         onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`)
       )
@@ -48,7 +68,7 @@ export default function FreezeButton({
 
     onStart?.();
     setLoading(true);
-    proposeProxyWalletOperation(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, "TOGGLE_FREEZE")
+    proposeProxyWalletOperation(signingClient!, userAddress, proxyWalletInfo.multisig_address!, "TOGGLE_FREEZE")
       //executeProxyWalletMSProposal(signingClient!, walletAddress, proxyWalletInfo.multisig_address!, 1)
       .then(() =>
         onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed correctly!`)
@@ -60,18 +80,40 @@ export default function FreezeButton({
       .finally(() => setLoading(false));
   }
 
+  // This function should be called only if the proxy wallet IS multisig
+  function openVoteModal() {
+    if (alreadyVoted) {
+      return;
+    }
+
+    setVoteModalOpen(true);
+  }
+
   if (loading) {
     return <Loader />;
   }
 
   if (proxyWalletInfo.multisig_address) {
     return (
-      <button
-        className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
-        onClick={proposeToggleFreezeStatus}
-      >
-        PROPOSE FREEZE
-      </button>
+      <>
+        <label
+          htmlFor={freezeProposal ? `vote-modal-${freezeProposal.id}` : ""}
+          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
+            alreadyVoted ? "btn-disabled" : "btn-primary"
+          }`}
+          onClick={() => (!freezeProposal ? proposeToggleFreezeStatus() : openVoteModal())}
+        >
+          {freezeProposal ? "VOTE" : "PROPOSE"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
+        </label>
+
+        {voteModalOpen && (
+          <VoteModal
+            proposal={freezeProposal!}
+            multisigAddress={proxyWalletInfo.multisig_address!}
+            onVote={fetchVoteList}
+          />
+        )}
+      </>
     );
   }
 

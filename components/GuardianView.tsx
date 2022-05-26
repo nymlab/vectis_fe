@@ -4,10 +4,11 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { queryProxyWalletInfo, queryProxyWalletMSProposals } from "services/vectis";
+import { queryProxyWalletInfo, queryProposals } from "services/vectis";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
 import Loader from "./Loader";
+import ProposalDetailsModal from "./modals/ProposalDetailsModal";
 import TokenAmount from "./TokenAmount";
 
 export default function GuardianView() {
@@ -21,6 +22,8 @@ export default function GuardianView() {
   const [walletActiveProposals, setWalletActiveProposals] = useState<Proposal[]>([]);
   const [success, setSuccess] = useState("");
   const [operationError, setOperationError] = useState<Error | null>(null);
+
+  const [showProposalDetailsModal, setShowProposalDetailsModal] = useState<Record<number, boolean>>({});
 
   const { getValueValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
@@ -37,10 +40,10 @@ export default function GuardianView() {
     navigator.clipboard?.writeText(address);
   }
 
-  function walletHasFreezeProposal() {
+  function getWalletFreezeProposal() {
     return walletActiveProposals.find((p) => p.title.toLowerCase().includes("freeze"));
   }
-  function walletHasKeyRotationProposal() {
+  function getWalletKeyRotationProposal() {
     return walletActiveProposals.find((p) => p.title.toLowerCase().includes("key"));
   }
 
@@ -58,7 +61,7 @@ export default function GuardianView() {
           return;
         }
         if (info.multisig_address) {
-          queryProxyWalletMSProposals(signingClient!, info.multisig_address)
+          queryProposals(signingClient!, info.multisig_address!)
             .then((props) => setWalletActiveProposals(props))
             .catch(console.error);
         }
@@ -70,6 +73,13 @@ export default function GuardianView() {
         setWalletInfo(null);
       })
       .finally(() => setFetchingSCW(false));
+  }
+
+  function toggleProposalDetailsModal(proposal: Proposal) {
+    setShowProposalDetailsModal({
+      ...showProposalDetailsModal,
+      [proposal.id]: !showProposalDetailsModal[proposal.id],
+    });
   }
 
   function onFreezeStart() {
@@ -141,13 +151,33 @@ export default function GuardianView() {
             <p>
               Balance: <TokenAmount token={walletInfo.balance} />
             </p>
-            {walletHasFreezeProposal() && <p>Proposal to freeze wallet is active</p>}
-            {walletHasKeyRotationProposal() && <p>Proposal to rotate owner key is active</p>}
+            {getWalletFreezeProposal() && (
+              <label
+                htmlFor={`proposal-details-modal-${getWalletFreezeProposal()!.id}`}
+                className="link link-hover hover:text-primary transition-colors tooltip"
+                data-tip="Show proposal details"
+                onClick={() => toggleProposalDetailsModal(getWalletFreezeProposal()!)}
+              >
+                Proposal to freeze wallet {getWalletFreezeProposal()?.status === "passed" ? "has passed" : "is active"}
+              </label>
+            )}
+            {getWalletKeyRotationProposal() && (
+              <label
+                htmlFor={`proposal-details-modal-${getWalletKeyRotationProposal()!.id}`}
+                className="link link-hover hover:text-primary transition-colors tooltip"
+                data-tip="Show proposal details"
+                onClick={() => toggleProposalDetailsModal(getWalletKeyRotationProposal()!)}
+              >
+                Proposal to rotate owner key{" "}
+                {getWalletKeyRotationProposal()?.status === "passed" ? "has passed" : "is active"}
+              </label>
+            )}
           </div>
 
           <FreezeButton
             proxyWalletAddress={proxyWalletAddress}
             proxyWalletInfo={walletInfo}
+            freezeProposal={getWalletFreezeProposal()}
             onStart={onFreezeStart}
             onSuccess={onFreezeSuccess}
             onError={onFreezeError}
@@ -155,6 +185,7 @@ export default function GuardianView() {
           <RotateKeyButton
             proxyWalletAddress={proxyWalletAddress}
             proxyWalletInfo={walletInfo}
+            keyRotationProposal={getWalletKeyRotationProposal()}
             onKeyRotation={onKeyRotation}
           />
 
@@ -171,6 +202,20 @@ export default function GuardianView() {
           )}
         </div>
       )}
+
+      {Object.entries(showProposalDetailsModal).map(([id, show]) => {
+        const proposal = walletActiveProposals.find((prop) => prop.id === +id)!;
+        return (
+          show && (
+            <ProposalDetailsModal
+              key={id}
+              multisigAddress={walletInfo?.multisig_address!}
+              proposal={proposal}
+              onClose={() => toggleProposalDetailsModal(proposal)}
+            />
+          )
+        );
+      })}
     </>
   );
 }
