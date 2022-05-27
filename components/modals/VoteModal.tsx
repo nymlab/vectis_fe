@@ -53,7 +53,7 @@ export default function VoteModal({ proposal, multisigAddress, onVote, onClose }
             <p>Title: {proposal.title}</p>
             <p>Description: {proposal.description}</p>
             {/* <p>Expires: {proposal.expires.at_time}</p> */}
-            <p>Approval Threshold: {proposal.threshold.absolute_count.total_weight} positive votes</p>
+            <p>Approval Threshold: {proposal.threshold.absolute_count.weight} positive votes</p>
           </div>
           {loading && <Loader>Casting your vote...</Loader>}
           {!loading && !success && (

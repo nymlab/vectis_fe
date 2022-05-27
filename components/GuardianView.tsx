@@ -62,7 +62,9 @@ export default function GuardianView() {
         }
         if (info.multisig_address) {
           queryProposals(signingClient!, info.multisig_address!)
-            .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed")))
+            .then((props) =>
+              setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected"))
+            )
             .catch(console.error);
         }
 
