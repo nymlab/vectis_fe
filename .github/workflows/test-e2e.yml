@@ -20,17 +20,17 @@ jobs:
         shell: bash
         run: |
           set +x
-          echo "NEXT_PUBLIC_CHAIN_ID=testing" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_CHAIN_NAME="Juno Local Test"" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_CHAIN_BECH32_PREFIX=juno" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_CHAIN_RPC_ENDPOINT=http://localhost:26657" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_CHAIN_REST_ENDPOINT=http://localhost:1317" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_STAKING_DENOM="ujunox"" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_COIN_DECIMALS=6" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_GAS_PRICE=0.025" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_SITE_TITLE=Vectis" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_SITE_ICON_URL="/juno.svg"" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=juno14jf8r2kxlymgjkp3xj8xuyud7h974648qdn9tsgsj0pascmntt9s4fueh5" >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CHAIN_ID=uni-2' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CHAIN_NAME="Juno Tesnet"' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CHAIN_BECH32_PREFIX=juno' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CHAIN_RPC_ENDPOINT=https://rpc.uni.junonetwork.io/' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CHAIN_REST_ENDPOINT=https://api.uni.junonetwork.io/' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_STAKING_DENOM=ujunox' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_COIN_DECIMALS=6' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_GAS_PRICE=0.025' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_SITE_TITLE=Vectis' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_SITE_ICON_URL=/juno.svg' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=juno14jf8r2kxlymgjkp3xj8xuyud7h974648qdn9tsgsj0pascmntt9s4fueh5' >> $GITHUB_ENV
       - run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run test:ci
         env:
           PWTEST_CHANNEL: chromium
