@@ -38,6 +38,7 @@ function Nav() {
           <button
             className="block btn btn-outline btn-primary w-full max-w-full truncate tooltip"
             onClick={handleConnect}
+            data-testid="wallet-nav-button"
           >
             {walletAddress || "Connect Wallet"}
           </button>
