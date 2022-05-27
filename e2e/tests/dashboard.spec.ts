@@ -7,6 +7,7 @@ test.describe("dashboard", () => {
     const dashboardPage = new DashboardPage({ context });
     await dashboardPage.navigate();
     await dashboardPage.clickConnectWallet();
-    await expect(page.locator("nav button")).toHaveText(USER_WALLET.address);
+    const elem = await dashboardPage.getLocatorByTestId("wallet-nav-button");
+    await expect(elem).toHaveText(USER_WALLET.address);
   });
 });

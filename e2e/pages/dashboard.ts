@@ -8,7 +8,8 @@ class DashboardPage extends CustomPage {
   }
 
   async clickConnectWallet(): Promise<void> {
-    await this.page!.click('button:has-text("Connect your wallet")');
+    const locator = await this.getLocatorByTestId("wallet-nav-button");
+    await locator.click();
   }
 }
 

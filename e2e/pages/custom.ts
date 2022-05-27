@@ -1,4 +1,4 @@
-import { BrowserContext, Page } from "@playwright/test";
+import { BrowserContext, Locator, Page } from "@playwright/test";
 import { CustomPageArgs } from "e2e/types/CustomPageArgs";
 
 export class CustomPage {
@@ -21,6 +21,10 @@ export class CustomPage {
       this.page = pages.length ? pages[0] : await this.context.newPage();
       await this.page.goto(matchingUrl);
     }
+  }
+
+  async getLocatorByTestId(testId: string): Promise<Locator> {
+    return await this.page!.locator(`[data-testid="${testId}"]`);
   }
 }
 
