@@ -5,7 +5,7 @@ import { useSigningClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { proposeProxyWalletOperation, rotateUserKey } from "services/vectis";
+import { proposeProxyWalletOperation, rotateUserKey, SCWOperation } from "services/vectis";
 
 type RotateKeyModalProps = {
   proxyWalletInfo: WalletInfoWithBalance | null;
@@ -78,7 +78,7 @@ export default function RotateKeyModal({
       userAddress,
       proxyWalletAddress,
       proxyWalletInfo.multisig_address!,
-      "ROTATE_KEY",
+      SCWOperation.RotateKey,
       newOwnerAddress
     )
       .then(() => {

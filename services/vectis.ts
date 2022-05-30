@@ -8,6 +8,30 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { ExecuteMsg, QueryMsg, Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 
+export enum SCWOperation {
+  ToggleFreeze = "TOGGLE_FREEZE",
+  RotateKey = "ROTATE_KEY",
+}
+
+export const SCWProposals = {
+  [SCWOperation.ToggleFreeze]: () => ({
+    title: "Revert freeze status",
+    description: "Need to revert freeze status",
+    message: {
+      revert_freeze_status: {},
+    },
+  }),
+  [SCWOperation.RotateKey]: (newUserAddress: string) => ({
+    title: "Rotate key",
+    description: "Need to rotate owner key",
+    message: {
+      rotate_user_key: {
+        new_user_address: newUserAddress,
+      },
+    },
+  }),
+};
+
 /**
  * Creates a new SCW.
  *
@@ -173,31 +197,10 @@ export async function proposeProxyWalletOperation(
   guardianAddress: string,
   proxyWalletAddress: string,
   multisigAddress: string,
-  operation: "TOGGLE_FREEZE" | "ROTATE_KEY",
+  operation: SCWOperation,
   newUserAddress?: string
 ) {
-  let title = "",
-    description = "",
-    message = {};
-  switch (operation) {
-    case "TOGGLE_FREEZE":
-      title = "Revert freeze status";
-      description = "Need to revert freeze status";
-      message = {
-        revert_freeze_status: {},
-      };
-      break;
-    case "ROTATE_KEY":
-      title = "Rotate key";
-      description = "Need to rotate owner key";
-      message = {
-        rotate_user_key: {
-          new_user_address: newUserAddress,
-        },
-      };
-      break;
-  }
-
+  const { title, description, message } = SCWProposals[operation](newUserAddress!);
   const msg: CosmosMsg = {
     wasm: {
       execute: {

@@ -6,6 +6,7 @@ import {
   executeProposal,
   proposeProxyWalletOperation,
   queryProposalVoteList,
+  SCWOperation,
   toggleProxyWalletFreezeStatus,
 } from "services/vectis";
 import Loader from "../Loader";
@@ -73,7 +74,7 @@ export default function FreezeButton({
       userAddress,
       proxyWalletAddress,
       proxyWalletInfo.multisig_address!,
-      "TOGGLE_FREEZE"
+      SCWOperation.ToggleFreeze
     )
       .then(() =>
         onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed successfully!`)
