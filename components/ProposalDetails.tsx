@@ -5,6 +5,7 @@ import { executeProposal, queryProposalVoteList } from "services/vectis";
 import { groupVoteListByVote } from "util/misc";
 import { AlertError } from "./Alert";
 import Loader from "./Loader";
+import ProposalVotes from "./ProposalVotes";
 
 type ProposalDetailsProps = {
   proposal: Proposal;
@@ -22,12 +23,6 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
   const [isExecuting, setIsExecuting] = useState(false);
   const [executeSuccess, setExecuteSuccess] = useState("");
   const [executeError, setExecuteError] = useState<Error | null>(null);
-
-  const voteColors = {
-    yes: "text-green-600",
-    no: "text-red-600",
-    abstain: "text-gray-600",
-  };
 
   useEffect(() => {
     if (!proposal) {
@@ -80,35 +75,16 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
         {!loading && !error && (
           <>
             <h3 className="text-2xl font-bold my-5">Votes</h3>
-            {voteList?.length > 0 && (
-              <>
-                <div className="flex items-center w-full justify-around mb-2">
-                  <p className="text-green-600">YES: {groupVoteListByVote(proposal, voteList, "yes").weight}</p>
-                  <p className="text-red-600">NO: {groupVoteListByVote(proposal, voteList, "no").weight}</p>
-                  <p className="text-gray-600">ABSTAIN: {groupVoteListByVote(proposal, voteList, "abstain").weight}</p>
-                </div>
-                {voteList.map((v, i) => (
-                  <div
-                    key={i}
-                    className={`flex w-full my-3 border-2 rounded-lg p-5 items-center justify-between ${
-                      voteColors[v.vote]
-                    }`}
-                  >
-                    <p className="link link-hover text-sm transition-colors tooltip" data-tip="Copy address">
-                      {v.voter}
-                    </p>
-                    <p className="font-bold">{v.vote.toUpperCase()}</p>
-                  </div>
-                ))}
-              </>
-            )}
-            {!voteList?.length && <p>No one voted for this proposal yet.</p>}
+            <ProposalVotes proposal={proposal} voteList={voteList} />
+
             {isExecuting && <Loader>Executing proposal...</Loader>}
+
             {proposal.status === "passed" && !isExecuting && !executeSuccess && (
               <button className="btn btn-primary text-lg mt-5" onClick={execute}>
                 EXECUTE PROPOSAL
               </button>
             )}
+
             {!isExecuting && executeError && (
               <div className="my-5 text-sm">
                 <AlertError>{executeError.message}</AlertError>
