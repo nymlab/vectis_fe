@@ -1,6 +1,7 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
 import Loader from "components/Loader";
+import Modal from "components/Modal";
 import { useSigningClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
@@ -94,64 +95,51 @@ export default function RotateKeyModal({
   }
 
   return (
-    <>
-      <input type="checkbox" id={`rotate-key-modal`} className="modal-toggle" />
-      <div className="modal">
-        <div className="modal-box relative">
-          <label
-            htmlFor={`rotate-key-modal`}
-            onClick={handleCloseModal}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </label>
-
-          <h3 className="text-xl font-bold mb-5">
-            {proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}
-          </h3>
-          <div className="flex flex-col items-center">
-            {!isRotating ? (
-              <>
-                <div className="flex flex-col w-full items-start">
-                  <div className="w-full">
-                    <Input
-                      placeholder="New owner address"
-                      onChange={(event) => setNewOwnerAddress(event.target.value)}
-                      error={getValueValidationError("ownerAddress")}
-                      value={newOwnerAddress}
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-                <div
-                  className="btn btn-primary mt-5 text-xl rounded-full"
-                  onClick={proxyWalletInfo?.multisig_address ? proposeKeyRotation : rotateKey}
-                >
-                  {proxyWalletInfo?.multisig_address ? "Propose key rotation" : "Rotate key"}
-                </div>
-              </>
-            ) : (
-              <>
-                <Loader>
-                  {proxyWalletInfo?.multisig_address ? "Proposing key rotation..." : "Performing key rotation..."}
-                </Loader>
-              </>
-            )}
-          </div>
-
-          {success && (
-            <div className="mt-5">
-              <AlertSuccess>{success}</AlertSuccess>
+    <Modal id={`rotate-key-modal`} onClose={handleCloseModal}>
+      <h3 className="text-xl font-bold mb-5">
+        {proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}
+      </h3>
+      <div className="flex flex-col items-center">
+        {!isRotating ? (
+          <>
+            <div className="flex flex-col w-full items-start">
+              <div className="w-full">
+                <Input
+                  placeholder="New owner address"
+                  onChange={(event) => setNewOwnerAddress(event.target.value)}
+                  error={getValueValidationError("ownerAddress")}
+                  value={newOwnerAddress}
+                  autoComplete="off"
+                />
+              </div>
             </div>
-          )}
-
-          {error && (
-            <div className="mt-5">
-              <AlertError>Error! {error.message}</AlertError>
+            <div
+              className="btn btn-primary mt-5 text-xl rounded-full"
+              onClick={proxyWalletInfo?.multisig_address ? proposeKeyRotation : rotateKey}
+            >
+              {proxyWalletInfo?.multisig_address ? "Propose key rotation" : "Rotate key"}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <>
+            <Loader>
+              {proxyWalletInfo?.multisig_address ? "Proposing key rotation..." : "Performing key rotation..."}
+            </Loader>
+          </>
+        )}
       </div>
-    </>
+
+      {success && (
+        <div className="mt-5">
+          <AlertSuccess>{success}</AlertSuccess>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-5">
+          <AlertError>Error! {error.message}</AlertError>
+        </div>
+      )}
+    </Modal>
   );
 }

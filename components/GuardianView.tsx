@@ -8,7 +8,8 @@ import { queryProxyWalletInfo, queryProposals } from "services/vectis";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
 import Loader from "./Loader";
-import ProposalDetailsModal from "./modals/ProposalDetailsModal";
+import Modal from "./Modal";
+import ProposalDetails from "./ProposalDetails";
 import TokenAmount from "./TokenAmount";
 
 export default function GuardianView() {
@@ -211,13 +212,17 @@ export default function GuardianView() {
         const proposal = walletActiveProposals.find((prop) => prop.id === +id)!;
         return (
           show && (
-            <ProposalDetailsModal
-              key={id}
-              multisigAddress={walletInfo?.multisig_address!}
-              proposal={proposal}
-              onExecute={fetchSCW}
+            <Modal
+              key={proposal.id}
+              id={`proposal-details-modal-${proposal.id}`}
               onClose={() => toggleProposalDetailsModal(proposal)}
-            />
+            >
+              <ProposalDetails
+                multisigAddress={walletInfo?.multisig_address!}
+                proposal={proposal}
+                onExecute={fetchSCW}
+              />
+            </Modal>
           )
         );
       })}
