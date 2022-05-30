@@ -3,7 +3,7 @@ import { Input } from "components/Input";
 import { useSigningClient } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { queryProxyWalletInfo, queryProposals } from "services/vectis";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
@@ -37,15 +37,17 @@ export default function GuardianView() {
     ],
   });
 
+  const walletFreezeProposal = useMemo(
+    () => walletActiveProposals.find((p) => p.title.toLowerCase().includes("freeze")),
+    [walletActiveProposals]
+  );
+  const walletKeyRotationProposal = useMemo(
+    () => walletActiveProposals.find((p) => p.title.toLowerCase().includes("key")),
+    [walletActiveProposals]
+  );
+
   function copyAddress(address: string) {
     navigator.clipboard?.writeText(address);
-  }
-
-  function getWalletFreezeProposal() {
-    return walletActiveProposals.find((p) => p.title.toLowerCase().includes("freeze"));
-  }
-  function getWalletKeyRotationProposal() {
-    return walletActiveProposals.find((p) => p.title.toLowerCase().includes("key"));
   }
 
   function fetchSCW() {
@@ -154,26 +156,26 @@ export default function GuardianView() {
             <p>
               Balance: <TokenAmount token={walletInfo.balance} />
             </p>
-            {getWalletFreezeProposal() && (
+            {walletFreezeProposal && (
               <label
-                htmlFor={`proposal-details-modal-${getWalletFreezeProposal()!.id}`}
+                htmlFor={`proposal-details-modal-${walletFreezeProposal.id}`}
                 className="link link-hover hover:text-primary transition-colors tooltip"
                 data-tip="Show proposal details"
-                onClick={() => toggleProposalDetailsModal(getWalletFreezeProposal()!)}
+                onClick={() => toggleProposalDetailsModal(walletFreezeProposal)}
               >
                 Proposal to {walletInfo.is_frozen ? "unfreeze" : "freeze"} wallet{" "}
-                {getWalletFreezeProposal()?.status === "passed" ? "has passed" : "is active"}
+                {walletFreezeProposal.status === "passed" ? "has passed" : "is active"}
               </label>
             )}
-            {getWalletKeyRotationProposal() && (
+            {walletKeyRotationProposal && (
               <label
-                htmlFor={`proposal-details-modal-${getWalletKeyRotationProposal()!.id}`}
+                htmlFor={`proposal-details-modal-${walletKeyRotationProposal.id}`}
                 className="link link-hover hover:text-primary transition-colors tooltip"
                 data-tip="Show proposal details"
-                onClick={() => toggleProposalDetailsModal(getWalletKeyRotationProposal()!)}
+                onClick={() => toggleProposalDetailsModal(walletKeyRotationProposal)}
               >
                 Proposal to rotate owner key{" "}
-                {getWalletKeyRotationProposal()?.status === "passed" ? "has passed" : "is active"}
+                {walletKeyRotationProposal.status === "passed" ? "has passed" : "is active"}
               </label>
             )}
           </div>
@@ -181,7 +183,7 @@ export default function GuardianView() {
           <FreezeButton
             proxyWalletAddress={proxyWalletAddress}
             proxyWalletInfo={walletInfo}
-            freezeProposal={getWalletFreezeProposal()}
+            freezeProposal={walletFreezeProposal}
             onStart={onFreezeStart}
             onSuccess={onFreezeSuccess}
             onError={onFreezeError}
@@ -189,7 +191,7 @@ export default function GuardianView() {
           <RotateKeyButton
             proxyWalletAddress={proxyWalletAddress}
             proxyWalletInfo={walletInfo}
-            keyRotationProposal={getWalletKeyRotationProposal()}
+            keyRotationProposal={walletKeyRotationProposal}
             onKeyRotation={onKeyRotation}
             onKeyRotationProposal={fetchSCW}
           />
