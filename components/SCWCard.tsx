@@ -52,7 +52,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
           <div className="card-body w-96 h-56 absolute backface-hidden">
             <h2 className="card-title flex space-x-2 items-center text-left my-3">
               <IconChip />
-              <p>{title || "Smart Contract Wallet"}</p>
+              <p>{title || walletInfo?.label || "Smart Contract Wallet"}</p>
             </h2>
 
             {loading ? (

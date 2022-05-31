@@ -45,6 +45,7 @@ export const SCWProposals = {
 export async function createProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
+  label: string,
   guardians: string[],
   relayers: string[],
   proxyInitialFunds: number,
@@ -67,6 +68,7 @@ export async function createProxyWallet(
   // Create wallet message
   const createWalletMsg: CreateWalletMsg = {
     user_pubkey: account.pubkey?.value,
+    label: label,
     guardians: {
       addresses: guardians,
       ...(multisigThreshold && {
@@ -388,4 +390,23 @@ export async function removeRelayerFromProxyWallet(
   const proxyClient = new ProxyClient(signingClient, userAddress, proxyWalletAddress);
   const res = await proxyClient.removeRelayer({ relayerAddress });
   console.log(`Executed remove relayer transaction with hash ${res.transactionHash}. Logs:`, res.logs);
+}
+
+/**
+ * Updates a proxy wallet's label.
+ *
+ * @param signingClient
+ * @param userAddress
+ * @param proxyWalletAddress
+ * @param newLabel
+ */
+export async function updateProxyWalletLabel(
+  signingClient: SigningCosmWasmClient,
+  userAddress: string,
+  proxyWalletAddress: string,
+  newLabel: string
+) {
+  const proxyClient = new ProxyClient(signingClient, userAddress, proxyWalletAddress);
+  const res = await proxyClient.updateLabel({ newLabel });
+  console.log(`Executed update label transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }

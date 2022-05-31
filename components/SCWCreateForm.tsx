@@ -30,6 +30,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
   const [proxyInitialFunds, setProxyInitialFunds] = useState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
+  const [label, setLabel] = useState("");
 
   const { getValueValidationError, getArrayValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
@@ -87,6 +88,12 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         message: "Relayer addresses must be unique",
         validate: (r1, i) => !relayers.some((r2, j) => i !== j && r1 === r2),
       },
+      {
+        key: "label",
+        value: label,
+        message: "This field is mandatory",
+        validate: () => !!label,
+      },
     ],
   });
 
@@ -113,6 +120,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
     createProxyWallet(
       signingClient!,
       walletAddress,
+      label,
       guardians,
       relayers,
       parseFloat(proxyInitialFunds),
@@ -261,6 +269,14 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       </button>
 
       <h2 className="text-3xl font-bold my-5">3. Create your wallet</h2>
+      <div className="w-full max-w-xl mb-2">
+        <Input
+          placeholder={`Label (e.g. Personal Wallet, Business Wallet...)`}
+          onChange={(event) => setLabel(event.target.value)}
+          error={getValueValidationError("label")}
+          value={label}
+        />
+      </div>
       <div className="flex flex-col md:flex-row w-full max-w-xl justify-between mb-8">
         <div className="flex flex-col items-start">
           <div className="relative rounded-full shadow-sm md:mr-2">
