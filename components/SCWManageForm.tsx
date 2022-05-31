@@ -8,6 +8,7 @@ import {
   queryProxyWalletInfo,
   removeRelayerFromProxyWallet,
   updateProxyWalletGuardians,
+  updateProxyWalletLabel,
 } from "services/vectis";
 import { AlertError, AlertSuccess } from "./Alert";
 import { IconCheckmark, IconInfo, IconTrash } from "./Icon";
@@ -39,6 +40,24 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
   } = useArrayState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
+  const [label, setLabel] = useState("");
+
+  const { getValueValidationError, checkValidationErrors } = useValidationErrors({
+    validators: [
+      {
+        key: "label",
+        value: label,
+        message: "This field is mandatory",
+        validate: () => !!label,
+      },
+      {
+        key: "label",
+        value: label,
+        message: "New label must be different from old label",
+        validate: () => label !== originalLabel,
+      },
+    ],
+  });
 
   const {
     getArrayValidationError: getGuardianArrayValidationError,
@@ -103,6 +122,10 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
   const [updateRelayersError, setUpdateRelayersError] = useState<Error | null>(null);
   const [updateRelayersSuccess, setUpdateRelayersSuccess] = useState("");
 
+  const [originalLabel, setOriginalLabel] = useState("");
+  const [updateLabelError, setUpdateLabelError] = useState<Error | null>(null);
+  const [updateLabelSuccess, setUpdateLabelSuccess] = useState("");
+
   useEffect(() => {
     fetchSCW();
   }, []);
@@ -114,6 +137,8 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         setGuardians(info.guardians);
         setRelayers(info.relayers);
         setOriginalRelayers(info.relayers);
+        setLabel(info.label);
+        setOriginalLabel(info.label);
         if (info.multisig_address) {
           setEnableMultisig(true);
           signingClient
@@ -142,7 +167,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
     }
 
     if (!signingClient) {
-      console.warn("signingClient is null, can't create SCW.");
+      console.warn("signingClient is null, can't update SCW.");
       return;
     }
 
@@ -188,6 +213,11 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
       return;
     }
 
+    if (!signingClient) {
+      console.warn("signingClient is null, can't update SCW.");
+      return;
+    }
+
     setIsUpdating(true);
     operation(signingClient!, userAddress, proxyWalletAddress, relayers[idx])
       .then(() => {
@@ -198,6 +228,33 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
       .catch((err) => {
         console.error(err);
         setUpdateRelayersError(err);
+      })
+      .finally(() => setIsUpdating(false));
+  }
+
+  function updateLabel() {
+    setUpdateLabelError(null);
+    setUpdateLabelSuccess("");
+
+    if (!checkValidationErrors()) {
+      return;
+    }
+
+    if (!signingClient) {
+      console.warn("signingClient is null, can't update SCW.");
+      return;
+    }
+
+    setIsUpdating(true);
+    updateProxyWalletLabel(signingClient!, userAddress, proxyWalletAddress, label)
+      .then(() => {
+        setUpdateLabelSuccess("Smart Contract Wallet label has been updated successfully");
+        fetchSCW();
+        onRefresh?.();
+      })
+      .catch((err) => {
+        console.error(err);
+        setUpdateLabelError(err);
       })
       .finally(() => setIsUpdating(false));
   }
@@ -257,6 +314,35 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         Optionally, you can also enable or disable multisig for this wallet.
       </h2>
 
+      <h2 className="text-3xl font-bold mb-5">Update your label</h2>
+      <div className="flex w-full max-w-xl align-middle items-center mb-5">
+        <Input
+          placeholder={`Label (e.g. Personal Wallet, Business Wallet...)`}
+          onChange={(event) => setLabel(event.target.value)}
+          error={getValueValidationError("label")}
+          value={label}
+        />
+      </div>
+
+      <button
+        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full mb-5"
+        onClick={updateLabel}
+        type="button"
+      >
+        UPDATE LABEL
+      </button>
+
+      {updateLabelError && (
+        <div className="mt-4 mb-8 flex flex-col w-full max-w-xl">
+          <AlertError>{updateLabelError.message}</AlertError>
+        </div>
+      )}
+      {updateLabelSuccess && (
+        <div className="mt-4 mb-8 flex flex-col w-full max-w-xl">
+          <AlertSuccess>{updateLabelSuccess}</AlertSuccess>
+        </div>
+      )}
+
       <h2 className="text-3xl font-bold mb-5">Update your guardians</h2>
       {guardians.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
@@ -278,7 +364,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         </div>
       ))}
       <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
+        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-lg rounded-full"
         onClick={() => pushGuardian()}
         type="button"
       >
@@ -329,7 +415,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
       )}
 
       <button
-        className="mt-4 btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
+        className="mt-2 btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
         type="submit"
         onClick={updateGuardians}
       >
