@@ -45,6 +45,7 @@ export const SCWProposals = {
 export async function createProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
+  label: string,
   guardians: string[],
   relayers: string[],
   proxyInitialFunds: number,
@@ -67,6 +68,7 @@ export async function createProxyWallet(
   // Create wallet message
   const createWalletMsg: CreateWalletMsg = {
     user_pubkey: account.pubkey?.value,
+    label: label,
     guardians: {
       addresses: guardians,
       ...(multisigThreshold && {

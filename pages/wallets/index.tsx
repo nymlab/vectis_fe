@@ -30,7 +30,7 @@ const ListWallets: NextPage = () => {
           >
             {proxyWallets.map((address, i) => (
               <div key={i} className="m-5">
-                <SCWCard title={`Smart Contract Wallet`} address={address} onRefresh={refreshBalance} />
+                <SCWCard address={address} onRefresh={refreshBalance} />
               </div>
             ))}
           </div>
