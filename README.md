@@ -4,19 +4,25 @@
 
 This project is based on [Cosmos Contracts Starter Kit](https://github.com/CosmosContracts/starter-kit) and heavily modified.
 
-### 1. Launch local Juno node
+### 1. Launch Development Node
 
-When developing this dApp locally, we always connect with a local [Juno](https://www.junonetwork.io/) node running on the same machine, with deployed contracts. In order to setup the local environment, follow these steps:
+When developing this dApp locally, we always connect with vectis image which runs [Juno](https://www.junonetwork.io/) under the hood.
+
+Assuming you have [Docker](https://www.docker.com) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `vectis_node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
+
+In order to setup the development environment, follow these steps:
+
+##### 1. Run vectis image
 
 ```bash
-git clone https://github.com/nymlab/vectis.git
-cd vectis
-./local-juno-setup.sh
+docker run -d --name vectis_node -p 1317:1317 -p 26656:26656 -p 26657:26657 ghcr.io/nymlab/vectis:main
 ```
 
-Assuming you have [Docker](https://www.docker.com) and [Rust](https://rustup.rs) installed on your machine, a local Juno node with deployed Vectis contracts will be running in a container with name `juno-local-node`, exposing TCP ports 26656-26657 (Tendermint RPC) and 1317 (REST).
+##### 2. Extract factory address
 
-**IMPORTANT**: While running all the tests, some Factory contracts will be deployed on your local node. The addresses of these contracts will be printed in your terminal while the tests are running, so watch out for them! You will need them later.
+```bash
+docker exec -it vectis_node cat ./factoryAddr.txt
+```
 
 ### 2. Launch Vectis DApp locally
 
@@ -36,7 +42,11 @@ cp .env.example .env.local
 
 By editing `.env.local`, you tell Vectis which chain it should use with Keplr. It can be a local node, testnet or mainnet, you decide. When developing, we always use local node.
 
-**When using a local node, it is important to ensure that you are providing the right Factory contract address to the FE.**. Doing so is easy, just copy one of the addresses you got from the terminal and put it inside `.env.local` under the `NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS` key. Please **do not modify `.env.example`** as that's just a blueprint for environment variables.
+> **Note:** _Regardless of the network you use, you must set NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS_
+
+**it is important to ensure that you are providing a valid factory contract address.**
+
+Doing so is easy, just copy one of the addresses you got from the terminal and put it inside `.env.local` under the `NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS` key. Please **do not modify `.env.example`** as that's just a blueprint for environment variables.
 
 Then, run the development server:
 
