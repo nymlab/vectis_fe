@@ -37,7 +37,7 @@ jobs:
           echo 'NEXT_PUBLIC_GAS_PRICE=0.025' >> $GITHUB_ENV
           echo 'NEXT_PUBLIC_SITE_TITLE=Vectis' >> $GITHUB_ENV
           echo 'NEXT_PUBLIC_SITE_ICON_URL=/juno.svg' >> $GITHUB_ENV
-          echo 'NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=juno14jf8r2kxlymgjkp3xj8xuyud7h974648qdn9tsgsj0pascmntt9s4fueh5' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=`docker exec -it vectis_node cat ./factoryAddr.txt`' >> $GITHUB_ENV
       - run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run test:ci
         env:
           PWTEST_CHANNEL: chromium
