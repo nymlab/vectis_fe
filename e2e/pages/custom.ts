@@ -16,7 +16,6 @@ export class CustomPage {
     const [matchedPage] = pages.filter((page) => page.url().includes(matchingUrl));
     if (matchedPage) {
       this.page = matchedPage;
-      this.page.waitForLoadState();
     } else {
       this.page = pages.length ? pages[0] : await this.context.newPage();
       await this.page.goto(matchingUrl);

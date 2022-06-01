@@ -65,6 +65,8 @@ export const test = baseTest.extend({
     await dashboardPage.clickConnectWallet();
     await keplrPage.addChainAndConnect();
 
+    console.debug("keplr loaded");
+
     await page.close();
     await use(context);
     await context.close();
