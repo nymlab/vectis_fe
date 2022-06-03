@@ -1629,10 +1629,10 @@
     "@typescript-eslint/types" "4.33.0"
     "eslint-visitor-keys" "^2.0.0"
 
-"@vectis/types@^0.0.1":
-  "integrity" "sha512-mYhgrhPVV4FPkH4vJ+rEC/0kEzTRhyJdv2fAfJBZtuJOFJpa1BnDWNTbANSx6ZkmgWnt/v2BrW/xGr4jXaNMmQ=="
-  "resolved" "https://registry.npmjs.org/@vectis/types/-/types-0.0.1.tgz"
-  "version" "0.0.1"
+"@vectis/types@^0.0.3":
+  "integrity" "sha512-2ro3+7FAPCm3JA+2LtQ3jUq7El4vvUuuJ1+No1q0N7Cy3ZO0ZC9ZUsur3z7qnrrMEjDjObGr+ys2OFGRnQQSaA=="
+  "resolved" "https://registry.npmjs.org/@vectis/types/-/types-0.0.3.tgz"
+  "version" "0.0.3"
   dependencies:
     "cosmwasm-typescript-gen" "^0.2.14"
 
