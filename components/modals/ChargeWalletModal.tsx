@@ -6,7 +6,7 @@ import { env } from "env";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
-import { WalletInfo } from "types/FactoryContract";
+import { WalletInfo } from "@vectis/types/contracts/FactoryContract";
 import { coin, convertFromMicroDenom } from "util/conversion";
 
 type ChargeWalletModalProps = {

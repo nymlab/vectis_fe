@@ -1,8 +1,8 @@
 import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import { useVectisClient } from "hooks/useVectisClient";
 import { createContext, useContext, ReactNode } from "react";
-import { Coin, WalletInfo } from "types/FactoryContract";
-import { WasmMsg } from "types/ProxyContract";
+import { Coin, WalletInfo } from "@vectis/types/contracts/FactoryContract";
+import { WasmMsg } from "@vectis/types/contracts/ProxyContract";
 import { useSigningClient } from "./cosmwasm";
 
 export type WalletInfoWithBalance = WalletInfo & { balance: Coin };
