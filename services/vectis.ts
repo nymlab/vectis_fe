@@ -1,7 +1,7 @@
 import { Proposal, VoteInfo } from "./../contexts/vectis";
 import { WalletInfoWithBalance } from "contexts/vectis";
-import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "./../@vectis/types/contracts/ProxyContract";
-import { Coin, CreateWalletMsg, FactoryClient } from "./../@vectis/types/contracts/FactoryContract";
+import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "@vectis/types/contracts/ProxyContract";
+import { Coin, CreateWalletMsg, FactoryClient } from "@vectis/types/contracts/FactoryContract";
 import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "util/conversion";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
