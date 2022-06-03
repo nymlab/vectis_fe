@@ -11,7 +11,7 @@ import fs from "fs";
  */
 const config: PlaywrightTestConfig = {
   testDir: "./tests",
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // Sometimes take longer to load the context
   expect: {
     timeout: 5000,
   },
