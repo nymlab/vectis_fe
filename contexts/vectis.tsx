@@ -1,9 +1,9 @@
 import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
-import { useVectisClient } from "hooks/useVectisClient";
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect, useMemo, useCallback } from "react";
 import { Coin, WalletInfo } from "@vectis/types/contracts/FactoryContract";
 import { WasmMsg } from "@vectis/types/contracts/ProxyContract";
-import { useSigningClient } from "./cosmwasm";
+import { useCosmWasmClient } from "./cosmwasm";
+import { queryProxyWalletInfo, queryProxyWalletsOfUser } from "services/vectis";
 
 export type WalletInfoWithBalance = WalletInfo & { balance: Coin };
 
@@ -35,24 +35,50 @@ export type VoteInfo = {
 
 export interface IVectisContext {
   proxyWallets: string[];
-  loading: boolean;
-  error: any;
-  fetchWalletsInfo: ((addresses: string[]) => Promise<{ [key: string]: WalletInfoWithBalance }>) | null;
+  walletsInfo: Promise<{ address: string; info: WalletInfoWithBalance }[]>;
+  isLoading: boolean;
+  error: Error;
+  getWallets: () => void;
 }
 
-let VectisContext: any;
-let { Provider } = (VectisContext = createContext<IVectisContext>({
-  proxyWallets: [],
-  loading: false,
-  error: null,
-  fetchWalletsInfo: null,
-}));
-
-export const useVectis = (): IVectisContext => useContext(VectisContext);
+const VectisContext = createContext<IVectisContext | null>(null);
 
 export const VectisProvider = ({ children }: { children: ReactNode }) => {
-  const { walletAddress } = useSigningClient();
+  const { address: userAddress, signingClient } = useCosmWasmClient();
+  const [proxyWallets, setProxyWallets] = useState<string[]>([]);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const value = useVectisClient(walletAddress);
-  return <Provider value={value}>{children}</Provider>;
+  const getWallets = useCallback(() => {
+    setIsLoading(true);
+    queryProxyWalletsOfUser(signingClient!, userAddress).then(setProxyWallets).catch(setError);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!userAddress) return;
+    setIsLoading(true);
+    setError(null);
+    getWallets();
+  }, [userAddress]);
+
+  const walletsInfo = useMemo(
+    () =>
+      Promise.all(proxyWallets.map(async (address) => ({ address, info: await queryProxyWalletInfo(signingClient!, userAddress, address) }))),
+    [proxyWallets]
+  );
+
+  return (
+    <VectisContext.Provider value={{ proxyWallets, isLoading, walletsInfo, getWallets, error } as IVectisContext}>
+      {children}
+    </VectisContext.Provider>
+  );
+};
+
+export const useVectis = () => {
+  const context = useContext(VectisContext);
+  if (context === null) {
+    throw new Error("useVectis must be used within a VectisProvider");
+  }
+  return context;
 };

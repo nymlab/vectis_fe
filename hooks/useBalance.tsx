@@ -1,39 +1,32 @@
 import { useEffect, useState } from "react";
-import { useSigningClient } from "contexts/cosmwasm";
-import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
-import { env } from "env";
+import { useCosmWasmClient } from "contexts/cosmwasm";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
 
 export const useBalance = () => {
   const [balance, setBalance] = useState("");
   const [error, setError] = useState("");
 
-  const { walletAddress, signingClient } = useSigningClient();
+  const { address, signingClient, network } = useCosmWasmClient();
 
-  function fetchBalance() {
-    signingClient
-      ?.getBalance(walletAddress, env.stakingDenom)
-      .then((response: any) => {
-        const { amount, denom }: { amount: number; denom: string } = response;
-        setBalance(`${convertMicroDenomToDenom(amount)} ${convertFromMicroDenom(denom)}`);
-      })
-      .catch((error) => {
-        setError(`Error! ${error.message}`);
-        console.error("Error signingClient.getBalance(): ", error);
-      });
-  }
+  const getBalance = async () => {
+    if (!address) return;
+    setError("");
+    try {
+      const { amount, denom } = await signingClient.getBalance(address, network.feeToken);
+      setBalance(`${convertMicroDenomToDenom(amount)} ${convertFromMicroDenom(denom)}`);
+    } catch (error) {
+      setError(`Error! ${(error as Error).message}`);
+      console.error("Error signingClient.getBalance(): ", error);
+    }
+  };
 
   useEffect(() => {
-    if (!signingClient || walletAddress.length === 0) {
-      return;
-    }
-    setError("");
-
-    fetchBalance();
-  }, [signingClient, walletAddress]);
+    getBalance();
+  }, [address]);
 
   return {
     balance,
-    refreshBalance: fetchBalance,
+    refreshBalance: getBalance,
     error,
   };
 };
