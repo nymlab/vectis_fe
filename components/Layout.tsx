@@ -1,35 +1,33 @@
-import { ReactNode } from "react";
+import React, { PropsWithChildren } from "react";
+import clsx from "clsx";
 import Head from "next/head";
-import Nav from "./Nav";
-import { env } from "env";
+import { FaDesktop } from "react-icons/fa";
 
-export default function Layout({ children }: { children: ReactNode }) {
+import Sidebar from "./Sidebar";
+
+export const Layout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 text-base-content">
+    <div className="overflow-hidden relative">
       <Head>
-        <title>{env.siteTitle}</title>
-        <meta name="description" content="Vectis - Smart Contract Wallet" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
       </Head>
 
-      <Nav />
-      <main className="flex flex-col items-center justify-center w-full flex-1 p-2 md:px-20 text-center">
-        {children}
-      </main>
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        Vectis ©{" "}
-        <a className="pl-1 link link-primary link-hover" href="https://www.nymlab.it" target="_blank">
-          Nymlab
-        </a>
-        <span className="pl-1">{new Date().getFullYear()} | Powered by </span>
-        <a className="pl-1 link link-primary link-hover" href="https://cosmos.network" target="_blank">
-          Cosmos
-        </a>
-        <span className="pl-1"> and</span>
-        <a className="pl-1 link link-primary link-hover" href="https://www.keplr.app" target="_blank">
-          Keplr
-        </a>
-      </footer>
+      <div className="hidden sm:flex">
+        <Sidebar />
+        <div className="overflow-auto relative flex-grow h-screen no-scrollbar">
+          <main className={clsx("mx-auto max-w-7xl flex flex-col flex-grow h-screen justify-center items-center", {})}>{children}</main>
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-center items-center p-8 space-y-4 h-screen text-center bg-black/50 sm:hidden">
+        <FaDesktop size={48} />
+        <h1 className="text-2xl font-bold">Unsupported Viewport</h1>
+        <p>
+          Vectis is best viewed on the big screen.
+          <br />
+          Please open Vectis on your tablet or desktop browser.
+        </p>
+      </div>
     </div>
   );
-}
+};
