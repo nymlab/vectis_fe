@@ -1,124 +1,83 @@
-import { env } from "env";
-import { convertFromMicroDenom } from "util/conversion";
-
-// extend window with CosmJS and Keplr properties
-interface CosmosKeplrWindow extends Window {
-  keplr: any;
-  getOfflineSigner: Function;
-}
-
-declare let window: CosmosKeplrWindow;
+import { Network, NetworkOptions } from "interfaces/network";
+import networks from "configs/networks";
+import { OfflineSigner } from "@cosmjs/proto-signing";
+import { Key } from "@keplr-wallet/types";
 
 export const isKeplrInstalled = () => {
   // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
   return window.getOfflineSigner && window.keplr;
 };
 
-export const connectKeplr = async () => {
-  // Keplr extension injects the offline signer that is compatible with cosmJS.
-  // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
-  // And it also injects the helper function to `window.keplr`.
-  if (!isKeplrInstalled()) {
-    throw new Error("Keplr extension is not installed. Please install it here: https://keplr.app");
-  } else {
-    if (window.keplr.experimentalSuggestChain) {
-      const stakingDenom = convertFromMicroDenom(env.stakingDenom);
+export const getSigner = (networkName: NetworkOptions): Promise<OfflineSigner> => {
+  const network = networks[networkName];
+  return window?.keplr?.getOfflineSignerAuto(network.chainId) as Promise<OfflineSigner>;
+};
+export const getKey = (networkName: NetworkOptions): Promise<Key> | undefined => {
+  const network = networks[networkName];
+  return window?.keplr?.getKey(network.chainId);
+};
 
-      try {
-        // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
-        // cosmoshub-3 is integrated to Keplr so the code should return without errors.
-        // The code below is not needed for cosmoshub-3, but may be helpful if you’re adding a custom chain.
-        // If the user approves, the chain will be added to the user's Keplr extension.
-        // If the user rejects it or the suggested chain information doesn't include the required fields, it will throw an error.
-        // If the same chain id is already registered, it will resolve and not require the user interactions.
-        await window.keplr.experimentalSuggestChain({
-          // Chain-id of the Cosmos SDK chain.
-          chainId: env.chainId,
-          // The name of the chain to be displayed to the user.
-          chainName: env.chainName,
-          // RPC endpoint of the chain.
-          rpc: env.chainRpcEndpoint,
-          // REST endpoint of the chain.
-          rest: env.chainRestEndpoint,
-          // Staking coin information
-          stakeCurrency: {
-            // Coin denomination to be displayed to the user.
-            coinDenom: stakingDenom,
-            // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-            coinMinimalDenom: env.stakingDenom,
-            // # of decimal points to convert minimal denomination to user-facing denomination.
-            coinDecimals: 6,
-            // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
-            // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-            // coinGeckoId: ""
-          },
-          // (Optional) If you have a wallet webpage used to stake the coin then provide the url to the website in `walletUrlForStaking`.
-          // The 'stake' button in Keplr extension will link to the webpage.
-          // walletUrlForStaking: "",
-          // The BIP44 path.
-          bip44: {
-            // You can only set the coin type of BIP44.
-            // 'Purpose' is fixed to 44.
-            coinType: 118,
-          },
-          // Bech32 configuration to show the address to user.
-          bech32Config: {
-            bech32PrefixAccAddr: env.chainPrefix,
-            bech32PrefixAccPub: `${env.chainPrefix}pub`,
-            bech32PrefixValAddr: `${env.chainPrefix}valoper`,
-            bech32PrefixValPub: `${env.chainPrefix}valoperpub`,
-            bech32PrefixConsAddr: `${env.chainPrefix}valcons`,
-            bech32PrefixConsPub: `${env.chainPrefix}valconspub`,
-          },
-          // List of all coin/tokens used in this chain.
-          currencies: [
-            {
-              // Coin denomination to be displayed to the user.
-              coinDenom: stakingDenom,
-              // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: env.stakingDenom,
-              // # of decimal points to convert minimal denomination to user-facing denomination.
-              coinDecimals: 6,
-              // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
-              // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              // coinGeckoId: ""
-            },
-          ],
-          // List of coin/tokens used as a fee token in this chain.
-          feeCurrencies: [
-            {
-              // Coin denomination to be displayed to the user.
-              coinDenom: stakingDenom,
-              // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: env.stakingDenom,
-              // # of decimal points to convert minimal denomination to user-facing denomination.
-              coinDecimals: 6,
-              // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
-              // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              // coinGeckoId: ""
-            },
-          ],
-          // (Optional) The number of the coin type.
-          // This field is only used to fetch the address from ENS.
-          // Ideally, it is recommended to be the same with BIP44 path's coin type.
-          // However, some early chains may choose to use the Cosmos Hub BIP44 path of '118'.
-          // So, this is separated to support such chains.
-          coinType: 118,
-          // (Optional) This is used to set the fee of the transaction.
-          // If this field is not provided, Keplr extension will set the default gas price as (low: 0.01, average: 0.025, high: 0.04).
-          // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.
-          // Make sure that the gas prices are higher than the minimum gas prices accepted by chain validators and RPC/REST endpoint.
-          gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.04,
-          },
-        });
-      } catch {
-        throw new Error("Failed to suggest the chain to Keplr.");
-      }
-    } else {
-      throw new Error("Your installation of Keplr is outdated. Please update it.");
-    }
+export const connectKeplr = async (networkName: NetworkOptions) => {
+  if (!window.keplr || !window.getOfflineSigner) throw new Error("Keplr extension is not installed. Please install it here: https://keplr.app");
+  try {
+    await window.keplr.enable(networkName);
+  } catch (err) {
+    await addNetwork(networkName);
+    await window.keplr.enable(networkName);
   }
+};
+
+const addNetwork = async (networkName: NetworkOptions) => {
+  const network = networks[networkName];
+  const config = configKeplr(network);
+  if (!window.keplr?.experimentalSuggestChain) throw new Error("Your installation of Keplr is outdated. Please update it.");
+  await window.keplr.experimentalSuggestChain(config);
+};
+
+const configKeplr = (config: Network) => {
+  return {
+    chainId: config.chainId,
+    chainName: config.chainName,
+    rpc: config.rpcUrl,
+    rest: config.httpUrl,
+    bech32Config: {
+      bech32PrefixAccAddr: `${config.addressPrefix}`,
+      bech32PrefixAccPub: `${config.addressPrefix}pub`,
+      bech32PrefixValAddr: `${config.addressPrefix}valoper`,
+      bech32PrefixValPub: `${config.addressPrefix}valoperpub`,
+      bech32PrefixConsAddr: `${config.addressPrefix}valcons`,
+      bech32PrefixConsPub: `${config.addressPrefix}valconspub`,
+    },
+    currencies: [
+      {
+        coinDenom: config.coinMap[config.feeToken].denom,
+        coinMinimalDenom: config.feeToken,
+        coinDecimals: config.coinMap[config.feeToken].fractionalDigits,
+      },
+      {
+        coinDenom: config.coinMap[config.stakingToken].denom,
+        coinMinimalDenom: config.stakingToken,
+        coinDecimals: config.coinMap[config.stakingToken].fractionalDigits,
+      },
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: config.coinMap[config.feeToken].denom,
+        coinMinimalDenom: config.feeToken,
+        coinDecimals: config.coinMap[config.feeToken].fractionalDigits,
+      },
+    ],
+    stakeCurrency: {
+      coinDenom: config.coinMap[config.stakingToken].denom,
+      coinMinimalDenom: config.stakingToken,
+      coinDecimals: config.coinMap[config.stakingToken].fractionalDigits,
+    },
+    gasPriceStep: {
+      low: config.gasPrice / 2,
+      average: config.gasPrice,
+      high: config.gasPrice * 2,
+    },
+    bip44: { coinType: 118 },
+    coinType: 118,
+  };
 };

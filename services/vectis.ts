@@ -3,7 +3,7 @@ import { WalletInfoWithBalance } from "contexts/vectis";
 import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "@vectis/types/contracts/ProxyContract";
 import { Coin, CreateWalletMsg, FactoryClient } from "@vectis/types/contracts/FactoryContract";
 import { env } from "env";
-import { coin, convertMicroDenomToDenom } from "util/conversion";
+import { coin, convertMicroDenomToDenom } from "utils/conversion";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { ExecuteMsg, QueryMsg, Vote } from "@dao-dao/types/contracts/cw-proposal-single";
@@ -83,12 +83,9 @@ export async function createProxyWallet(
   };
 
   // Execute wallet creation
-  const res = await factoryClient.createWallet(
-    { createWalletMsg },
-    Number(defaultWalletCreationFee.amount),
-    undefined,
-    [coin(proxyInitialFunds + walletFee)]
-  );
+  const res = await factoryClient.createWallet({ createWalletMsg }, Number(defaultWalletCreationFee.amount), undefined, [
+    coin(proxyInitialFunds + walletFee),
+  ]);
 
   console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
 }
@@ -99,10 +96,7 @@ export async function createProxyWallet(
  * @param signingClient
  * @param userAddress
  */
-export async function queryProxyWalletsOfUser(
-  signingClient: SigningCosmWasmClient,
-  userAddress: string
-): Promise<string[]> {
+export async function queryProxyWalletsOfUser(signingClient: SigningCosmWasmClient, userAddress: string): Promise<string[]> {
   const factoryClient = new FactoryClient(signingClient, userAddress, env.contractFactoryAddress);
   const { wallets } = await factoryClient.walletsOf({ user: userAddress });
 
@@ -173,11 +167,7 @@ export async function transferFundsFromProxyWallet(
  * @param guardianAddress
  * @param proxyWalletAddress
  */
-export async function toggleProxyWalletFreezeStatus(
-  signingClient: SigningCosmWasmClient,
-  guardianAddress: string,
-  proxyWalletAddress: string
-) {
+export async function toggleProxyWalletFreezeStatus(signingClient: SigningCosmWasmClient, guardianAddress: string, proxyWalletAddress: string) {
   const proxyClient = new ProxyClient(signingClient, guardianAddress, proxyWalletAddress);
   const res = await proxyClient.revertFreezeStatus();
   console.log(`Executed revert freeze status transaction with hash ${res.transactionHash}. Logs:`, res.logs);
@@ -229,10 +219,7 @@ export async function proposeProxyWalletOperation(
  * @param signingClient
  * @param multisigAddress
  */
-export async function queryProposals(
-  signingClient: SigningCosmWasmClient,
-  multisigAddress: string
-): Promise<Proposal[]> {
+export async function queryProposals(signingClient: SigningCosmWasmClient, multisigAddress: string): Promise<Proposal[]> {
   const queryProps: QueryMsg = { list_proposals: {} };
   const { proposals } = await signingClient.queryContractSmart(multisigAddress, queryProps);
   return proposals;
