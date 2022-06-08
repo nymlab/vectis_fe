@@ -1,82 +1,83 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { ReactNode, useEffect } from "react";
-import { useSigningClient } from "contexts/cosmwasm";
-import Loader from "./Loader";
-import { AlertError } from "./Alert";
+import { Popover, Transition } from "@headlessui/react";
+import clsx from "clsx";
+import { Fragment, useEffect, useState } from "react";
+import { FaCopy, FaPowerOff, FaRedo } from "react-icons/fa";
+import { copy } from "utils/clipboard";
+import { getShortAddress } from "utils/string";
+import { convertMicroDenomToDenom } from "utils/conversion";
 
-type WalletLoaderProps = {
-  children: ReactNode;
-  loading?: boolean;
-};
+import { WalletButton } from "./buttons/WalletButton";
+import { WalletPanelButton } from "./WalletPanelButton";
+import { useCosmWasmClient } from "contexts/cosmwasm";
+import { Coin } from "@cosmjs/proto-signing";
 
-export default function WalletLoader({ children, loading = false }: WalletLoaderProps) {
-  const { walletAddress, loading: clientLoading, error, connectWallet } = useSigningClient();
+export const WalletLoader = () => {
+  const { address, isReady, isLoading, keyDetails, getBalance, connectWallet, disconnect } = useCosmWasmClient();
+  const [balance, setBalance] = useState<Coin | null>(null);
+  const shortAddress = address && getShortAddress(address);
+  const displayName = keyDetails?.name || shortAddress;
 
   useEffect(() => {
-    if (!!localStorage.getItem("walletAddress")) {
-      connectToWallet();
-    }
+    if (!address) return;
+    getBalance().then(setBalance);
+  }, [address]);
 
-    window.addEventListener("keplr_keystorechange", () => connectToWallet());
+  return (
+    <Popover className="my-8">
+      {({ close }) => (
+        <>
+          <div className="grid -mx-4">
+            {!isReady && (
+              <WalletButton className="w-full" data-testid="wallet-nav-button" isLoading={isLoading} onClick={() => connectWallet()}>
+                Connect Wallet
+              </WalletButton>
+            )}
 
-    return () => window.removeEventListener("keplr_keystorechange", () => connectToWallet());
-  }, []);
-
-  function connectToWallet() {
-    connectWallet();
-  }
-
-  if (loading || clientLoading) {
-    return (
-      <Loader>
-        Connecting to your <b>Keplr Wallet</b>...
-      </Loader>
-    );
-  }
-
-  if (walletAddress === "") {
-    return (
-      <div className="max-w-full">
-        <h1 className="text-6xl font-bold">
-          Welcome to{" "}
-          <a className="link link-primary link-hover" href="https://github.com/nymlab/vectis">
-            Vectis
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by installing{" "}
-          <a className="pl-1 link link-primary link-hover" href="https://keplr.app/">
-            Keplr wallet
-          </a>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
-          <button
-            className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
-            onClick={connectToWallet}
-          >
-            <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
-            <p className="mt-4 text-xl">Get your Keplr wallet connected now and start using it with Vectis.</p>
-          </button>
-        </div>
-
-        {error && (
-          <div className="my-5">
-            <AlertError>Error! {error.message}</AlertError>
+            {isReady && (
+              <Popover.Button as={WalletButton} className="w-full" isLoading={isLoading}>
+                {displayName}
+              </Popover.Button>
+            )}
           </div>
-        )}
-      </div>
-    );
-  }
 
-  if (error) {
-    return (
-      <div className="my-5">
-        <AlertError>Error! {error.message}</AlertError>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-}
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 -translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 -translate-y-1"
+          >
+            <Popover.Panel
+              className={clsx(
+                "absolute inset-x-4 mt-2",
+                "bg-stone-800/80 rounded shadow-lg shadow-black/90 backdrop-blur-sm",
+                "flex flex-col items-stretch text-sm divide-y divide-white/10"
+              )}
+            >
+              <div className="flex flex-col items-center py-2 px-4 space-y-1 text-center">
+                <span className="py-px px-2 mb-2 font-mono text-xs text-white/50 rounded-full border border-white/25">{shortAddress}</span>
+                <div className="font-bold">Your Balance</div>
+                {balance && (
+                  <span key={`balance-${balance.denom}`}>
+                    {convertMicroDenomToDenom(balance.amount)} {balance.denom.slice(1, balance.denom.length)}
+                  </span>
+                )}
+              </div>
+              <WalletPanelButton Icon={FaCopy} onClick={() => void copy(address)}>
+                Copy wallet address
+              </WalletPanelButton>
+              <WalletPanelButton Icon={FaRedo} onClick={() => connectWallet()}>
+                Reconnect
+              </WalletPanelButton>
+              <WalletPanelButton Icon={FaPowerOff} onClick={() => [disconnect(), close()]}>
+                Disconnect
+              </WalletPanelButton>
+            </Popover.Panel>
+          </Transition>
+        </>
+      )}
+    </Popover>
+  );
+};
