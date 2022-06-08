@@ -2,7 +2,7 @@ import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export default function RotateKeyModal({
   onKeyRotationProposal,
   onClose,
 }: RotateKeyModalProps) {
-  const { signingClient, walletAddress: userAddress } = useSigningClient();
+  const { signingClient, address: userAddress } = useCosmWasmClient();
 
   const [newOwnerAddress, setNewOwnerAddress] = useState("");
   const { getValueValidationError, checkValidationErrors, clearValidationErrors } = useValidationErrors({
@@ -96,9 +96,7 @@ export default function RotateKeyModal({
 
   return (
     <Modal id={`rotate-key-modal`} onClose={handleCloseModal}>
-      <h3 className="text-xl font-bold mb-5">
-        {proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}
-      </h3>
+      <h3 className="text-xl font-bold mb-5">{proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}</h3>
       <div className="flex flex-col items-center">
         {!isRotating ? (
           <>
@@ -122,9 +120,7 @@ export default function RotateKeyModal({
           </>
         ) : (
           <>
-            <Loader>
-              {proxyWalletInfo?.multisig_address ? "Proposing key rotation..." : "Performing key rotation..."}
-            </Loader>
+            <Loader>{proxyWalletInfo?.multisig_address ? "Proposing key rotation..." : "Performing key rotation..."}</Loader>
           </>
         )}
       </div>

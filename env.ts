@@ -1,4 +1,7 @@
+import { NetworkOptions } from "interfaces/network";
+
 interface Environment {
+  networkName: NetworkOptions;
   chainId: string;
   chainName: string;
   chainPrefix: string;
@@ -13,6 +16,7 @@ interface Environment {
 }
 
 export const env: Environment = {
+  networkName: process.env.NEXT_PUBLIC_NETWORK as NetworkOptions,
   chainId: process.env.NEXT_PUBLIC_CHAIN_ID!,
   chainName: process.env.NEXT_PUBLIC_CHAIN_NAME!,
   chainPrefix: process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX!,

@@ -1,5 +1,5 @@
 import { Proposal, VoteInfo } from "contexts/vectis";
-import { groupVoteListByVote } from "util/misc";
+import { groupVoteListByVote } from "utils/misc";
 
 type ProposalVotesProps = {
   proposal: Proposal;
@@ -25,10 +25,7 @@ export default function ProposalVotes({ proposal, voteList }: ProposalVotesProps
         <p className="text-gray-600">ABSTAIN: {groupVoteListByVote(proposal, voteList, "abstain").weight}</p>
       </div>
       {voteList.map((v, i) => (
-        <div
-          key={i}
-          className={`flex w-full my-3 border-2 rounded-lg p-5 items-center justify-between ${voteColors[v.vote]}`}
-        >
+        <div key={i} className={`flex w-full my-3 border-2 rounded-lg p-5 items-center justify-between ${voteColors[v.vote]}`}>
           <p className="link link-hover text-sm transition-colors tooltip" data-tip="Copy address">
             {v.voter}
           </p>

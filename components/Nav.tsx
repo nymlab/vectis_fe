@@ -1,13 +1,13 @@
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "components/ThemeToggle";
 import { env } from "env";
 
 function Nav() {
-  const { walletAddress, connectWallet, disconnect } = useSigningClient();
+  const { address, connectWallet, disconnect } = useCosmWasmClient();
   const handleConnect = () => {
-    if (walletAddress.length === 0) {
+    if (!address.length) {
       connectWallet();
     } else {
       disconnect();
@@ -40,7 +40,7 @@ function Nav() {
             onClick={handleConnect}
             data-testid="wallet-nav-button"
           >
-            {walletAddress || "Connect Wallet"}
+            {address || "Connect Wallet"}
           </button>
         </div>
       </nav>

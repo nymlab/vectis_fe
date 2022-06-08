@@ -1,6 +1,6 @@
 import RotateKeyModal from "components/modals/RotateKeyModal";
 import VoteModal from "components/modals/VoteModal";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
 import { queryProposalVoteList } from "services/vectis";
@@ -20,7 +20,7 @@ export default function RotateKeyButton({
   onKeyRotation,
   onKeyRotationProposal,
 }: RotateKeyButtonProps) {
-  const { signingClient, walletAddress: userAddress } = useSigningClient();
+  const { signingClient, address: userAddress } = useCosmWasmClient();
 
   const [rotateKeyModalOpen, setRotateKeyModalOpen] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
@@ -54,20 +54,14 @@ export default function RotateKeyButton({
       <>
         <label
           htmlFor={keyRotationProposal ? `vote-modal-${keyRotationProposal.id}` : "rotate-key-modal"}
-          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
-            alreadyVoted ? "btn-disabled" : "btn-primary"
-          }`}
+          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${alreadyVoted ? "btn-disabled" : "btn-primary"}`}
           onClick={() => (!keyRotationProposal ? setRotateKeyModalOpen(true) : openVoteModal())}
         >
           {keyRotationProposal ? "VOTE" : "PROPOSE"} KEY ROTATION
         </label>
 
         {voteModalOpen && (
-          <VoteModal
-            proposal={keyRotationProposal!}
-            multisigAddress={proxyWalletInfo.multisig_address!}
-            onVote={fetchVoteList}
-          />
+          <VoteModal proposal={keyRotationProposal!} multisigAddress={proxyWalletInfo.multisig_address!} onVote={fetchVoteList} />
         )}
 
         {rotateKeyModalOpen && (

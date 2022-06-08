@@ -3,7 +3,7 @@ import { queryProxyWalletInfo } from "services/vectis";
 import { AlertError } from "./Alert";
 import { IconChip, IconFreeze, IconSignature } from "./Icon";
 import { WalletInfoWithBalance } from "contexts/vectis";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
@@ -17,7 +17,7 @@ type SCWCardProps = {
 };
 
 export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
-  const { signingClient, walletAddress } = useSigningClient();
+  const { signingClient, address: walletAddress } = useCosmWasmClient();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -114,20 +114,10 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
       </div>
 
       {modalSendOpen && (
-        <SendFundsModal
-          walletInfo={walletInfo}
-          walletAddress={address}
-          onSentFunds={doRefresh}
-          onClose={() => setModalSendOpen(false)}
-        />
+        <SendFundsModal walletInfo={walletInfo} walletAddress={address} onSentFunds={doRefresh} onClose={() => setModalSendOpen(false)} />
       )}
       {modalChargeOpen && (
-        <ChargeWalletModal
-          walletInfo={walletInfo}
-          walletAddress={address}
-          onChargeDone={doRefresh}
-          onClose={() => setModalChargeOpen(false)}
-        />
+        <ChargeWalletModal walletInfo={walletInfo} walletAddress={address} onChargeDone={doRefresh} onClose={() => setModalChargeOpen(false)} />
       )}
     </>
   );

@@ -1,5 +1,5 @@
 import { Coin } from "@cosmjs/stargate";
-import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
 
 type TokenAmountProps = {
   token?: Coin;

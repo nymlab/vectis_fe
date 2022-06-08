@@ -1,5 +1,5 @@
 import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
-import { Proposal, VoteInfo } from "./../contexts/vectis";
+import { Proposal, VoteInfo } from "../contexts/vectis";
 
 type AggregatedVoteInfo = {
   proposal_id: number;

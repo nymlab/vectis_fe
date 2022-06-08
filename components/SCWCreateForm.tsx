@@ -1,11 +1,11 @@
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { createProxyWallet } from "services/vectis";
-import { convertFromMicroDenom } from "util/conversion";
+import { convertFromMicroDenom } from "utils/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
 import { IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
@@ -16,16 +16,11 @@ type SCWCreateFormProps = {
 };
 
 export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
-  const { walletAddress, signingClient } = useSigningClient();
+  const { address, signingClient } = useCosmWasmClient();
   const { balance, refreshBalance } = useBalance();
 
   // Form state hooks
-  const {
-    array: guardians,
-    setItem: setGuardian,
-    pushItem: pushGuardian,
-    removeItem: removeGuardian,
-  } = useArrayState("");
+  const { array: guardians, setItem: setGuardian, pushItem: pushGuardian, removeItem: removeGuardian } = useArrayState("");
   const { array: relayers, setItem: setRelayer, pushItem: pushRelayer, removeItem: removeRelayer } = useArrayState("");
   const [proxyInitialFunds, setProxyInitialFunds] = useState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
@@ -68,13 +63,13 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         key: "guardians",
         value: guardians,
         message: "You can't become your own guardian",
-        validate: (g) => g !== walletAddress,
+        validate: (g) => g !== address,
       },
       {
         key: "relayers",
         value: relayers,
         message: "You can't become your own relayer",
-        validate: (r) => r !== walletAddress,
+        validate: (r) => r !== address,
       },
       {
         key: "guardians",
@@ -119,7 +114,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
     setIsCreating(true);
     createProxyWallet(
       signingClient!,
-      walletAddress,
+      address,
       label,
       guardians,
       relayers,
@@ -191,10 +186,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           )}
         </div>
       ))}
-      <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
-        onClick={() => pushGuardian()}
-      >
+      <button className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full" onClick={() => pushGuardian()}>
         ADD GUARDIAN
       </button>
 

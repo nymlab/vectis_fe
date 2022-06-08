@@ -3,13 +3,13 @@ import { Input } from "components/Input";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
 import TokenAmount from "components/TokenAmount";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { env } from "env";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { transferFundsFromProxyWallet } from "services/vectis";
-import { convertFromMicroDenom, convertMicroDenomToDenom } from "util/conversion";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
 
 type SendFundsModalProps = {
   walletInfo: WalletInfoWithBalance | null;
@@ -19,7 +19,7 @@ type SendFundsModalProps = {
 };
 
 export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds, onClose }: SendFundsModalProps) {
-  const { walletAddress: userAddress, signingClient } = useSigningClient();
+  const { address: userAddress, signingClient } = useCosmWasmClient();
 
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amountToSend, setAmountToSend] = useState("");
