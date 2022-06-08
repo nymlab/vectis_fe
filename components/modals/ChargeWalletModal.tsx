@@ -1,13 +1,13 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { env } from "env";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { WalletInfo } from "@vectis/types/contracts/FactoryContract";
-import { coin, convertFromMicroDenom } from "util/conversion";
+import { coin, convertFromMicroDenom } from "utils/conversion";
 
 type ChargeWalletModalProps = {
   walletInfo: WalletInfo | null;
@@ -16,14 +16,9 @@ type ChargeWalletModalProps = {
   onClose?: () => void;
 };
 
-export default function ChargeWalletModal({
-  walletInfo,
-  walletAddress,
-  onChargeDone,
-  onClose,
-}: ChargeWalletModalProps) {
+export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeDone, onClose }: ChargeWalletModalProps) {
   const { balance } = useBalance();
-  const { walletAddress: userAddress, signingClient } = useSigningClient();
+  const { address: userAddress, signingClient } = useCosmWasmClient();
 
   const [amountToSend, setAmountToSend] = useState("");
   const { getValueValidationError, checkValidationErrors, clearValidationErrors } = useValidationErrors({
@@ -62,9 +57,7 @@ export default function ChargeWalletModal({
     signingClient
       ?.sendTokens(userAddress, walletAddress, [coin(parseFloat(amountToSend))], "auto")
       .then(() => {
-        setSendSuccess(
-          `Successfully charged ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)} into the wallet!`
-        );
+        setSendSuccess(`Successfully charged ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)} into the wallet!`);
         setAmountToSend("");
         onChargeDone();
       })

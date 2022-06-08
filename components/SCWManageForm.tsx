@@ -1,5 +1,5 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { useArrayState } from "hooks/useArrayState";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ type SCWManageFormProps = {
 };
 
 export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWManageFormProps) {
-  const { walletAddress: userAddress, signingClient } = useSigningClient();
+  const { address: userAddress, signingClient } = useCosmWasmClient();
 
   // Form state hooks
   const {
@@ -31,13 +31,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
     removeItem: removeGuardian,
     setArray: setGuardians,
   } = useArrayState("");
-  const {
-    array: relayers,
-    setItem: setRelayer,
-    pushItem: pushRelayer,
-    removeItem: removeRelayer,
-    setArray: setRelayers,
-  } = useArrayState("");
+  const { array: relayers, setItem: setRelayer, pushItem: pushRelayer, removeItem: removeRelayer, setArray: setRelayers } = useArrayState("");
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
   const [label, setLabel] = useState("");
@@ -59,35 +53,30 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
     ],
   });
 
-  const {
-    getArrayValidationError: getGuardianArrayValidationError,
-    checkValidationErrors: checkGuardianValidationErrors,
-  } = useValidationErrors({
-    validators: [
-      {
-        key: "guardians",
-        value: guardians,
-        message: "This field is mandatory",
-        validate: (g) => !!g,
-      },
-      {
-        key: "guardians",
-        value: guardians,
-        message: "You can't become your own guardian",
-        validate: (g) => g !== userAddress,
-      },
-      {
-        key: "guardians",
-        value: guardians,
-        message: "Guardian addresses must be unique",
-        validate: (g1, i) => !guardians.some((g2, j) => i !== j && g1 === g2),
-      },
-    ],
-  });
-  const {
-    getArrayValidationError: getRelayerArrayValidationError,
-    checkValidationErrors: checkRelayerValidationErrors,
-  } = useValidationErrors({
+  const { getArrayValidationError: getGuardianArrayValidationError, checkValidationErrors: checkGuardianValidationErrors } =
+    useValidationErrors({
+      validators: [
+        {
+          key: "guardians",
+          value: guardians,
+          message: "This field is mandatory",
+          validate: (g) => !!g,
+        },
+        {
+          key: "guardians",
+          value: guardians,
+          message: "You can't become your own guardian",
+          validate: (g) => g !== userAddress,
+        },
+        {
+          key: "guardians",
+          value: guardians,
+          message: "Guardian addresses must be unique",
+          validate: (g1, i) => !guardians.some((g2, j) => i !== j && g1 === g2),
+        },
+      ],
+    });
+  const { getArrayValidationError: getRelayerArrayValidationError, checkValidationErrors: checkRelayerValidationErrors } = useValidationErrors({
     validators: [
       {
         key: "relayers",
@@ -172,13 +161,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
     }
 
     setIsUpdating(true);
-    updateProxyWalletGuardians(
-      signingClient!,
-      userAddress,
-      proxyWalletAddress,
-      guardians,
-      enableMultisig ? multisigThreshold : 0
-    )
+    updateProxyWalletGuardians(signingClient!, userAddress, proxyWalletAddress, guardians, enableMultisig ? multisigThreshold : 0)
       .then(() => {
         setUpdateGuardiansSuccess("Smart Contract Wallet guardians have been updated successfully");
         onRefresh?.();
@@ -199,12 +182,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
 
   function updateRelayers(
     idx: number,
-    operation: (
-      signingClient: SigningCosmWasmClient,
-      userAddress: string,
-      proxyWalletAddress: string,
-      relayer: string
-    ) => Promise<void>
+    operation: (signingClient: SigningCosmWasmClient, userAddress: string, proxyWalletAddress: string, relayer: string) => Promise<void>
   ) {
     setUpdateRelayersError(null);
     setUpdateRelayersSuccess("");

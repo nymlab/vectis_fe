@@ -1,8 +1,8 @@
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { Proposal, VoteInfo } from "contexts/vectis";
 import { useEffect, useState } from "react";
 import { executeProposal, queryProposalVoteList } from "services/vectis";
-import { groupVoteListByVote } from "util/misc";
+import { groupVoteListByVote } from "utils/misc";
 import { AlertError } from "./Alert";
 import Loader from "./Loader";
 import ProposalVotes from "./ProposalVotes";
@@ -14,7 +14,7 @@ type ProposalDetailsProps = {
 };
 
 export default function ProposalDetails({ proposal, multisigAddress, onExecute }: ProposalDetailsProps) {
-  const { signingClient, walletAddress: userAddress } = useSigningClient();
+  const { signingClient, address: userAddress } = useCosmWasmClient();
 
   const [voteList, setVoteList] = useState<VoteInfo[]>([]);
   const [loading, setLoading] = useState(false);

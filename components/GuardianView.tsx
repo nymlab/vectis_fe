@@ -1,6 +1,6 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useMemo, useState } from "react";
@@ -13,7 +13,7 @@ import ProposalDetails from "./ProposalDetails";
 import TokenAmount from "./TokenAmount";
 
 export default function GuardianView() {
-  const { signingClient, walletAddress } = useSigningClient();
+  const { signingClient, address } = useCosmWasmClient();
 
   const [proxyWalletAddress, setProxyWalletAddress] = useState("");
   const [fetchingSCW, setFetchingSCW] = useState(false);
@@ -57,17 +57,15 @@ export default function GuardianView() {
 
     setError(null);
     setFetchingSCW(true);
-    return queryProxyWalletInfo(signingClient!, walletAddress, proxyWalletAddress)
+    return queryProxyWalletInfo(signingClient!, address, proxyWalletAddress)
       .then((info) => {
-        if (!info.guardians.includes(walletAddress)) {
+        if (!info.guardians.includes(address)) {
           setError(new Error("You are not a guardian of this Smart Contract Wallet."));
           return;
         }
         if (info.multisig_address) {
           queryProposals(signingClient!, info.multisig_address!)
-            .then((props) =>
-              setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected"))
-            )
+            .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected")))
             .catch(console.error);
         }
 
@@ -123,10 +121,7 @@ export default function GuardianView() {
           error={getValueValidationError("walletAddress")}
           value={proxyWalletAddress}
         />
-        <button
-          className="btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow my-5"
-          type="submit"
-        >
+        <button className="btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow my-5" type="submit">
           SEARCH
         </button>
       </form>
@@ -174,8 +169,7 @@ export default function GuardianView() {
                 data-tip="Show proposal details"
                 onClick={() => toggleProposalDetailsModal(walletKeyRotationProposal)}
               >
-                Proposal to rotate owner key{" "}
-                {walletKeyRotationProposal.status === "passed" ? "has passed" : "is active"}
+                Proposal to rotate owner key {walletKeyRotationProposal.status === "passed" ? "has passed" : "is active"}
               </label>
             )}
           </div>
@@ -214,16 +208,8 @@ export default function GuardianView() {
         const proposal = walletActiveProposals.find((prop) => prop.id === +id)!;
         return (
           show && (
-            <Modal
-              key={proposal.id}
-              id={`proposal-details-modal-${proposal.id}`}
-              onClose={() => toggleProposalDetailsModal(proposal)}
-            >
-              <ProposalDetails
-                multisigAddress={walletInfo?.multisig_address!}
-                proposal={proposal}
-                onExecute={fetchSCW}
-              />
+            <Modal key={proposal.id} id={`proposal-details-modal-${proposal.id}`} onClose={() => toggleProposalDetailsModal(proposal)}>
+              <ProposalDetails multisigAddress={walletInfo?.multisig_address!} proposal={proposal} onExecute={fetchSCW} />
             </Modal>
           )
         );

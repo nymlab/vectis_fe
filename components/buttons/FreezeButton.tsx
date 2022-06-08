@@ -1,5 +1,5 @@
 import VoteModal from "components/modals/VoteModal";
-import { useSigningClient } from "contexts/cosmwasm";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
 import {
@@ -20,15 +20,8 @@ type FreezeButtonProps = {
   onError?: (err: Error) => void;
 };
 
-export default function FreezeButton({
-  proxyWalletAddress,
-  proxyWalletInfo,
-  freezeProposal,
-  onStart,
-  onSuccess,
-  onError,
-}: FreezeButtonProps) {
-  const { signingClient, walletAddress: userAddress } = useSigningClient();
+export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, freezeProposal, onStart, onSuccess, onError }: FreezeButtonProps) {
+  const { signingClient, address: userAddress } = useCosmWasmClient();
   const [loading, setLoading] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [voteModalOpen, setVoteModalOpen] = useState(false);
@@ -53,9 +46,7 @@ export default function FreezeButton({
     onStart?.();
     setLoading(true);
     toggleProxyWalletFreezeStatus(signingClient!, userAddress, proxyWalletAddress)
-      .then(() =>
-        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`)
-      )
+      .then(() => onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was executed correctly!`))
       .catch((err) => onError?.(err))
       .finally(() => setLoading(false));
   }
@@ -69,16 +60,8 @@ export default function FreezeButton({
 
     onStart?.();
     setLoading(true);
-    proposeProxyWalletOperation(
-      signingClient!,
-      userAddress,
-      proxyWalletAddress,
-      proxyWalletInfo.multisig_address!,
-      SCWOperation.ToggleFreeze
-    )
-      .then(() =>
-        onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed successfully!`)
-      )
+    proposeProxyWalletOperation(signingClient!, userAddress, proxyWalletAddress, proxyWalletInfo.multisig_address!, SCWOperation.ToggleFreeze)
+      .then(() => onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed successfully!`))
       .catch((err) => {
         console.error(err);
         onError?.(err);
@@ -104,30 +87,19 @@ export default function FreezeButton({
       <>
         <label
           htmlFor={freezeProposal ? `vote-modal-${freezeProposal.id}` : ""}
-          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
-            alreadyVoted ? "btn-disabled" : "btn-primary"
-          }`}
+          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${alreadyVoted ? "btn-disabled" : "btn-primary"}`}
           onClick={() => (!freezeProposal ? proposeToggleFreezeStatus() : openVoteModal())}
         >
           {freezeProposal ? "VOTE" : "PROPOSE"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
         </label>
 
-        {voteModalOpen && (
-          <VoteModal
-            proposal={freezeProposal!}
-            multisigAddress={proxyWalletInfo.multisig_address!}
-            onVote={fetchVoteList}
-          />
-        )}
+        {voteModalOpen && <VoteModal proposal={freezeProposal!} multisigAddress={proxyWalletInfo.multisig_address!} onVote={fetchVoteList} />}
       </>
     );
   }
 
   return (
-    <button
-      className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2"
-      onClick={toggleFreezeStatus}
-    >
+    <button className="btn btn-primary btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2" onClick={toggleFreezeStatus}>
       {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
     </button>
   );
