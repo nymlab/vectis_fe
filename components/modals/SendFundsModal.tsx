@@ -5,11 +5,11 @@ import Modal from "components/Modal";
 import TokenAmount from "components/TokenAmount";
 import { useCosmWasmClient } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
-import { env } from "env";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { transferFundsFromProxyWallet } from "services/vectis";
 import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
+import network from "configs/networks";
 
 type SendFundsModalProps = {
   walletInfo: WalletInfoWithBalance | null;
@@ -52,7 +52,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
       {
         key: "amountToSend",
         value: amountToSend,
-        message: `This SCW doesn't have enough ${convertFromMicroDenom(env.stakingDenom)}`,
+        message: `This SCW doesn't have enough ${convertFromMicroDenom(network.stakingToken)}`,
         validate: () => parseFloat(amountToSend) < convertMicroDenomToDenom(walletInfo?.balance.amount ?? 0),
       },
     ],
@@ -70,7 +70,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
     setIsSending(true);
     transferFundsFromProxyWallet(signingClient!, userAddress, walletAddress, receiverAddress, parseFloat(amountToSend))
       .then(() => {
-        setSendSuccess(`Successfully sent ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)}!`);
+        setSendSuccess(`Successfully sent ${amountToSend} ${convertFromMicroDenom(network.stakingToken)}!`);
         setAmountToSend("");
         onSentFunds();
       })
@@ -119,7 +119,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
                   value={amountToSend}
                 />
                 <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-                  {convertFromMicroDenom(env.stakingDenom)}
+                  {convertFromMicroDenom(network.stakingToken)}
                 </span>
               </div>
               {getValueValidationError("amountToSend") && (

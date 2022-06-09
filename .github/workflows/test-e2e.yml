@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           set +x
-          echo 'NEXT_PUBLIC_NETWORK=juno-local' >> $GITHUB_ENV
+          echo 'NEXT_PUBLIC_NETWORK=juno_local' >> $GITHUB_ENV
           echo 'NEXT_PUBLIC_SITE_TITLE=Vectis' >> $GITHUB_ENV
           echo 'NEXT_PUBLIC_SITE_ICON_URL=/juno.svg' >> $GITHUB_ENV
           echo 'NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=`docker exec -it vectis_node cat ./factoryAddr.txt`' >> $GITHUB_ENV

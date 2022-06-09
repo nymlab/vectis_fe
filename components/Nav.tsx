@@ -2,7 +2,6 @@ import { useCosmWasmClient } from "contexts/cosmwasm";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "components/ThemeToggle";
-import { env } from "env";
 
 function Nav() {
   const { address, connectWallet, disconnect } = useCosmWasmClient();
@@ -14,7 +13,7 @@ function Nav() {
     }
   };
 
-  const PUBLIC_SITE_ICON_URL = env.siteIconUrl;
+  const PUBLIC_SITE_ICON_URL = "";
 
   return (
     <div className="border-b w-screen px-2 md:px-16">
@@ -30,7 +29,7 @@ function Nav() {
             </a>
           </Link>
           <Link href="/">
-            <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">{env.siteTitle}</a>
+            <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">{""}</a>
           </Link>
         </div>
         <ThemeToggle />

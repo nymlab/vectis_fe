@@ -2,12 +2,12 @@ import { AlertError, AlertSuccess } from "components/Alert";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
 import { useCosmWasmClient } from "contexts/cosmwasm";
-import { env } from "env";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
 import { WalletInfo } from "@vectis/types/contracts/FactoryContract";
 import { coin, convertFromMicroDenom } from "utils/conversion";
+import network from "configs/networks";
 
 type ChargeWalletModalProps = {
   walletInfo: WalletInfo | null;
@@ -38,7 +38,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
       {
         key: "amountToSend",
         value: amountToSend,
-        message: `You don't have enough ${convertFromMicroDenom(env.stakingDenom)}`,
+        message: `You don't have enough ${convertFromMicroDenom(network.stakingToken)}`,
         validate: () => parseFloat(amountToSend) < parseFloat(balance),
       },
     ],
@@ -57,7 +57,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
     signingClient
       ?.sendTokens(userAddress, walletAddress, [coin(parseFloat(amountToSend))], "auto")
       .then(() => {
-        setSendSuccess(`Successfully charged ${amountToSend} ${convertFromMicroDenom(env.stakingDenom)} into the wallet!`);
+        setSendSuccess(`Successfully charged ${amountToSend} ${convertFromMicroDenom(network.stakingToken)} into the wallet!`);
         setAmountToSend("");
         onChargeDone();
       })
@@ -94,7 +94,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
                   value={amountToSend}
                 />
                 <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-                  {convertFromMicroDenom(env.stakingDenom)}
+                  {convertFromMicroDenom(network.stakingToken)}
                 </span>
               </div>
               {getValueValidationError("amountToSend") && (

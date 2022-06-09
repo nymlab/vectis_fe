@@ -2,11 +2,13 @@ import { Proposal, VoteInfo } from "./../contexts/vectis";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "@vectis/types/contracts/ProxyContract";
 import { Coin, CreateWalletMsg, FactoryClient } from "@vectis/types/contracts/FactoryContract";
-import { env } from "env";
 import { coin, convertMicroDenomToDenom } from "utils/conversion";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { ExecuteMsg, QueryMsg, Vote } from "@dao-dao/types/contracts/cw-proposal-single";
+import network from "configs/networks";
+
+const factoryContractAddress = process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS;
 
 export enum SCWOperation {
   ToggleFreeze = "TOGGLE_FREEZE",
@@ -51,7 +53,7 @@ export async function createProxyWallet(
   proxyInitialFunds: number,
   multisigThreshold?: number
 ) {
-  if (!env.contractFactoryAddress) {
+  if (!factoryContractAddress) {
     throw new Error("Factory address is missing in environment");
   }
 
@@ -60,7 +62,7 @@ export async function createProxyWallet(
     throw new Error(`Signer account was not found by user address ${userAddress}`);
   }
 
-  const factoryClient = new FactoryClient(signingClient, userAddress, env.contractFactoryAddress);
+  const factoryClient = new FactoryClient(signingClient, userAddress, factoryContractAddress);
 
   const defaultWalletCreationFee = await factoryClient.fee();
   const walletFee = convertMicroDenomToDenom(100);
@@ -97,7 +99,7 @@ export async function createProxyWallet(
  * @param userAddress
  */
 export async function queryProxyWalletsOfUser(signingClient: SigningCosmWasmClient, userAddress: string): Promise<string[]> {
-  const factoryClient = new FactoryClient(signingClient, userAddress, env.contractFactoryAddress);
+  const factoryClient = new FactoryClient(signingClient, userAddress, factoryContractAddress);
   const { wallets } = await factoryClient.walletsOf({ user: userAddress });
 
   return wallets;
@@ -117,7 +119,7 @@ export async function queryProxyWalletInfo(
 ): Promise<WalletInfoWithBalance> {
   const proxyClient = new ProxyClient(signingClient, userAddress, proxyWalletAddress);
   const info = await proxyClient.info();
-  const balance = await signingClient.getBalance(proxyWalletAddress, env.stakingDenom);
+  const balance = await signingClient.getBalance(proxyWalletAddress, network.stakingToken);
 
   return {
     ...info,

@@ -1,4 +1,4 @@
-import { env } from "env";
+import network from "configs/networks";
 
 export function convertMicroDenomToDenom(amount: number | string) {
   if (typeof amount === "string") {
@@ -36,12 +36,12 @@ export const zeroVotingCoin = {
 
 export const zeroStakingCoin = {
   amount: "0",
-  denom: env.stakingDenom,
+  denom: network.stakingToken,
 };
 
 export function coin(amount: number) {
   return {
     amount: convertDenomToMicroDenom(amount),
-    denom: env.stakingDenom,
+    denom: network.stakingToken,
   };
 }
