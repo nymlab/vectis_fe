@@ -1,18 +1,19 @@
 import React, { createContext, useContext, PropsWithChildren, useState, useEffect, useCallback } from "react";
+import { BankExtension, StakingExtension, QueryClient } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { connectKeplr, getKey, getSigner } from "services/keplr";
-import { createSignCosmWasmClient } from "services/cosmwasm";
+import { createQueryClient, createSignCosmWasmClient } from "services/stargate";
 import { deleteWalletAddress, setWalletAddress } from "services/localStorage";
-import { env } from "env";
-import { Key } from "@keplr-wallet/types";
-import networks from "configs/networks";
+import networkConfig from "configs/networks";
 import { Network } from "interfaces/network";
 import { Coin } from "@cosmjs/proto-signing";
+import { Key } from "@keplr-wallet/types";
 
 export interface ICosmWasmContext {
   address: string;
   keyDetails: Key;
   network: Network;
+  queryClient: QueryClient & StakingExtension & BankExtension;
   signingClient: SigningCosmWasmClient;
   isReady: boolean;
   isLoading: boolean;
@@ -28,23 +29,26 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [address, setAddress] = useState<string | null>(null);
   const [keyDetails, setKeyDetails] = useState<Key | null>(null);
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
+  const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension) | null>(null);
   const [network, setNetwork] = useState<Network | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [error, setError] = useState<unknown | null>(null);
-  const { networkName } = env;
 
   useEffect(() => {
-    setNetwork(networks[networkName]);
-  }, [networkName]);
+    setIsLoading(true);
+    setNetwork(networkConfig);
+    createQueryClient().then(setQueryClient);
+    setIsLoading(false);
+  }, [networkConfig]);
 
   const connectWallet = async () => {
     setIsLoading(true);
     try {
-      await connectKeplr(networkName);
-      const signer = await getSigner(networkName);
-      const client = await createSignCosmWasmClient(signer, networkName);
-      const key = await getKey(networkName);
+      await connectKeplr();
+      const signer = await getSigner();
+      const client = await createSignCosmWasmClient(signer);
+      const key = await getKey();
       const [{ address: firstAddress }] = await signer.getAccounts();
 
       setSigningClient(client);
@@ -74,7 +78,19 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   return (
     <CosmWasmContext.Provider
       value={
-        { address, signingClient, isLoading, isReady, keyDetails, network, error, getBalance, connectWallet, disconnect } as ICosmWasmContext
+        {
+          address,
+          signingClient,
+          queryClient,
+          isLoading,
+          isReady,
+          keyDetails,
+          network,
+          error,
+          getBalance,
+          connectWallet,
+          disconnect,
+        } as ICosmWasmContext
       }
     >
       {children}
