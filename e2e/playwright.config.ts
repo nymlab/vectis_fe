@@ -13,7 +13,7 @@ const config: PlaywrightTestConfig = {
   testDir: "./tests",
   timeout: 60 * 1000, // Sometimes take longer to load the context
   expect: {
-    timeout: 5000,
+    timeout: 20000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

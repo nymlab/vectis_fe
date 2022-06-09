@@ -28,7 +28,7 @@ export const WalletLoader = () => {
         <>
           <div className="grid -mx-4">
             {!isReady && (
-              <WalletButton className="w-full" data-testid="wallet-nav-button" isLoading={isLoading} onClick={() => connectWallet()}>
+              <WalletButton className="w-full" data-testid="wallet-connect" isLoading={isLoading} onClick={() => connectWallet()}>
                 Connect Wallet
               </WalletButton>
             )}
