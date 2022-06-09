@@ -1302,7 +1302,7 @@
   dependencies:
     "xstream" "^11.14.0"
 
-"@cosmjs/tendermint-rpc@^0.28.0", "@cosmjs/tendermint-rpc@0.28.4":
+"@cosmjs/tendermint-rpc@^0.28.0", "@cosmjs/tendermint-rpc@^0.28.4", "@cosmjs/tendermint-rpc@0.28.4":
   "integrity" "sha512-iz6p4UW2QUZNh55WeJy9wHbMdqM8COo0AJdrGU4Ikb/xU0/H6b0dFPoEK+i6ngR0cSizh+hpTMzh3AA7ySUKlA=="
   "resolved" "https://registry.npmjs.org/@cosmjs/tendermint-rpc/-/tendermint-rpc-0.28.4.tgz"
   "version" "0.28.4"

@@ -1,6 +1,6 @@
-import { Network, NetworkOptions } from "interfaces/network";
-import networks from "configs/networks";
-import { OfflineSigner } from "@cosmjs/proto-signing";
+import network from "configs/networks";
+import { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
+import { Network } from "interfaces/network";
 import { Key } from "@keplr-wallet/types";
 
 export const isKeplrInstalled = () => {
@@ -8,27 +8,23 @@ export const isKeplrInstalled = () => {
   return window.getOfflineSigner && window.keplr;
 };
 
-export const getSigner = (networkName: NetworkOptions): Promise<OfflineSigner> => {
-  const network = networks[networkName];
-  return window?.keplr?.getOfflineSignerAuto(network.chainId) as Promise<OfflineSigner>;
+export const getSigner = async (): Promise<OfflineSigner | OfflineDirectSigner> => {
+  if (window.keplr?.getOfflineSignerAuto) return await window.keplr.getOfflineSignerAuto(network.chainId);
+  return window.keplr?.getOfflineSigner(network.chainId) as OfflineSigner & OfflineDirectSigner;
 };
-export const getKey = (networkName: NetworkOptions): Promise<Key> | undefined => {
-  const network = networks[networkName];
-  return window?.keplr?.getKey(network.chainId);
-};
+export const getKey = async (): Promise<Key> => window.keplr?.getKey(network.chainId) as Promise<Key>;
 
-export const connectKeplr = async (networkName: NetworkOptions) => {
+export const connectKeplr = async () => {
   if (!window.keplr || !window.getOfflineSigner) throw new Error("Keplr extension is not installed. Please install it here: https://keplr.app");
   try {
-    await window.keplr.enable(networkName);
+    await window.keplr.enable(network.chainId);
   } catch (err) {
-    await addNetwork(networkName);
-    await window.keplr.enable(networkName);
+    await addNetwork();
+    await window.keplr.enable(network.chainId);
   }
 };
 
-const addNetwork = async (networkName: NetworkOptions) => {
-  const network = networks[networkName];
+const addNetwork = async () => {
   const config = configKeplr(network);
   if (!window.keplr?.experimentalSuggestChain) throw new Error("Your installation of Keplr is outdated. Please update it.");
   await window.keplr.experimentalSuggestChain(config);

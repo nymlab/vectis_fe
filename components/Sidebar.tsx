@@ -7,13 +7,14 @@ import { links } from "utils/links";
 import { SidebarLayout } from "./SidebarLayout";
 import ThemeToggle from "./ThemeToggle";
 import { WalletLoader } from "./WalletLoader";
-import { env } from "env";
 import VectisLogo from "./VectisLogo";
+import { useCosmWasmClient } from "contexts/cosmwasm";
 
 const routes = [{ text: "Validators", href: `/validators` }];
 
 const Sidebar: React.FC = () => {
   const router = useRouter();
+  const { network } = useCosmWasmClient();
 
   return (
     <SidebarLayout>
@@ -42,7 +43,7 @@ const Sidebar: React.FC = () => {
       <div className="flex-grow" />
 
       {/* juno network status */}
-      <div className="text-sm">Network: {env.chainName}</div>
+      <div className="text-sm">Network: {network?.chainName}</div>
       <div className="align-center">
         <ThemeToggle />
       </div>

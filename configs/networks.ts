@@ -1,6 +1,4 @@
-import { Network } from "../interfaces/network";
-
-const uninet: Network = {
+const juno_testnet = {
   chainId: "uni-2",
   chainName: "Juno (uni-2)",
   addressPrefix: "juno",
@@ -15,7 +13,7 @@ const uninet: Network = {
 };
 
 const juno_local = {
-  chainId: "juno-local",
+  chainId: "juno_local",
   chainName: "Juno Local",
   addressPrefix: "juno",
   rpcUrl: "http://localhost:26657",
@@ -29,8 +27,8 @@ const juno_local = {
 };
 
 const networks = {
-  "uni-2": uninet,
-  "juno-local": juno_local,
+  juno_testnet,
+  juno_local,
 };
 
-export default networks;
+export default networks[process.env.NEXT_PUBLIC_NETWORK as keyof typeof networks];
