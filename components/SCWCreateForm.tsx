@@ -1,5 +1,4 @@
 import { useCosmWasmClient } from "contexts/cosmwasm";
-import { env } from "env";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
@@ -10,6 +9,8 @@ import { AlertError, AlertSuccess } from "./Alert";
 import { IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
 import Loader from "./Loader";
+import network from "configs/networks";
+import { Anchor } from "./Anchor";
 
 type SCWCreateFormProps = {
   onRefresh?: () => void;
@@ -43,7 +44,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       },
       {
         key: "proxyInitialFunds",
-        message: `You don't have enough ${convertFromMicroDenom(env.stakingDenom)}`,
+        message: `You don't have enough ${convertFromMicroDenom(network.stakingToken)}`,
         value: proxyInitialFunds,
         validate: () => parseFloat(proxyInitialFunds) < parseFloat(balance),
       },
@@ -145,7 +146,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       <div className="mt-4 flex flex-col w-full max-w-xl">
         <AlertSuccess>{success}</AlertSuccess>
         <span className="my-5 text-primary hover:underline">
-          <a href="/wallets">Go to your Smart Contract Wallets &rarr;</a>
+          <Anchor href="/wallets">Go to your Smart Contract Wallets &rarr;</Anchor>
         </span>
       </div>
     );
@@ -284,7 +285,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
               value={proxyInitialFunds}
             />
             <span className="absolute top-0 right-0 bottom-0 px-4 py-5 rounded-r-full bg-secondary text-base-100 text-sm">
-              {convertFromMicroDenom(env.stakingDenom)}
+              {convertFromMicroDenom(network.stakingToken)}
             </span>
           </div>
           {getValueValidationError("proxyInitialFunds") && (
