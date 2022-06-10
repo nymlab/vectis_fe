@@ -31,13 +31,13 @@ export const WalletLoader = () => {
         <>
           <div className="grid -mx-4">
             {!isReady && (
-              <WalletButton className="w-full" data-testid="wallet-connect" isLoading={isLoading} onClick={() => connectWallet()}>
+              <WalletButton className="w-full text-white" data-testid="wallet-connect" isLoading={isLoading} onClick={() => connectWallet()}>
                 Connect Wallet
               </WalletButton>
             )}
 
             {isReady && (
-              <Popover.Button as={WalletButton} className="w-full" isLoading={isLoading}>
+              <Popover.Button as={WalletButton} className="w-full text-white" isLoading={isLoading}>
                 {displayName}
               </Popover.Button>
             )}
@@ -61,9 +61,9 @@ export const WalletLoader = () => {
             >
               <div className="flex flex-col items-center py-2 px-4 space-y-1 text-center">
                 <span className="py-px px-2 mb-2 font-mono text-xs text-white/50 rounded-full border border-white/25">{shortAddr}</span>
-                <div className="font-bold">Your Balance</div>
+                <div className="font-bold text-white">Your Balance</div>
                 {balance && (
-                  <span key={`balance-${balance.denom}`}>
+                  <span key={`balance-${balance.denom}`} className="text-white">
                     {convertMicroDenomToDenom(balance.amount)} {balance.denom.slice(1, balance.denom.length)}
                   </span>
                 )}
