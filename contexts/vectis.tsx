@@ -50,10 +50,12 @@ export const VectisProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getWallets = useCallback(() => {
+    if (!signingClient) return;
     setIsLoading(true);
+    console.log(userAddress);
     queryProxyWalletsOfUser(signingClient!, userAddress).then(setProxyWallets).catch(setError);
     setIsLoading(false);
-  }, []);
+  }, [signingClient]);
 
   useEffect(() => {
     if (!userAddress) return;

@@ -60,10 +60,10 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       const client = await createSignCosmWasmClient(signer);
       const key = await getKey();
       const [{ address: firstAddress }] = await signer.getAccounts();
-      setSigningClient(client);
       setKeyDetails(key!);
       setAddress(firstAddress);
       setSession({ allowConnection: true });
+      setSigningClient(client);
       setIsReady(true);
     } catch (error) {
       setError(error);
@@ -71,7 +71,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
     setIsLoading(false);
   };
 
-  const getBalance = useCallback(() => signingClient!.getBalance(address!, network?.feeToken!), [address, network]);
+  const getBalance = useCallback(() => queryClient?.bank.balance(address!, network?.feeToken!), [address, network]);
 
   const disconnect = useCallback(() => {
     setIsLoading(true);

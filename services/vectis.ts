@@ -101,6 +101,7 @@ export async function createProxyWallet(
 export async function queryProxyWalletsOfUser(signingClient: SigningCosmWasmClient, userAddress: string): Promise<string[]> {
   const factoryClient = new FactoryClient(signingClient, userAddress, factoryContractAddress);
   const { wallets } = await factoryClient.walletsOf({ user: userAddress });
+  console.log(wallets);
 
   return wallets;
 }
