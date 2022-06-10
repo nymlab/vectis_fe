@@ -12,7 +12,7 @@ export const WalletPanelButton = forwardRef<HTMLButtonElement, WalletPanelButton
   ref
 ) {
   return (
-    <button className={clsx("flex items-center py-2 px-4 space-x-4 hover:bg-white/5", className)} ref={ref} type="button" {...rest}>
+    <button className={clsx("flex items-center py-2 px-4 text-white space-x-4 hover:bg-white/5", className)} ref={ref} type="button" {...rest}>
       <Icon />
       <span className="text-left">{children}</span>
     </button>
