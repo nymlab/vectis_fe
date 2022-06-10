@@ -13,17 +13,16 @@ export class CustomPage {
   async navigate(url = ""): Promise<void> {
     const pages = await this.context.pages();
     const matchingUrl = this.baseUrl + url;
-    const [matchedPage] = pages.filter((page) => page.url().includes(matchingUrl));
-    if (matchedPage) {
-      this.page = matchedPage;
-    } else {
-      this.page = pages.length ? pages[0] : await this.context.newPage();
-      await this.page.goto(matchingUrl);
-    }
+    this.page = pages.length ? pages[0] : await this.context.newPage();
+    await this.page.goto(matchingUrl, { waitUntil: "networkidle" });
   }
 
   async getLocatorByTestId(testId: string): Promise<Locator> {
     return await this.page!.locator(`[data-testid="${testId}"]`);
+  }
+
+  async wait(ms: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

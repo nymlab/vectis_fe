@@ -1,11 +1,23 @@
-import { KEPLER_EXTENSION, USER_WALLET } from "e2e/utils/constants";
-import { CustomPageArgs } from "e2e/types/CustomPageArgs";
+import { KEPLER_EXTENSION, USER_WALLET } from "../utils/constants";
+import { CustomPageArgs } from "../types/CustomPageArgs";
 import CustomPage from "./custom";
 
 class KeplrPage extends CustomPage {
   constructor({ context }: CustomPageArgs) {
     super({ context });
     this.baseUrl = `chrome-extension://${KEPLER_EXTENSION.id}/popup.html#`;
+  }
+
+  async navigate(url = ""): Promise<void> {
+    const pages = await this.context.pages();
+    const matchingUrl = this.baseUrl + url;
+    const [matchedPage] = pages.filter((page) => page.url().includes(matchingUrl));
+    if (matchedPage) {
+      this.page = matchedPage;
+    } else {
+      this.page = pages.length ? pages[0] : await this.context.newPage();
+      await this.page.goto(matchingUrl, { waitUntil: "networkidle" });
+    }
   }
 
   async clickApprove(): Promise<void> {
