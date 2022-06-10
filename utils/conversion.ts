@@ -45,3 +45,7 @@ export function coin(amount: number) {
     denom: network.stakingToken,
   };
 }
+
+export function comissionRateToHuman(comissionRate: string | number) {
+  return Number(comissionRate) / 10000000000000000;
+}

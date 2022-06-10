@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 import { FaCopy, FaPowerOff, FaRedo } from "react-icons/fa";
 import { copy } from "utils/clipboard";
-import { getShortAddress } from "utils/string";
 import { convertMicroDenomToDenom } from "utils/conversion";
 
 import { WalletButton } from "./buttons/WalletButton";
@@ -11,11 +10,15 @@ import { WalletPanelButton } from "./WalletPanelButton";
 import { useCosmWasmClient } from "contexts/cosmwasm";
 import { Coin } from "@cosmjs/proto-signing";
 
+function shortAddress(address: string): string | null {
+  return address.slice(0, 8).concat(".....") + address.substring(36);
+}
+
 export const WalletLoader = () => {
   const { address, isReady, isLoading, keyDetails, getBalance, connectWallet, disconnect } = useCosmWasmClient();
   const [balance, setBalance] = useState<Coin | null>(null);
-  const shortAddress = address && getShortAddress(address);
-  const displayName = keyDetails?.name || shortAddress;
+  const shortAddr = address && shortAddress(address);
+  const displayName = keyDetails?.name || shortAddr;
 
   useEffect(() => {
     if (!address) return;
@@ -57,7 +60,7 @@ export const WalletLoader = () => {
               )}
             >
               <div className="flex flex-col items-center py-2 px-4 space-y-1 text-center">
-                <span className="py-px px-2 mb-2 font-mono text-xs text-white/50 rounded-full border border-white/25">{shortAddress}</span>
+                <span className="py-px px-2 mb-2 font-mono text-xs text-white/50 rounded-full border border-white/25">{shortAddr}</span>
                 <div className="font-bold">Your Balance</div>
                 {balance && (
                   <span key={`balance-${balance.denom}`}>
