@@ -38,9 +38,14 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [isReady, setIsReady] = useState<boolean>(false);
   const [error, setError] = useState<unknown | null>(null);
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     const session = getSession();
     if (session?.allowConnection) connectWallet();
+    const handlerConnection = () => connectWallet();
+    window.addEventListener("keplr_keystorechange", handlerConnection);
+    return () => window.removeEventListener("keplr_keystorechange", handlerConnection);
   }, []);
 
   useEffect(() => {
