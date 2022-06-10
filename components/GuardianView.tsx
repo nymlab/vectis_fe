@@ -1,6 +1,6 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useMemo, useState } from "react";
@@ -13,7 +13,7 @@ import ProposalDetails from "./ProposalDetails";
 import TokenAmount from "./TokenAmount";
 
 export default function GuardianView() {
-  const { signingClient, address } = useCosmWasmClient();
+  const { signingClient, address } = useCosm();
 
   const [proxyWalletAddress, setProxyWalletAddress] = useState("");
   const [fetchingSCW, setFetchingSCW] = useState(false);

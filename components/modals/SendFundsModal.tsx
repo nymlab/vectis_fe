@@ -3,7 +3,7 @@ import { Input } from "components/Input";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
 import TokenAmount from "components/TokenAmount";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
@@ -19,7 +19,7 @@ type SendFundsModalProps = {
 };
 
 export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds, onClose }: SendFundsModalProps) {
-  const { address: userAddress, signingClient } = useCosmWasmClient();
+  const { address: userAddress, signingClient } = useCosm();
 
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amountToSend, setAmountToSend] = useState("");

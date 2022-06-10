@@ -8,13 +8,13 @@ import { SidebarLayout } from "./SidebarLayout";
 import ThemeToggle from "./ThemeToggle";
 import { WalletLoader } from "./WalletLoader";
 import VectisLogo from "./VectisLogo";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 
 const routes = [{ text: "Validators", href: `/validators` }];
 
 const Sidebar: React.FC = () => {
   const router = useRouter();
-  const { network } = useCosmWasmClient();
+  const { network } = useCosm();
 
   return (
     <SidebarLayout>

@@ -7,7 +7,7 @@ import { convertMicroDenomToDenom } from "utils/conversion";
 
 import { WalletButton } from "./buttons/WalletButton";
 import { WalletPanelButton } from "./WalletPanelButton";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { Coin } from "@cosmjs/proto-signing";
 
 function shortAddress(address: string): string | null {
@@ -15,7 +15,7 @@ function shortAddress(address: string): string | null {
 }
 
 export const WalletLoader = () => {
-  const { address, isReady, isLoading, keyDetails, getBalance, connectWallet, disconnect } = useCosmWasmClient();
+  const { address, isReady, isLoading, keyDetails, getBalance, connectWallet, disconnect } = useCosm();
   const [balance, setBalance] = useState<Coin | null>(null);
   const shortAddr = address && shortAddress(address);
   const displayName = keyDetails?.name || shortAddr;

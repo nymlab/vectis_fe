@@ -35,7 +35,7 @@ export const startContext = async () => {
   await dashboardPage.navigate();
   await dashboardPage.clickConnectWallet();
   await keplrPage.addChainAndConnect();
-  await dashboardPage.wait(100);
+  await dashboardPage.wait(500);
 };
 
 export const closeContext = async () => {

@@ -2,7 +2,7 @@ import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export default function RotateKeyModal({
   onKeyRotationProposal,
   onClose,
 }: RotateKeyModalProps) {
-  const { signingClient, address: userAddress } = useCosmWasmClient();
+  const { signingClient, address: userAddress } = useCosm();
 
   const [newOwnerAddress, setNewOwnerAddress] = useState("");
   const { getValueValidationError, checkValidationErrors, clearValidationErrors } = useValidationErrors({

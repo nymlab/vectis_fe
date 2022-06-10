@@ -1,7 +1,7 @@
 import { AlertError, AlertSuccess } from "components/Alert";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useState } from "react";
@@ -18,7 +18,7 @@ type ChargeWalletModalProps = {
 
 export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeDone, onClose }: ChargeWalletModalProps) {
   const { balance } = useBalance();
-  const { address: userAddress, signingClient } = useCosmWasmClient();
+  const { address: userAddress, signingClient } = useCosm();
 
   const [amountToSend, setAmountToSend] = useState("");
   const { getValueValidationError, checkValidationErrors, clearValidationErrors } = useValidationErrors({

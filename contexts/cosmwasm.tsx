@@ -108,10 +108,10 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   );
 };
 
-export const useCosmWasmClient = (): ICosmWasmContext => {
+export const useCosm = (): ICosmWasmContext => {
   const context = useContext(CosmWasmContext);
   if (context === null) {
-    throw new Error("useCosmWasmClient must be used within a CosmWasmProvider");
+    throw new Error("useCosm must be used within a CosmWasmProvider");
   }
   return context;
 };
