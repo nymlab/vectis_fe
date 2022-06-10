@@ -8,11 +8,6 @@ import DashboardPage from "./pages/dashboard";
 export const startContext = async () => {
   await extractExtensionPackage(KEPLER_EXTENSION.id);
 
-  // need to rm CACHE_PATH or else will store extension state
-  if (fs.existsSync(PLAYWRIGHT_PATH)) {
-    fs.rmSync(PLAYWRIGHT_PATH, { recursive: true });
-  }
-
   const browser = await chromium.launchPersistentContext(PLAYWRIGHT_PATH, {
     devtools: false,
     headless: false,
@@ -35,9 +30,10 @@ export const startContext = async () => {
   await dashboardPage.navigate();
   await dashboardPage.clickConnectWallet();
   await keplrPage.addChainAndConnect();
-  await dashboardPage.wait(500);
+  await dashboardPage.wait(300);
 };
 
 export const closeContext = async () => {
+  fs.rmSync(PLAYWRIGHT_PATH, { recursive: true });
   await context.close();
 };

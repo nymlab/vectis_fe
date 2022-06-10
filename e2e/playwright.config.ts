@@ -19,7 +19,7 @@ const config: PlaywrightTestConfig = {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     launchOptions: {
-      slowMo: 100, // For debug purpose
+      /* slowMo: 100, // For debug purpose */
     },
   },
 
