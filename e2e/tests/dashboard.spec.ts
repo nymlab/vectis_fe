@@ -1,13 +1,14 @@
 import DashboardPage from "e2e/pages/dashboard";
-import { test, expect } from "e2e/playwright.config";
-import { USER_WALLET } from "e2e/utils/constants";
+import { test, expect } from "@playwright/test";
+import { closeContext, startContext } from "e2e/setup";
 
 test.describe("dashboard", () => {
-  test("should appear wallet address in nav button", async ({ page, context }) => {
+  test.beforeAll(startContext);
+  test.afterAll(closeContext);
+  test("should appear wallet address in nav button", async () => {
     const dashboardPage = new DashboardPage({ context });
     await dashboardPage.navigate();
-    await dashboardPage.clickConnectWallet();
     const elem = await dashboardPage.getLocatorByTestId("wallet-connect");
-    await expect(elem).toHaveText("Loading...");
+    await expect(elem).toHaveText("wallet-user");
   });
 });
