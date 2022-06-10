@@ -134,7 +134,7 @@ export default function GuardianView() {
       )}
 
       {walletInfo && (
-        <div className="border-2 rounded-lg p-5">
+        <div className="border-2 rounded-lg p-5 flex flex-col items-center">
           <h1 className="text-3xl font-bold mb-5">Smart Contract Wallet</h1>
           <div className="flex flex-col items-start text-xl mb-3">
             <p>
@@ -175,21 +175,23 @@ export default function GuardianView() {
             )}
           </div>
 
-          <FreezeButton
-            proxyWalletAddress={proxyWalletAddress}
-            proxyWalletInfo={walletInfo}
-            freezeProposal={walletFreezeProposal}
-            onStart={onFreezeStart}
-            onSuccess={onFreezeSuccess}
-            onError={onFreezeError}
-          />
-          <RotateKeyButton
-            proxyWalletAddress={proxyWalletAddress}
-            proxyWalletInfo={walletInfo}
-            keyRotationProposal={walletKeyRotationProposal}
-            onKeyRotation={onKeyRotation}
-            onKeyRotationProposal={fetchSCW}
-          />
+          <div>
+            <FreezeButton
+              proxyWalletAddress={proxyWalletAddress}
+              proxyWalletInfo={walletInfo}
+              freezeProposal={walletFreezeProposal}
+              onStart={onFreezeStart}
+              onSuccess={onFreezeSuccess}
+              onError={onFreezeError}
+            />
+            <RotateKeyButton
+              proxyWalletAddress={proxyWalletAddress}
+              proxyWalletInfo={walletInfo}
+              keyRotationProposal={walletKeyRotationProposal}
+              onKeyRotation={onKeyRotation}
+              onKeyRotationProposal={fetchSCW}
+            />
+          </div>
 
           {success && (
             <div className="mt-5">
