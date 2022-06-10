@@ -37,7 +37,7 @@ export const WalletLoader = () => {
             )}
 
             {isReady && (
-              <Popover.Button as={WalletButton} className="w-full text-white" isLoading={isLoading}>
+              <Popover.Button as={WalletButton} data-testid="wallet-connect" className="w-full text-white" isLoading={isLoading}>
                 {displayName}
               </Popover.Button>
             )}
