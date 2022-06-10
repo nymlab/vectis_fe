@@ -1,19 +1,21 @@
 import React, { createContext, useContext, PropsWithChildren, useState, useEffect, useCallback } from "react";
-import { BankExtension, StakingExtension, QueryClient } from "@cosmjs/stargate";
+import { BankExtension, StakingExtension, QueryClient, TxExtension } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { connectKeplr, getKey, getSigner } from "services/keplr";
-import { createQueryClient, createSignCosmWasmClient } from "services/stargate";
+import { createQueryClient, createSignCosmWasmClient, createTendermintClient } from "services/stargate";
 import { deleteWalletAddress, setWalletAddress } from "services/localStorage";
 import networkConfig from "configs/networks";
 import { Network } from "interfaces/network";
 import { Coin } from "@cosmjs/proto-signing";
 import { Key } from "@keplr-wallet/types";
+import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
 export interface ICosmWasmContext {
   address: string;
   keyDetails: Key;
   network: Network;
-  queryClient: QueryClient & StakingExtension & BankExtension;
+  queryClient: QueryClient & StakingExtension & BankExtension & TxExtension;
+  tmClient: Tendermint34Client;
   signingClient: SigningCosmWasmClient;
   isReady: boolean;
   isLoading: boolean;
@@ -29,7 +31,8 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [address, setAddress] = useState<string | null>(null);
   const [keyDetails, setKeyDetails] = useState<Key | null>(null);
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
-  const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension) | null>(null);
+  const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension & TxExtension) | null>(null);
+  const [tmClient, setTmClient] = useState<Tendermint34Client | null>(null);
   const [network, setNetwork] = useState<Network | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -39,7 +42,9 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
     setIsLoading(true);
     setNetwork(networkConfig);
     createQueryClient().then(setQueryClient);
+    createTendermintClient().then(setTmClient);
     setIsLoading(false);
+    return () => tmClient?.disconnect();
   }, [networkConfig]);
 
   const connectWallet = async () => {
@@ -50,7 +55,6 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       const client = await createSignCosmWasmClient(signer);
       const key = await getKey();
       const [{ address: firstAddress }] = await signer.getAccounts();
-
       setSigningClient(client);
       setKeyDetails(key!);
       setAddress(firstAddress);
@@ -82,6 +86,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
           address,
           signingClient,
           queryClient,
+          tmClient,
           isLoading,
           isReady,
           keyDetails,
