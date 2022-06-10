@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
 
 export const useBalance = () => {
   const [balance, setBalance] = useState("");
   const [error, setError] = useState("");
 
-  const { address, signingClient, network } = useCosmWasmClient();
+  const { address, signingClient, network } = useCosm();
 
   const getBalance = async () => {
     if (!address) return;

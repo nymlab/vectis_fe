@@ -6,7 +6,7 @@ import { devices } from "@playwright/test";
  */
 const config: PlaywrightTestConfig = {
   testDir: "./tests",
-  timeout: 10 * 1000, // Sometimes take longer to load the context
+  timeout: 30 * 1000, // Sometimes take longer to load the context
   expect: {
     timeout: 5000,
   },

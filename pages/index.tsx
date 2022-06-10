@@ -2,11 +2,11 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { AlertError } from "components/Alert";
 import { useVectis } from "contexts/vectis";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 
 const Home: NextPage = () => {
   const { proxyWallets, error } = useVectis();
-  const { isReady } = useCosmWasmClient();
+  const { isReady } = useCosm();
 
   return (
     <>

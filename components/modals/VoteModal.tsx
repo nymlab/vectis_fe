@@ -2,7 +2,7 @@ import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import { AlertError, AlertSuccess } from "components/Alert";
 import Loader from "components/Loader";
 import Modal from "components/Modal";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { Proposal } from "contexts/vectis";
 import { useState } from "react";
 import { voteProposal } from "services/vectis";
@@ -15,7 +15,7 @@ type VoteModalProps = {
 };
 
 export default function VoteModal({ proposal, multisigAddress, onVote, onClose }: VoteModalProps) {
-  const { signingClient, address: userAddress } = useCosmWasmClient();
+  const { signingClient, address: userAddress } = useCosm();
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");

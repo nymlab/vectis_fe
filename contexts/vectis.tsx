@@ -2,7 +2,7 @@ import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import { createContext, useContext, ReactNode, useState, useEffect, useMemo, useCallback } from "react";
 import { Coin, WalletInfo } from "@vectis/types/contracts/FactoryContract";
 import { WasmMsg } from "@vectis/types/contracts/ProxyContract";
-import { useCosmWasmClient } from "./cosmwasm";
+import { useCosm } from "./cosmwasm";
 import { queryProxyWalletInfo, queryProxyWalletsOfUser } from "services/vectis";
 
 export type WalletInfoWithBalance = WalletInfo & { balance: Coin };
@@ -44,7 +44,7 @@ export interface IVectisContext {
 const VectisContext = createContext<IVectisContext | null>(null);
 
 export const VectisProvider = ({ children }: { children: ReactNode }) => {
-  const { address: userAddress, signingClient } = useCosmWasmClient();
+  const { address: userAddress, signingClient } = useCosm();
   const [proxyWallets, setProxyWallets] = useState<string[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);

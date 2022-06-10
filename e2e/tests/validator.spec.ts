@@ -16,6 +16,7 @@ test.describe("Validator View", () => {
   test("validator view should have at least one validator in the table", async () => {
     const validatorPage = new ValidatorsPage({ context });
     await validatorPage.navigate();
+    await validatorPage.wait(300);
     const tbodyLocator = await validatorPage.getValidatorTableTbody();
     const count = await tbodyLocator.count();
     await expect(count).toBeGreaterThanOrEqual(1);

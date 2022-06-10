@@ -1,5 +1,5 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { useArrayState } from "hooks/useArrayState";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ type SCWManageFormProps = {
 };
 
 export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWManageFormProps) {
-  const { address: userAddress, signingClient } = useCosmWasmClient();
+  const { address: userAddress, signingClient } = useCosm();
 
   // Form state hooks
   const {

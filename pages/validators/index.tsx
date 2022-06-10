@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import type { NextPage } from "next";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import ValidatorCard from "components/ValidatorCard";
 import ValidatorTable from "components/ValidatorTable";
 import { FaCoins, FaUsers, FaBoxes } from "react-icons/fa";
@@ -13,7 +13,7 @@ const Validators: NextPage = () => {
   const [validators, setValidators] = useState<Validator[] | null>(null);
   const [numberOfValidators, setNumberOfValidators] = useState<number>(0);
   const [blockHeight, setBlockHeight] = useState<number>(0);
-  const { queryClient, tmClient } = useCosmWasmClient();
+  const { queryClient, tmClient } = useCosm();
 
   const sortedValidators = useMemo(() => validators?.sort((a, b) => Number(b.tokens) - Number(a.tokens)), [validators]);
   const bondedTokens = useMemo(() => validators?.reduce((acc, validator) => acc + convertMicroDenomToDenom(validator.tokens), 0), [validators]);

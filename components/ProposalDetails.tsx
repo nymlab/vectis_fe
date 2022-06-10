@@ -1,4 +1,4 @@
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { Proposal, VoteInfo } from "contexts/vectis";
 import { useEffect, useState } from "react";
 import { executeProposal, queryProposalVoteList } from "services/vectis";
@@ -14,7 +14,7 @@ type ProposalDetailsProps = {
 };
 
 export default function ProposalDetails({ proposal, multisigAddress, onExecute }: ProposalDetailsProps) {
-  const { signingClient, address: userAddress } = useCosmWasmClient();
+  const { signingClient, address: userAddress } = useCosm();
 
   const [voteList, setVoteList] = useState<VoteInfo[]>([]);
   const [loading, setLoading] = useState(false);

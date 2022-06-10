@@ -1,4 +1,4 @@
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
@@ -17,7 +17,7 @@ type SCWCreateFormProps = {
 };
 
 export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
-  const { address, signingClient } = useCosmWasmClient();
+  const { address, signingClient } = useCosm();
   const { balance, refreshBalance } = useBalance();
 
   // Form state hooks

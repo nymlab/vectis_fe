@@ -1,5 +1,5 @@
 import VoteModal from "components/modals/VoteModal";
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
 import {
@@ -21,7 +21,7 @@ type FreezeButtonProps = {
 };
 
 export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, freezeProposal, onStart, onSuccess, onError }: FreezeButtonProps) {
-  const { signingClient, address: userAddress } = useCosmWasmClient();
+  const { signingClient, address: userAddress } = useCosm();
   const [loading, setLoading] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [voteModalOpen, setVoteModalOpen] = useState(false);

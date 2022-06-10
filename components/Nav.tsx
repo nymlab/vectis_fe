@@ -1,10 +1,10 @@
-import { useCosmWasmClient } from "contexts/cosmwasm";
+import { useCosm } from "contexts/cosmwasm";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "components/ThemeToggle";
 
 function Nav() {
-  const { address, connectWallet, disconnect } = useCosmWasmClient();
+  const { address, connectWallet, disconnect } = useCosm();
   const handleConnect = () => {
     if (!address.length) {
       connectWallet();
