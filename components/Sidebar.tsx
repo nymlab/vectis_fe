@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
           key={href}
           className={clsx(
             "py-2 px-4 -mx-4 uppercase", // styling
-            "hover:bg-white/5 transition-colors", // hover styling
+            "hover:bg-white/5 transition-colors text-white", // hover styling
             { "font-bold text-white dark": router.asPath.startsWith(href) } // active route styling
             // { 'text-gray-500 pointer-events-none': disabled }, // disabled route styling
           )}
