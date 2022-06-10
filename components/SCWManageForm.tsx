@@ -116,8 +116,9 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
   const [updateLabelSuccess, setUpdateLabelSuccess] = useState("");
 
   useEffect(() => {
+    if (!signingClient) return;
     fetchSCW();
-  }, []);
+  }, [signingClient]);
 
   async function fetchSCW() {
     setLoading(true);
