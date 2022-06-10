@@ -13,7 +13,7 @@ const juno_testnet = {
 };
 
 const juno_local = {
-  chainId: "juno_local",
+  chainId: "testing",
   chainName: "Juno Local",
   addressPrefix: "juno",
   rpcUrl: "http://localhost:26657",

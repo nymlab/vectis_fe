@@ -207,7 +207,8 @@ export default function GuardianView() {
       {Object.entries(showProposalDetailsModal).map(([id, show]) => {
         const proposal = walletActiveProposals.find((prop) => prop.id === +id)!;
         return (
-          show && (
+          show &&
+          proposal && (
             <Modal key={proposal.id} id={`proposal-details-modal-${proposal.id}`} onClose={() => toggleProposalDetailsModal(proposal)}>
               <ProposalDetails multisigAddress={walletInfo?.multisig_address!} proposal={proposal} onExecute={fetchSCW} />
             </Modal>

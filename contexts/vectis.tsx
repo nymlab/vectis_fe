@@ -52,7 +52,6 @@ export const VectisProvider = ({ children }: { children: ReactNode }) => {
   const getWallets = useCallback(() => {
     if (!signingClient) return;
     setIsLoading(true);
-    console.log(userAddress);
     queryProxyWalletsOfUser(signingClient!, userAddress).then(setProxyWallets).catch(setError);
     setIsLoading(false);
   }, [signingClient]);
@@ -62,7 +61,7 @@ export const VectisProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     getWallets();
-  }, [userAddress]);
+  }, [signingClient]);
 
   const walletsInfo = useMemo(
     () =>
