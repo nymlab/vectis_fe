@@ -37,7 +37,7 @@ const Validators: NextPage = () => {
       </Head>
       <div className="flex flex-grow flex-col min-h-full w-full px-16">
         <h1 className="text-4xl p-4">Validators</h1>
-        <section className="grid grid-cols-3 gap-2 pb-8">
+        <section id="validator-cards" className="grid grid-cols-3 gap-2 pb-8">
           <ValidatorCard title="Height" Icon={<FaBoxes size={28} />}>
             {blockHeight}
           </ValidatorCard>
