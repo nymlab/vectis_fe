@@ -10,7 +10,11 @@ import { WalletLoader } from "./WalletLoader";
 import VectisLogo from "./VectisLogo";
 import { useCosm } from "contexts/cosmwasm";
 
-const routes = [{ text: "Validators", href: `/validators` }];
+const routes = [
+  { text: "Wallets", href: "/wallets" },
+  { text: "Guardian View", href: "/guardian" },
+  { text: "Validators", href: "/validators" },
+];
 
 const Sidebar: React.FC = () => {
   const router = useRouter();
@@ -47,6 +51,7 @@ const Sidebar: React.FC = () => {
       <div className="align-center">
         <ThemeToggle />
       </div>
+
       {/* footer reference links */}
       <ul className="text-sm list-disc list-inside">
         {[].map(({ href, text }) => (
@@ -60,7 +65,7 @@ const Sidebar: React.FC = () => {
 
       {/* footer attribution */}
       <div className="text-xs text-white/50">
-        Vectis Wallet {process.env.APP_VERSION} <br />
+        Vectis {process.env.APP_VERSION} <br />
         Made by{" "}
         <Anchor className="text-white hover:underline" href={links.nymlab}>
           <span className="font-bold">Nymlab</span>

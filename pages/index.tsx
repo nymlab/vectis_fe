@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AlertError } from "components/Alert";
 import { useVectis } from "contexts/vectis";
 import { useCosm } from "contexts/cosmwasm";
+import Head from "next/head";
 
 const Home: NextPage = () => {
   const { proxyWallets, error } = useVectis();
@@ -10,6 +11,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Vectis</title>
+      </Head>
       <h1 className="text-6xl font-bold">Welcome to Vectis!</h1>
       {!isReady && <div className="mt-3 text-2xl">It's necessary to connect your wallet in order to interact with Vectis dApp</div>}
       {isReady && (
