@@ -109,6 +109,7 @@ export default function GuardianView() {
   return (
     <>
       <form
+        className="flex flex-col items-center"
         onSubmit={(e) => {
           e.preventDefault();
           fetchSCW();

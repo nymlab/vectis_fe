@@ -143,7 +143,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
   if (success) {
     return (
-      <div className="mt-4 flex flex-col w-full max-w-xl">
+      <div className="mt-4 flex flex-col w-full max-w-xl items-center">
         <AlertSuccess>{success}</AlertSuccess>
         <span className="my-5 text-primary hover:underline">
           <Anchor href="/wallets">Go to your Smart Contract Wallets &rarr;</Anchor>
