@@ -2382,6 +2382,14 @@
     "long" "^4.0.0"
     "protobufjs" "~6.11.2"
 
+"cosmjs-types@^0.5.0":
+  "integrity" "sha512-Qy2yxDp5HasBUnBV5OL9EOuTJw94LAbCWfiRb5QcW1sqh93KSSY5PpNMB3rTsxwuPcf/k3CNRY02DeQMjrsJuA=="
+  "resolved" "https://registry.npmjs.org/cosmjs-types/-/cosmjs-types-0.5.0.tgz"
+  "version" "0.5.0"
+  dependencies:
+    "long" "^4.0.0"
+    "protobufjs" "~6.11.2"
+
 "cosmwasm-typescript-gen@^0.2.14":
   "integrity" "sha512-yztCd4ZkV0kl/OMp6wQMWHwFo5OdiPd8nC5wEAZAJxk44RvA3TrvYULC2wF0CST7BzuHoPvn3I3y1D3ormbQUw=="
   "resolved" "https://registry.npmjs.org/cosmwasm-typescript-gen/-/cosmwasm-typescript-gen-0.2.14.tgz"
@@ -5158,11 +5166,6 @@
   "integrity" "sha1-f17oI66AUgfACvLfSoTsP8+lcLQ="
   "resolved" "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
   "version" "0.2.0"
-
-"theme-change@^2.0.2":
-  "integrity" "sha512-YvQqavf8nlGB3J7PdO0zLLhSLlgYhrqZL6By3FuzFIlWBsPTSPG/V98cHJllK3mmU97Jecei8XYiHalhy2umUw=="
-  "resolved" "https://registry.npmjs.org/theme-change/-/theme-change-2.0.2.tgz"
-  "version" "2.0.2"
 
 "thenify-all@^1.0.0":
   "integrity" "sha1-GhkY1ALY/D+Y+/I02wvMjMEOlyY="

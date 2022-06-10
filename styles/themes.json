@@ -1,5 +1,5 @@
 {
-  "vectisLight": {
+  "light": {
     "primary": "#f0827d",
     "primary-focus": "#e67873",
     "primary-content": "#fff",
@@ -21,7 +21,7 @@
     "warning": "#f0df95",
     "error": "#f06c65"
   },
-  "vectisDark": {
+  "dark": {
     "primary": "#f0827d",
     "primary-focus": "#e67873",
     "primary-content": "#fff",

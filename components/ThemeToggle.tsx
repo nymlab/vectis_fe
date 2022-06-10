@@ -1,20 +1,27 @@
-import { themeChange } from "theme-change";
 import { useEffect, useState } from "react";
-import themesJson from "styles/themes.json";
+import { getTheme, setTheme as setLocalTheme } from "services/localStorage";
 
-const themes = Object.keys(themesJson) || [""];
-export const defaultTheme = themes[0];
-
-export function isDarkMode(): boolean {
-  return document.documentElement.getAttribute("data-theme") === "vectisDark";
-}
+const addThemeAttribute = (theme: "dark" | "light") => {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.documentElement.classList.add(theme);
+};
 
 function ThemeToggle() {
-  const [theme, setTheme] = useState(defaultTheme);
+  const [theme, setTheme] = useState<"dark" | "light">();
   useEffect(() => {
-    themeChange(false);
-    setTheme(document.documentElement.getAttribute("data-theme") || defaultTheme);
+    const preferSchema = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const defaultTheme = getTheme() || preferSchema;
+    addThemeAttribute(defaultTheme);
+    setTheme(defaultTheme);
   }, []);
+
+  const changeTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    setLocalTheme(newTheme);
+    addThemeAttribute(newTheme);
+    document.documentElement.classList.remove(theme!);
+  };
 
   return (
     <div className="form-control lg:mr-4 md:ml-auto">
@@ -23,10 +30,9 @@ function ThemeToggle() {
         <input
           type="checkbox"
           className="toggle toggle-secondary mx-1"
-          data-toggle-theme={themes.join(",")}
           data-act-class="active"
-          checked={theme !== themes[0]}
-          onClick={() => setTheme(theme !== defaultTheme ? defaultTheme : themes[1])}
+          checked={theme === "dark"}
+          onClick={() => changeTheme()}
           readOnly
         />
         <span className="label-text">🌚</span>
