@@ -1,3 +1,5 @@
+import Session from "interfaces/session";
+
 export const setItem = <T>(key: string, item: T): void => {
   localStorage.setItem(key, JSON.stringify(item));
 };
@@ -20,14 +22,14 @@ export const getTheme = (): "dark" | "light" | null => {
   return getItem("theme");
 };
 
-export const setWalletAddress = (addr: string): void => {
-  setItem<string>("walletAddress", addr);
+export const setSession = (session: Session): void => {
+  setItem<Session>("session", session);
 };
 
-export const getWalletAddress = (): string | null => {
-  return getItem<string>("walletAddress");
+export const getSession = (): Session | null => {
+  return getItem<Session>("session");
 };
 
-export const deleteWalletAddress = (): void => {
-  deleteItem("walletAddress");
+export const deleteSession = (): void => {
+  deleteItem("session");
 };

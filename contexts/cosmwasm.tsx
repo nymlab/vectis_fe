@@ -3,7 +3,7 @@ import { BankExtension, StakingExtension, QueryClient, TxExtension } from "@cosm
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { connectKeplr, getKey, getSigner } from "services/keplr";
 import { createQueryClient, createSignCosmWasmClient, createTendermintClient } from "services/stargate";
-import { deleteWalletAddress, setWalletAddress } from "services/localStorage";
+import { deleteSession, setSession, getSession } from "services/localStorage";
 import networkConfig from "configs/networks";
 import { Network } from "interfaces/network";
 import { Coin } from "@cosmjs/proto-signing";
@@ -39,6 +39,11 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [error, setError] = useState<unknown | null>(null);
 
   useEffect(() => {
+    const session = getSession();
+    if (session?.allowConnection) connectWallet();
+  }, []);
+
+  useEffect(() => {
     setIsLoading(true);
     setNetwork(networkConfig);
     createQueryClient().then(setQueryClient);
@@ -58,7 +63,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       setSigningClient(client);
       setKeyDetails(key!);
       setAddress(firstAddress);
-      setWalletAddress(firstAddress);
+      setSession({ allowConnection: true });
       setIsReady(true);
     } catch (error) {
       setError(error);
@@ -71,7 +76,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const disconnect = useCallback(() => {
     setIsLoading(true);
     signingClient?.disconnect();
-    deleteWalletAddress();
+    deleteSession();
     setAddress(null);
     setKeyDetails(null);
     setSigningClient(null);
