@@ -7,7 +7,7 @@ export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => 
   const { isOpen } = useSidebarStore();
 
   return (
-    <div className={clsx(isOpen ? "min-w-[250px] max-w-[250px]" : "min-w-[20px] max-w-[20px]", "relative z-10")}>
+    <aside className={clsx(isOpen ? "min-w-[250px] max-w-[250px]" : "min-w-[20px] max-w-[20px]", "relative z-10")}>
       {/* fixed component */}
       <div
         className={clsx(
@@ -34,6 +34,6 @@ export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => 
       >
         <FaChevronLeft className={clsx("mx-auto", { "rotate-180": !isOpen })} size={12} />
       </button>
-    </div>
+    </aside>
   );
 };

@@ -11,7 +11,7 @@ const ValidatorTable: React.FC<Props> = ({ validators }) => {
   if (!validators) return null;
 
   return (
-    <table className="table table-zebra w-full h-full ">
+    <table id="validator-list" className="table table-zebra w-full h-full ">
       <thead>
         <tr>
           <th>Rank</th>
