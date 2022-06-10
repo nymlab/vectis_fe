@@ -6,10 +6,15 @@ import { useBalance } from "hooks/useBalance";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const ListWallets: NextPage = () => {
-  const { proxyWallets, isLoading, error } = useVectis();
+  const { proxyWallets, isLoading, error, getWallets } = useVectis();
   const { balance, refreshBalance } = useBalance();
+
+  useEffect(() => {
+    getWallets();
+  }, []);
 
   return (
     <>
