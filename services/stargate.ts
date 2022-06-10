@@ -1,4 +1,13 @@
-import { BankExtension, GasPrice, QueryClient, setupBankExtension, setupStakingExtension, StakingExtension } from "@cosmjs/stargate";
+import {
+  BankExtension,
+  GasPrice,
+  QueryClient,
+  setupBankExtension,
+  setupStakingExtension,
+  StakingExtension,
+  setupTxExtension,
+  TxExtension,
+} from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Coin, OfflineSigner } from "@cosmjs/proto-signing";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
@@ -11,9 +20,13 @@ export const createSignCosmWasmClient = async (signer: OfflineSigner): Promise<S
   });
 };
 
-export const createQueryClient = async (): Promise<QueryClient & StakingExtension & BankExtension> => {
-  const tmClient = await Tendermint34Client.connect(network.rpcUrl);
-  return QueryClient.withExtensions(tmClient, setupStakingExtension, setupBankExtension);
+export const createTendermintClient = async (): Promise<Tendermint34Client> => {
+  return await Tendermint34Client.connect(network.rpcUrl);
+};
+
+export const createQueryClient = async (): Promise<QueryClient & StakingExtension & BankExtension & TxExtension> => {
+  const tmClient = await createTendermintClient();
+  return QueryClient.withExtensions(tmClient, setupStakingExtension, setupBankExtension, setupTxExtension);
 };
 
 export const getNativeBalance = async (signCosmWasmClient: SigningCosmWasmClient, address: string, denom: string): Promise<Coin> => {
