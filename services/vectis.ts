@@ -1,9 +1,9 @@
 import { Proposal, VoteInfo } from "./../contexts/vectis";
 import { WalletInfoWithBalance } from "contexts/vectis";
-import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg } from "@vectis/types/contracts/ProxyContract";
+import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg, StakingMsg } from "@vectis/types/contracts/ProxyContract";
 import { Coin, CreateWalletMsg, FactoryClient } from "@vectis/types/contracts/FactoryContract";
 import { coin, convertMicroDenomToDenom } from "utils/conversion";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { ExecuteMsg, QueryMsg, Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import network from "configs/networks";
@@ -125,6 +125,92 @@ export async function queryProxyWalletInfo(
     ...info,
     balance: balance as Coin,
   };
+}
+
+/**
+ * Delegate funds in a validator address. Only the owner may call this.
+ *
+ * @param signingClient
+ * @param fromAddress
+ * @param proxyWalletAddress
+ * @param validatorAddress
+ * @param amount
+ */
+export async function executeDelegation(
+  signingClient: SigningCosmWasmClient,
+  fromAddress: string,
+  proxyWalletAddress: string,
+  validatorAddress: string,
+  amount: number
+): Promise<ExecuteResult> {
+  const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
+  const msgDelegate: StakingMsg = {
+    delegate: {
+      validator: validatorAddress,
+      amount: coin(amount),
+    },
+  };
+
+  return await proxyClient.execute({ msgs: [{ staking: msgDelegate }] });
+}
+
+/**
+ * Undelegate funds from a validator address. Only the owner may call this.
+ *
+ * @param signingClient
+ * @param fromAddress
+ * @param proxyWalletAddress
+ * @param validatorAddress
+ * @param amount
+ */
+
+export async function executeUndelegation(
+  signingClient: SigningCosmWasmClient,
+  fromAddress: string,
+  proxyWalletAddress: string,
+  validatorAddress: string,
+  amount: number
+): Promise<ExecuteResult> {
+  const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
+  const msgUndelegate: StakingMsg = {
+    undelegate: {
+      validator: validatorAddress,
+      amount: coin(amount),
+    },
+  };
+
+  return await proxyClient.execute({ msgs: [{ staking: msgUndelegate }] });
+}
+
+/**
+ * Delegate funds in a validator address. Only the owner may call this.
+ *
+ * @param signingClient
+ * @param fromAddress
+ * @param proxyWalletAddress
+ * @param srcValidatorAddress
+ * @param dstValidatorAddress
+ * @param amount
+ */
+export async function executeRedelegation(
+  signingClient: SigningCosmWasmClient,
+  fromAddress: string,
+  proxyWalletAddress: string,
+  srcValidatorAddress: string,
+  dstValidatorAddress: string,
+  amount: number
+): Promise<ExecuteResult> {
+  const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
+
+  const msgRedelegate: StakingMsg = {
+    redelegate: {
+      dst_validator: dstValidatorAddress,
+      src_validator: srcValidatorAddress,
+      amount: coin(amount),
+    },
+  };
+
+  return await proxyClient.execute({ msgs: [{ staking: msgRedelegate }] });
 }
 
 /**
