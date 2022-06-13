@@ -2,6 +2,7 @@ import clsx from "clsx";
 import React, { PropsWithChildren } from "react";
 import { toggleSidebar, useSidebarStore } from "stores/sidebar";
 import { FaChevronLeft } from "react-icons/fa";
+import ThemeToggle from "./ThemeToggle";
 
 export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const { isOpen } = useSidebarStore();
@@ -34,6 +35,15 @@ export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => 
       >
         <FaChevronLeft className={clsx("mx-auto", { "rotate-180": !isOpen })} size={12} />
       </button>
+      <div
+        className={clsx(
+          "absolute top-[70px] right-[-12px] flex justify-center align-center w-[24px] h-[24px]",
+          "text-black bg-white rounded-full",
+          "hover:bg-plumbus"
+        )}
+      >
+        <ThemeToggle size={15} />
+      </div>
     </aside>
   );
 };
