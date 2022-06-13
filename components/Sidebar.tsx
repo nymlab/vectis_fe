@@ -2,10 +2,9 @@ import React from "react";
 import clsx from "clsx";
 import { Anchor } from "./Anchor";
 import { useRouter } from "next/router";
-import { links } from "utils/links";
+import { links, socialsLinks } from "utils/links";
 
 import { SidebarLayout } from "./SidebarLayout";
-import ThemeToggle from "./ThemeToggle";
 import { WalletLoader } from "./WalletLoader";
 import VectisLogo from "./VectisLogo";
 import { useCosm } from "contexts/cosmwasm";
@@ -48,9 +47,7 @@ const Sidebar: React.FC = () => {
 
       {/* juno network status */}
       <div className="text-sm text-white">Network: {network?.chainName}</div>
-      <div className="align-center">
-        <ThemeToggle />
-      </div>
+      <div className="align-center"></div>
 
       {/* footer reference links */}
       <ul className="text-sm list-disc list-inside">
@@ -71,12 +68,11 @@ const Sidebar: React.FC = () => {
           <span className="font-bold">Nymlab</span>
         </Anchor>
       </div>
-
       {/* footer social links */}
-      <div className="flex gap-x-6 items-center text-white/75">
-        {[].map(({ Icon, href, text }) => (
+      <div className="flex gap-x-6 items-center justify-center text-white/75">
+        {socialsLinks.map(({ Icon, href, text }) => (
           <Anchor key={href} className="hover:text-white" href={href}>
-            {/* <Icon aria-label={text} size={20} /> */}
+            <Icon aria-label={text} size={20} />
           </Anchor>
         ))}
       </div>
