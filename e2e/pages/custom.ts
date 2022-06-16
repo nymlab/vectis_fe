@@ -14,7 +14,7 @@ export class CustomPage {
     const pages = await this.context.pages();
     const matchingUrl = this.baseUrl + url;
     this.page = pages.length ? pages[0] : await this.context.newPage();
-    await this.page.goto(matchingUrl, { waitUntil: "networkidle" });
+    await this.page.goto(matchingUrl);
   }
 
   async getLocatorByTestId(testId: string): Promise<Locator> {

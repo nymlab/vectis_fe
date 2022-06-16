@@ -28,7 +28,7 @@ class ValidatorsPage extends CustomPage {
   async selectFirstWallet(): Promise<void> {
     const walletSelector = await this.getLocatorByTestId("wallet-selector");
     await walletSelector.click();
-    await walletSelector.locator("li").first().click({ delay: 300 });
+    await walletSelector.locator("li").first().click({ delay: 1000 });
   }
 
   async clickOnDelegate(): Promise<void> {
