@@ -1,6 +1,6 @@
 import { Proposal, VoteInfo } from "./../contexts/vectis";
 import { WalletInfoWithBalance } from "contexts/vectis";
-import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg, StakingMsg } from "@vectis/types/contracts/ProxyContract";
+import { ProxyClient, CosmosMsg_for_Empty as CosmosMsg, StakingMsg, DistributionMsg } from "@vectis/types/contracts/ProxyContract";
 import { Coin, CreateWalletMsg, FactoryClient } from "@vectis/types/contracts/FactoryContract";
 import { coin, convertMicroDenomToDenom } from "utils/conversion";
 import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
@@ -198,7 +198,7 @@ export async function executeRedelegation(
   proxyWalletAddress: string,
   srcValidatorAddress: string,
   dstValidatorAddress: string,
-  amount: number
+  amount: string | number
 ): Promise<ExecuteResult> {
   const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
 
@@ -206,11 +206,38 @@ export async function executeRedelegation(
     redelegate: {
       dst_validator: dstValidatorAddress,
       src_validator: srcValidatorAddress,
-      amount: coin(amount),
+      amount: coin(Number(amount)),
     },
   };
 
   return await proxyClient.execute({ msgs: [{ staking: msgRedelegate }] });
+}
+
+/**
+ * Delegate funds in a validator address. Only the owner may call this.
+ *
+ * @param signingClient
+ * @param fromAddress
+ * @param proxyWalletAddress
+ * @param srcValidatorAddress
+ * @param dstValidatorAddress
+ * @param amount
+ */
+export async function executeClaimDelegationReward(
+  signingClient: SigningCosmWasmClient,
+  fromAddress: string,
+  proxyWalletAddress: string,
+  validatorAddress: string
+): Promise<ExecuteResult> {
+  const proxyClient = new ProxyClient(signingClient, fromAddress, proxyWalletAddress);
+
+  const msgRedelegate: DistributionMsg = {
+    withdraw_delegator_reward: {
+      validator: validatorAddress,
+    },
+  };
+
+  return await proxyClient.execute({ msgs: [{ distribution: msgRedelegate }] });
 }
 
 /**

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, PropsWithChildren, useState, useEffect, useCallback } from "react";
-import { BankExtension, StakingExtension, QueryClient, TxExtension } from "@cosmjs/stargate";
+import { BankExtension, StakingExtension, QueryClient, TxExtension, DistributionExtension } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { connectKeplr, getKey, getSigner } from "services/keplr";
 import { createQueryClient, createSignCosmWasmClient, createTendermintClient } from "services/stargate";
@@ -14,13 +14,13 @@ export interface ICosmWasmContext {
   address: string;
   keyDetails: Key;
   network: Network;
-  queryClient: QueryClient & StakingExtension & BankExtension & TxExtension;
+  queryClient: QueryClient & StakingExtension & BankExtension & TxExtension & DistributionExtension;
   tmClient: Tendermint34Client;
   signingClient: SigningCosmWasmClient;
   isReady: boolean;
   isLoading: boolean;
   error: unknown;
-  getBalance: () => Promise<Coin>;
+  getBalance: (addr: string) => Promise<Coin>;
   connectWallet: () => void;
   disconnect: () => void;
 }
@@ -31,7 +31,9 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [address, setAddress] = useState<string | null>(null);
   const [keyDetails, setKeyDetails] = useState<Key | null>(null);
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
-  const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension & TxExtension) | null>(null);
+  const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension & TxExtension & DistributionExtension) | null>(
+    null
+  );
   const [tmClient, setTmClient] = useState<Tendermint34Client | null>(null);
   const [network, setNetwork] = useState<Network | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -76,7 +78,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
     setIsLoading(false);
   };
 
-  const getBalance = useCallback(() => queryClient?.bank.balance(address!, network?.feeToken!), [address, network]);
+  const getBalance = useCallback((addr: string) => queryClient?.bank.balance(addr, network?.feeToken!), [queryClient, network]);
 
   const disconnect = useCallback(() => {
     setIsLoading(true);

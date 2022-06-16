@@ -22,7 +22,7 @@ export const useBalance = () => {
 
   useEffect(() => {
     getBalance();
-  }, [address]);
+  }, [signingClient, address]);
 
   return {
     balance,
