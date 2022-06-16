@@ -103,7 +103,7 @@ test.describe("Validator View", () => {
     expect(balanceBefore).toBeGreaterThan(balanceAfter);
   });
 
-  test.only("after delegate you will see a claim button in the validator modal", async () => {
+  test("after delegate you will see a claim button in the validator modal", async () => {
     const validatorPage = new ValidatorsPage({ context });
 
     await validatorPage.delegate(2);

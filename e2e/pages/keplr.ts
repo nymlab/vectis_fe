@@ -21,24 +21,25 @@ class KeplrPage extends CustomPage {
   }
 
   async clickApprove(): Promise<void> {
+    await this.page?.waitForLoadState();
     await this.page!.click('button:has-text("Approve")');
   }
 
   async waitForEventAndClickApprove(): Promise<void> {
-    await this.wait(1500);
+    await this.wait(2500);
     await this.navigate("/sign?interaction=true&interactionInternal=false");
     await this.clickApprove();
   }
 
   async addChain(): Promise<void> {
-    await this.wait(1500);
+    await this.wait(2500);
     // await context.waitForEvent("page", (page) => page.url().includes("/suggest-chain?interaction=true&interactionInternal=false"));
     await this.navigate("/suggest-chain?interaction=true&interactionInternal=false");
     await this.clickApprove();
   }
 
   async connectAccount(): Promise<void> {
-    await this.wait(1500);
+    await this.wait(2500);
     // await context.waitForEvent("page", (page) => page.url().includes("/access?interaction=true&interactionInternal=false"));
     await this.navigate("/access?interaction=true&interactionInternal=false");
     await this.clickApprove();
