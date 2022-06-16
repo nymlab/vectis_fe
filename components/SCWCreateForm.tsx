@@ -172,6 +172,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
             placeholder={`Guardian #${i + 1} address`}
+            name="guardian-#1"
             onChange={(event) => setGuardian(i, event.target.value)}
             error={getArrayValidationError("guardians", i)}
             value={address}
@@ -238,6 +239,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
             placeholder={`Relayer #${i + 1} address`}
+            name="relayer-#1"
             onChange={(event) => setRelayer(i, event.target.value)}
             error={getArrayValidationError("relayers", i)}
             value={address}
@@ -265,6 +267,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       <div className="w-full max-w-xl mb-2">
         <Input
           placeholder={`Label (e.g. Personal Wallet, Business Wallet...)`}
+          name="wallet-label"
           onChange={(event) => setLabel(event.target.value)}
           error={getValueValidationError("label")}
           value={label}
@@ -278,6 +281,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
               className={`input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg ${
                 getValueValidationError("proxyInitialFunds") ? "input-error" : ""
               }`}
+              name="wallet-funds"
               placeholder="Initial funds"
               step="0.1"
               min="0"

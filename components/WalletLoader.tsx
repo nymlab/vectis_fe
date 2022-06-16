@@ -9,20 +9,17 @@ import { WalletButton } from "./buttons/WalletButton";
 import { WalletPanelButton } from "./WalletPanelButton";
 import { useCosm } from "contexts/cosmwasm";
 import { Coin } from "@cosmjs/proto-signing";
-
-function shortAddress(address: string): string | null {
-  return address.slice(0, 8).concat(".....") + address.substring(36);
-}
+import { IntlAddress } from "utils/intl";
 
 export const WalletLoader = () => {
   const { address, isReady, isLoading, keyDetails, getBalance, connectWallet, disconnect } = useCosm();
   const [balance, setBalance] = useState<Coin | null>(null);
-  const shortAddr = address && shortAddress(address);
+  const shortAddr = address && IntlAddress(address);
   const displayName = keyDetails?.name || shortAddr;
 
   useEffect(() => {
     if (!address) return;
-    getBalance().then(setBalance);
+    getBalance(address).then(setBalance);
   }, [address]);
 
   return (
