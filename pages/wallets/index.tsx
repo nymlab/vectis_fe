@@ -38,7 +38,9 @@ const ListWallets: NextPage = () => {
       )}
 
       <Link href="/wallets/create" passHref={true}>
-        <button className="btn btn-primary text-xl rounded-full my-10">Create new wallet</button>
+        <button data-testid="create-wallet" className="btn btn-primary text-xl rounded-full my-10">
+          Create new wallet
+        </button>
       </Link>
 
       {error && (

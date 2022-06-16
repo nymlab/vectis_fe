@@ -24,34 +24,42 @@ class KeplrPage extends CustomPage {
     await this.page!.click('button:has-text("Approve")');
   }
 
+  async waitForEventAndClickApprove(): Promise<void> {
+    await this.wait(1500);
+    await this.navigate("/sign?interaction=true&interactionInternal=false");
+    await this.clickApprove();
+  }
+
   async addChain(): Promise<void> {
+    await this.wait(1500);
+    // await context.waitForEvent("page", (page) => page.url().includes("/suggest-chain?interaction=true&interactionInternal=false"));
     await this.navigate("/suggest-chain?interaction=true&interactionInternal=false");
     await this.clickApprove();
   }
 
   async connectAccount(): Promise<void> {
+    await this.wait(1500);
+    // await context.waitForEvent("page", (page) => page.url().includes("/access?interaction=true&interactionInternal=false"));
     await this.navigate("/access?interaction=true&interactionInternal=false");
     await this.clickApprove();
   }
 
   async addChainAndConnect(): Promise<void> {
-    await this.context.waitForEvent("page");
     await this.addChain();
-    await this.context.waitForEvent("page");
     await this.connectAccount();
   }
 
   async importAccount(): Promise<void> {
-    const page = await this.context.newPage();
-    await page.goto(this.baseUrl + "/register");
-    await page.click("text=Import existing account");
-    await page.fill('textarea[name="words"]', USER_WALLET.mnemonic);
-    await page.fill('input[name="name"]', USER_WALLET.name);
-    await page.fill('input[name="password"]', USER_WALLET.password);
-    await page.fill('input[name="confirmPassword"]', USER_WALLET.password);
-    await page.click("text=Next");
-    await page.click("text=Done");
-    await page.close();
+    this.page = await this.context.newPage();
+    await this.page.goto(this.baseUrl + "/register");
+    await this.page.click("text=Import existing account");
+    await this.page.fill('textarea[name="words"]', USER_WALLET.mnemonic);
+    await this.page.fill('input[name="name"]', USER_WALLET.name);
+    await this.page.fill('input[name="password"]', USER_WALLET.password);
+    await this.page.fill('input[name="confirmPassword"]', USER_WALLET.password);
+    await this.page.click("text=Next");
+    await this.page.click("text=Done");
+    await this.page.close();
   }
 }
 
