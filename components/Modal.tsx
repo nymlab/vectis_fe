@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 
 type ModalProps = {
   id: string;
@@ -6,12 +6,14 @@ type ModalProps = {
   onClose?: () => void;
 };
 
-export default function Modal({ id, children, onClose }: ModalProps) {
+import React from "react";
+
+const Modal: React.FC<PropsWithChildren<React.HTMLAttributes<HTMLDivElement> & ModalProps>> = ({ id, onClose, children, ...rest }) => {
   return (
     <>
       <input type="checkbox" id={id} className="modal-toggle" />
       <div className="modal">
-        <div className="modal-box relative">
+        <div className="modal-box relative" {...rest}>
           <label htmlFor={id} className="btn btn-sm btn-circle absolute right-2 top-2" onClick={onClose}>
             ✕
           </label>
@@ -20,4 +22,6 @@ export default function Modal({ id, children, onClose }: ModalProps) {
       </div>
     </>
   );
-}
+};
+
+export default Modal;
