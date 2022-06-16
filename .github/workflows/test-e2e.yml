@@ -19,6 +19,7 @@ jobs:
       - name: Run vectis image
         run: |
           docker run -d \
+          --name vectis_node \
           -p 1317:1317 \
           -p 26656:26656 \
           -p 26657:26657 \
@@ -27,8 +28,9 @@ jobs:
         shell: bash
         run: |
           set +x
+          FACTORY_ADDRESS=$(docker exec vectis_node cat .cache/uploadInfo.json | grep "factoryAddr" | cut -c19-81)
           echo 'NEXT_PUBLIC_NETWORK=juno_local' >> $GITHUB_ENV
-          echo 'NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=`docker exec -it vectis_node cat .cache/uploadInfo.json | grep '"factoryAddr":' | cut -c19-81`' >> $GITHUB_ENV
-      - run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run test:ci
+          echo "NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS=$FACTORY_ADDRESS" >> $GITHUB_ENV
+      - run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run test:e2e:debug
         env:
           PWTEST_CHANNEL: chromium
