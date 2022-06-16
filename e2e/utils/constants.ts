@@ -3,8 +3,9 @@ import path from "path";
 export const USER_WALLET = {
   name: "wallet-user",
   password: "fake-password",
-  address: "juno104vyyfqys5qhepxgkgcc25zew57rapgs7jddrq",
-  mnemonic: "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat",
+  address: "juno1tcxyhajlzvdheqyackfzqcmmfcr760malxrvqr",
+  mnemonic:
+    "useful guitar throw awesome later damage film tonight escape burger powder manage exact start title december impulse random similar eager smart absurd unaware enlist",
 };
 
 // Paths

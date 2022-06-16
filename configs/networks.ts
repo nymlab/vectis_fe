@@ -1,3 +1,17 @@
+const juno_prod = {
+  chainId: "juno-1",
+  chainName: "Juno",
+  addressPrefix: "juno",
+  rpcUrl: "https://rpc-juno.itastakers.com/",
+  httpUrl: "https://lcd-juno.itastakers.com/",
+  feeToken: "ujuno",
+  stakingToken: "ujuno",
+  coinMap: {
+    ujunox: { denom: "JUNO", fractionalDigits: 6 },
+  },
+  gasPrice: 0.025,
+};
+
 const juno_testnet = {
   chainId: "uni-2",
   chainName: "Juno (uni-2)",
@@ -27,6 +41,7 @@ const juno_local = {
 };
 
 const networks = {
+  juno_prod,
   juno_testnet,
   juno_local,
 };
