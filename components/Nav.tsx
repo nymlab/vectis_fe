@@ -32,7 +32,7 @@ function Nav() {
             <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">{""}</a>
           </Link>
         </div>
-        <ThemeToggle />
+        <ThemeToggle size={15} />
         <div className="flex flex-grow lg:flex-grow-0 max-w-full">
           <button
             className="block btn btn-outline btn-primary w-full max-w-full truncate tooltip"
