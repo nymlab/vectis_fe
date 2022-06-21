@@ -245,7 +245,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
             error={getArrayValidationError("relayers", i)}
             value={address}
           />
-          {relayers.length > 1 && (
+          {relayers.length > 0 && (
             <button
               className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
               type="button"
