@@ -1,11 +1,26 @@
 import network from "configs/networks";
 import { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
 import { Network } from "interfaces/network";
-import { Key } from "@keplr-wallet/types";
+import { Keplr, Key } from "@keplr-wallet/types";
 
 export const isKeplrInstalled = () => {
   // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
   return window.getOfflineSigner && window.keplr;
+};
+
+export const getKeplr = async (): Promise<Keplr | undefined> => {
+  if (window.keplr) return window.keplr;
+  if (document.readyState === "complete") return window.keplr;
+  return new Promise((resolve) => {
+    const documentStateChange = (event: Event) => {
+      if (event.target && (event.target as Document).readyState === "complete") {
+        resolve(window.keplr);
+        document.removeEventListener("readystatechange", documentStateChange);
+      }
+    };
+
+    document.addEventListener("readystatechange", documentStateChange);
+  });
 };
 
 export const getSigner = async (): Promise<OfflineSigner | OfflineDirectSigner> => {

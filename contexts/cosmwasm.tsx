@@ -1,7 +1,7 @@
 import React, { createContext, useContext, PropsWithChildren, useState, useEffect, useCallback } from "react";
 import { BankExtension, StakingExtension, QueryClient, TxExtension, DistributionExtension } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { connectKeplr, getKey, getSigner } from "services/keplr";
+import { connectKeplr, getKeplr, getKey, getSigner } from "services/keplr";
 import { createQueryClient, createSignCosmWasmClient, createTendermintClient } from "services/stargate";
 import { deleteSession, setSession, getSession } from "services/localStorage";
 import networkConfig from "configs/networks";
@@ -46,11 +46,14 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   useEffect(() => {}, []);
 
   useEffect(() => {
-    const session = getSession();
-    if (session?.allowConnection) connectWallet();
-    const handlerConnection = () => connectWallet();
-    window.addEventListener("keplr_keystorechange", handlerConnection);
-    return () => window.removeEventListener("keplr_keystorechange", handlerConnection);
+    const loadKeplr = async () => {
+      await getKeplr();
+      const session = getSession();
+      if (session?.allowConnection) connectWallet();
+      window.addEventListener("keplr_keystorechange", connectWallet);
+    };
+    loadKeplr();
+    return () => window.removeEventListener("keplr_keystorechange", connectWallet);
   }, []);
 
   useEffect(() => {
