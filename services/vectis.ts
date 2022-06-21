@@ -6,6 +6,7 @@ import { coin, convertMicroDenomToDenom } from "utils/conversion";
 import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { ExecuteMsg, QueryMsg, Vote } from "@dao-dao/types/contracts/cw-proposal-single";
+import { Secp256k1Pubkey } from "@cosmjs/amino";
 import network from "configs/networks";
 
 const factoryContractAddress = process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS;
@@ -47,6 +48,7 @@ export const SCWProposals = {
 export async function createProxyWallet(
   signingClient: SigningCosmWasmClient,
   userAddress: string,
+  pubkey: Secp256k1Pubkey,
   label: string,
   guardians: string[],
   relayers: string[],
@@ -69,7 +71,7 @@ export async function createProxyWallet(
 
   // Create wallet message
   const createWalletMsg: CreateWalletMsg = {
-    user_pubkey: account.pubkey?.value,
+    user_pubkey: pubkey.value,
     label: label,
     guardians: {
       addresses: guardians,

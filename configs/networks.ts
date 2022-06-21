@@ -13,11 +13,11 @@ const juno_prod = {
 };
 
 const juno_testnet = {
-  chainId: "uni-2",
-  chainName: "Juno (uni-2)",
+  chainId: "uni-3",
+  chainName: "Juno Testnet",
   addressPrefix: "juno",
-  rpcUrl: "https://rpc.uni.junonetwork.io/",
-  httpUrl: "https://api.uni.junonetwork.io/",
+  rpcUrl: "https://rpc.uni.juno.deuslabs.fi:443",
+  httpUrl: "https://lcd.uni.juno.deuslabs.fi",
   feeToken: "ujunox",
   stakingToken: "ujunox",
   coinMap: {

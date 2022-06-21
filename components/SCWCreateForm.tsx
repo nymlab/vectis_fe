@@ -17,7 +17,7 @@ type SCWCreateFormProps = {
 };
 
 export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
-  const { address, signingClient } = useCosm();
+  const { address, pubkey, signingClient } = useCosm();
   const { balance, refreshBalance } = useBalance();
 
   // Form state hooks
@@ -116,6 +116,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
     createProxyWallet(
       signingClient!,
       address,
+      pubkey,
       label,
       guardians,
       relayers,

@@ -15,6 +15,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@cosmjs/amino": "^0.28.4",
     "@cosmjs/cosmwasm-stargate": "^0.28.4",
     "@cosmjs/proto-signing": "^0.28.4",
     "@cosmjs/stargate": "^0.28.4",
