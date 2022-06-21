@@ -9,9 +9,11 @@ import { Network } from "interfaces/network";
 import { Coin } from "@cosmjs/proto-signing";
 import { Key } from "@keplr-wallet/types";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { encodeSecp256k1Pubkey, Secp256k1Pubkey } from "@cosmjs/amino";
 
 export interface ICosmWasmContext {
   address: string;
+  pubkey: Secp256k1Pubkey;
   keyDetails: Key;
   network: Network;
   queryClient: QueryClient & StakingExtension & BankExtension & TxExtension & DistributionExtension;
@@ -30,6 +32,7 @@ const CosmWasmContext = createContext<ICosmWasmContext | null>(null);
 export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [keyDetails, setKeyDetails] = useState<Key | null>(null);
+  const [pubkey, setPubkey] = useState<Secp256k1Pubkey | null>(null);
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
   const [queryClient, setQueryClient] = useState<(QueryClient & StakingExtension & BankExtension & TxExtension & DistributionExtension) | null>(
     null
@@ -66,13 +69,15 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       const signer = await getSigner();
       const client = await createSignCosmWasmClient(signer);
       const key = await getKey();
-      const [{ address: firstAddress }] = await signer.getAccounts();
+      const [{ address: firstAddress, pubkey }] = await signer.getAccounts();
+      setPubkey(encodeSecp256k1Pubkey(pubkey));
       setKeyDetails(key!);
       setAddress(firstAddress);
       setSession({ allowConnection: true });
       setSigningClient(client);
       setIsReady(true);
     } catch (error) {
+      console.log(error);
       setError(error);
     }
     setIsLoading(false);
@@ -96,6 +101,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       value={
         {
           address,
+          pubkey,
           signingClient,
           queryClient,
           tmClient,
