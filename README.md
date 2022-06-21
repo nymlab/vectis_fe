@@ -31,7 +31,7 @@ First of all, clone this project, then install dependencies:
 ```bash
 git clone https://github.com/nymlab/vectis_fe.git
 cd vectis_fe
-yarn install # This project uses yarn.lock
+npm install # This project uses package-lock.json
 ```
 
 Next, setup your `.env` file by copying the example:
