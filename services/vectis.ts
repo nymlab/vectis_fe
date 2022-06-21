@@ -60,6 +60,7 @@ export async function createProxyWallet(
   }
 
   const account = await signingClient.getAccount(userAddress);
+
   if (!account) {
     throw new Error(`Signer account was not found by user address ${userAddress}`);
   }
@@ -67,7 +68,6 @@ export async function createProxyWallet(
   const factoryClient = new FactoryClient(signingClient, userAddress, factoryContractAddress);
 
   const defaultWalletCreationFee = await factoryClient.fee();
-  const walletFee = convertMicroDenomToDenom(100);
 
   // Create wallet message
   const createWalletMsg: CreateWalletMsg = {
@@ -87,8 +87,8 @@ export async function createProxyWallet(
   };
 
   // Execute wallet creation
-  const res = await factoryClient.createWallet({ createWalletMsg }, Number(defaultWalletCreationFee.amount), undefined, [
-    coin(proxyInitialFunds + walletFee),
+  const res = await factoryClient.createWallet({ createWalletMsg }, "auto", undefined, [
+    coin(proxyInitialFunds + convertMicroDenomToDenom(defaultWalletCreationFee.amount)),
   ]);
 
   console.log(`Executed wallet creation transaction with hash ${res.transactionHash}. Logs:`, res.logs);
