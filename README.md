@@ -21,7 +21,7 @@ docker run -d --name vectis_node -p 1317:1317 -p 26656:26656 -p 26657:26657 ghcr
 ##### 2. Extract factory address
 
 ```bash
-docker exec -it vectis_node cat .cache/uploadInfo.json | grep '"factoryAddr":' | cut -c19-81
+docker exec vectis_node cat .cache/deployInfo.json | grep '"factoryAddr":' | cut -c19-81
 ```
 
 ### 2. Launch Vectis DApp locally
