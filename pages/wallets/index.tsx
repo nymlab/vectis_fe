@@ -1,4 +1,5 @@
 import { AlertError } from "components/Alert";
+import ConnectWallet from "components/ConnectWallet";
 import Loader from "components/Loader";
 import SCWCard from "components/SCWCard";
 import { useVectis } from "contexts/vectis";
@@ -22,36 +23,41 @@ const ListWallets: NextPage = () => {
         <title>Vectis | Wallets</title>
       </Head>
 
-      <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
-      <h1 className="text-5xl font-bold my-8">Your Smart Contract Wallets</h1>
+      <ConnectWallet>
+        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
+        <h1 className="text-5xl font-bold my-8">Your Smart Contract Wallets</h1>
 
-      {isLoading ? (
-        <Loader>Querying your Smart Contract Wallets...</Loader>
-      ) : (
-        <div className={`flex flex-col md:grid`} style={{ gridTemplateColumns: `repeat(${Math.min(proxyWallets.length, 3)}, minmax(0, 1fr))` }}>
-          {proxyWallets.map((address, i) => (
-            <div key={i} className="m-5">
-              <SCWCard address={address} onRefresh={refreshBalance} />
-            </div>
-          ))}
-        </div>
-      )}
+        {isLoading ? (
+          <Loader>Querying your Smart Contract Wallets...</Loader>
+        ) : (
+          <div
+            className={`flex flex-col md:grid`}
+            style={{ gridTemplateColumns: `repeat(${Math.min(proxyWallets.length, 3)}, minmax(0, 1fr))` }}
+          >
+            {proxyWallets.map((address, i) => (
+              <div key={i} className="m-5">
+                <SCWCard address={address} onRefresh={refreshBalance} />
+              </div>
+            ))}
+          </div>
+        )}
 
-      <Link href="/wallets/create" passHref={true}>
-        <button data-testid="create-wallet" className="btn btn-primary text-xl rounded-full my-10">
-          Create new wallet
-        </button>
-      </Link>
+        <Link href="/wallets/create" passHref={true}>
+          <button data-testid="create-wallet" className="btn btn-primary text-xl rounded-full my-10">
+            Create new wallet
+          </button>
+        </Link>
 
-      {error && (
-        <div className="my-5">
-          <AlertError>
-            Failed to retrieve your Smart Contract Wallets.
-            <br />
-            {error.message}
-          </AlertError>
-        </div>
-      )}
+        {error && (
+          <div className="my-5">
+            <AlertError>
+              Failed to retrieve your Smart Contract Wallets.
+              <br />
+              {error.message}
+            </AlertError>
+          </div>
+        )}
+      </ConnectWallet>
     </>
   );
 };

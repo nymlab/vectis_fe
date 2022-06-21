@@ -1,3 +1,4 @@
+import ConnectWallet from "components/ConnectWallet";
 import GuardianView from "components/GuardianView";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -8,7 +9,10 @@ const Guardian: NextPage = () => {
       <Head>
         <title>Vectis | Guardian</title>
       </Head>
-      <GuardianView />
+
+      <ConnectWallet>
+        <GuardianView />
+      </ConnectWallet>
     </>
   );
 };

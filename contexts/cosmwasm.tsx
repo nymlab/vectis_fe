@@ -21,7 +21,7 @@ export interface ICosmWasmContext {
   signingClient: SigningCosmWasmClient;
   isReady: boolean;
   isLoading: boolean;
-  error: unknown;
+  error: Error | null;
   getBalance: (addr: string) => Promise<Coin>;
   connectWallet: () => void;
   disconnect: () => void;
