@@ -6,13 +6,13 @@ export const useBalance = () => {
   const [balance, setBalance] = useState("");
   const [error, setError] = useState("");
 
-  const { address, signingClient, network } = useCosm();
+  const { address, signingClient, getBalance: cosmGetBalance } = useCosm();
 
   const getBalance = async () => {
     if (!address) return;
     setError("");
     try {
-      const { amount, denom } = await signingClient.getBalance(address, network.feeToken);
+      const { amount, denom } = await cosmGetBalance(address);
       setBalance(`${convertMicroDenomToDenom(amount)} ${convertFromMicroDenom(denom)}`);
     } catch (error) {
       setError(`Error! ${(error as Error).message}`);
