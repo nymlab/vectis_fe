@@ -17,7 +17,7 @@ interface Props {
 }
 
 const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onClose }) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("");
   const [balance, setBalance] = useState<Coin>(delegation.balance!);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signingClient, queryClient, address } = useCosm();
@@ -29,13 +29,13 @@ const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onC
     setIsLoading(true);
     try {
       await toast
-        .promise(executeUndelegation(signingClient, address, scwallet, validator.operatorAddress, amount), {
+        .promise(executeUndelegation(signingClient, address, scwallet, validator.operatorAddress, Number(amount)), {
           loading: "UnDelegating...",
           success: <b>UnDelegation successful!</b>,
           error: <b>UnDelegation failed</b>,
         })
         .catch(console.log);
-      setAmount(0);
+      setAmount("0");
       const { delegationResponse } = await queryClient.staking.delegation(scwallet, validator.operatorAddress);
       setBalance(delegationResponse?.balance || coin(0));
     } catch (err) {
@@ -63,7 +63,7 @@ const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onC
           <input
             name="undelegate"
             value={amount}
-            onChange={({ target }) => setAmount(+target.value)}
+            onChange={({ target }) => setAmount(target.value)}
             className="input input-bordered w-full max-w-xs"
           />
         </div>

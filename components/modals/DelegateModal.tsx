@@ -17,7 +17,7 @@ interface Props {
 
 const DelegateModal: React.FC<Props> = ({ validator, scwallet, onClose }) => {
   const { description } = validator;
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("");
   const [balance, setBalance] = useState<Coin | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -32,14 +32,14 @@ const DelegateModal: React.FC<Props> = ({ validator, scwallet, onClose }) => {
   const delegate = async () => {
     setIsLoading(true);
     await toast
-      .promise(executeDelegation(signingClient, address, scwallet, validator.operatorAddress, amount), {
+      .promise(executeDelegation(signingClient, address, scwallet, validator.operatorAddress, Number(amount)), {
         loading: "Delegating...",
         success: <b>Delegation successful!</b>,
         error: <b>Delegation failed</b>,
       })
       .catch(console.log);
     getBalance(scwallet).then(setBalance);
-    setAmount(0);
+    setAmount("0");
     setIsLoading(false);
   };
 
@@ -56,7 +56,7 @@ const DelegateModal: React.FC<Props> = ({ validator, scwallet, onClose }) => {
         <input
           name="delegate"
           value={amount}
-          onChange={({ target }) => setAmount(+target.value)}
+          onChange={({ target }) => setAmount(target.value)}
           className="input input-bordered w-full max-w-xs"
         />
       </div>
