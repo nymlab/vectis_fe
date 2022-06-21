@@ -21,7 +21,7 @@ const ConnectWallet: React.FC<Props> = ({ children }) => {
   if (!isReady) {
     return (
       <div className="max-w-full">
-        <p className="mt-3 text-2xl">
+        <p className="mt-3 text-2xl text-center">
           You need to connect your
           <a className="pl-1 link link-primary link-hover" href="https://keplr.app/">
             Keplr wallet
