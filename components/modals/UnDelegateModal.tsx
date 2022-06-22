@@ -45,7 +45,7 @@ const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onC
   };
 
   return (
-    <Modal style={{ overflowY: "initial" }} id={`undelegate-modal-${description?.moniker}`} onClose={closeModal}>
+    <Modal id={`undelegate-modal-${description?.moniker}`} onClose={closeModal}>
       <div className="">
         <h3 className="font-bold text-lg">{description?.moniker}</h3>
         <div className="py-4">

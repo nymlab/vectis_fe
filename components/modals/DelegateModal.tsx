@@ -44,7 +44,7 @@ const DelegateModal: React.FC<Props> = ({ validator, scwallet, onClose }) => {
   };
 
   return (
-    <Modal style={{ overflowY: "initial" }} id={`delegate-modal-${description?.moniker}`} onClose={closeModal}>
+    <Modal id={`delegate-modal-${description?.moniker}`} onClose={closeModal}>
       <h3 className="font-bold text-lg">{description?.moniker}</h3>
       <div className="py-4">
         <p className="font-bold">Available balance:</p>

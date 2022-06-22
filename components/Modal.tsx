@@ -8,12 +8,12 @@ type ModalProps = {
 
 import React from "react";
 
-const Modal: React.FC<PropsWithChildren<React.HTMLAttributes<HTMLDivElement> & ModalProps>> = ({ id, onClose, children, ...rest }) => {
+const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ id, onClose, children, ...rest }) => {
   return (
     <>
       <input type="checkbox" id={id} className="modal-toggle" />
       <div className="modal">
-        <div className="modal-box relative" {...rest}>
+        <div className="modal-box relative overflow-y-visible">
           <label htmlFor={id} className="btn btn-sm btn-circle absolute right-2 top-2" onClick={onClose}>
             ✕
           </label>
