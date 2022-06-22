@@ -1,14 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { IntlNumber } from "utils/intl";
-import { comissionRateToHuman, convertMicroDenomToDenom } from "utils/conversion";
+import { convertMicroDenomToDenom, fromValidationRate } from "utils/conversion";
 import { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import ValidatorModal from "./modals/ValidatorModal";
 
 interface Props {
   validators?: Validator[];
+  showManageButtons?: boolean;
 }
 
-const ValidatorTable: React.FC<Props> = ({ validators }) => {
+const ValidatorTable: React.FC<Props> = ({ validators, showManageButtons }) => {
   const [validator, setValidator] = useState<Validator | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -17,7 +18,7 @@ const ValidatorTable: React.FC<Props> = ({ validators }) => {
   if (!validators) return null;
 
   return (
-    <div className="overflow-visible">
+    <>
       <table id="validator-list" className="table table-zebra w-full">
         <thead>
           <tr>
@@ -25,7 +26,7 @@ const ValidatorTable: React.FC<Props> = ({ validators }) => {
             <th>Validator</th>
             <th>Voting Power</th>
             <th>Comission</th>
-            <th></th>
+            {showManageButtons && <th></th>}
           </tr>
         </thead>
         <tbody>
@@ -35,23 +36,25 @@ const ValidatorTable: React.FC<Props> = ({ validators }) => {
                 <th>{index + 1}</th>
                 <td>{validator.description?.moniker}</td>
                 <td>{IntlNumber(convertMicroDenomToDenom(validator.tokens))} Juno</td>
-                <td>{comissionRateToHuman(validator.commission?.commissionRates?.rate!)} %</td>
-                <td>
-                  <label
-                    className="cursor-pointer rounded dark:text-white bg-gray-100 hover:bg-gray-200 p-2.5 dark:bg-gray-700 dark:hover:bg-gray-600"
-                    onClick={() => [setValidator(validator), changeVisibility()]}
-                    htmlFor={`validator-modal-${validator.description?.moniker}`}
-                  >
-                    Manage
-                  </label>
-                </td>
+                <td>{fromValidationRate(validator.commission?.commissionRates?.rate!)} %</td>
+                {showManageButtons && (
+                  <td>
+                    <label
+                      className="cursor-pointer rounded dark:text-white bg-gray-100 hover:bg-gray-200 p-2.5 dark:bg-gray-700 dark:hover:bg-gray-600"
+                      onClick={() => [setValidator(validator), changeVisibility()]}
+                      htmlFor={`validator-modal-${validator.description?.moniker}`}
+                    >
+                      Manage
+                    </label>
+                  </td>
+                )}
               </tr>
             );
           })}
         </tbody>
       </table>
       {isModalOpen && <ValidatorModal validators={validators} validator={validator} onClose={changeVisibility} />}
-    </div>
+    </>
   );
 };
 

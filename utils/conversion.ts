@@ -1,10 +1,11 @@
 import network from "configs/networks";
+import { MICRO_DENOM, VALIDATOR_RATE } from "./constants";
 
 export function convertMicroDenomToDenom(amount: number | string) {
   if (typeof amount === "string") {
     amount = Number(amount);
   }
-  amount = amount / 1000000;
+  amount = amount / MICRO_DENOM;
   return isNaN(amount) ? 0 : amount;
 }
 
@@ -12,7 +13,7 @@ export function convertDenomToMicroDenom(amount: number | string): string {
   if (typeof amount === "string") {
     amount = Number(amount);
   }
-  amount = Math.ceil(amount * 1000000);
+  amount = Math.ceil(amount * MICRO_DENOM);
   return isNaN(amount) ? "0" : String(amount);
 }
 
@@ -46,6 +47,6 @@ export function coin(amount: number) {
   };
 }
 
-export function comissionRateToHuman(comissionRate: string | number) {
-  return Number(comissionRate) / 10000000000000000;
+export function fromValidationRate(comissionRate: string | number) {
+  return (Number(comissionRate) / VALIDATOR_RATE).toFixed(2);
 }
