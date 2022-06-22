@@ -7,16 +7,14 @@ import Sidebar from "./Sidebar";
 
 export const Layout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
-    <div className="overflow-hidden relative">
+    <div className="overflow-x-hidden min-h-screen min-w-full">
       <Head>
         <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
       </Head>
 
-      <div className="hidden sm:flex">
+      <div className="hidden sm:flex sm:min-h-screen">
         <Sidebar />
-        <div className="overflow-auto relative flex-grow h-screen no-scrollbar">
-          <main className={clsx("mx-auto max-w-7xl flex flex-col flex-grow h-screen justify-center items-center", {})}>{children}</main>
-        </div>
+        <main className="mx-auto flex flex-col flex-grow justify-center items-center">{children}</main>
       </div>
 
       <div className="flex flex-col justify-center items-center p-8 space-y-4 h-screen text-center bg-black/50 sm:hidden">

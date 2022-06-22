@@ -28,7 +28,12 @@ const Dropdown: React.FC<Props> = ({ initialLabel, options, onChange, full }) =>
       <button className={clsx("btn m-1", { "w-full": full })} onClick={() => setIsDropdownVisible(!isDropdownVisible)}>
         {selected}
       </button>
-      <ul className={clsx("menu p-2 shadow bg-base-100 rounded-box absolute", { hidden: !isDropdownVisible, "w-full": full })}>
+      <ul
+        className={clsx("menu p-2 shadow bg-base-100 rounded-box absolute", {
+          hidden: !isDropdownVisible,
+          "w-full max-h-40 overflow-y-scroll": full,
+        })}
+      >
         {options.map((option) => (
           <li key={option.value} onClick={() => onSelection(option)}>
             <a>{option.label}</a>
