@@ -29,7 +29,9 @@ export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => 
 
       {/* sidebar toggle */}
       <button
-        className={clsx("absolute top-[32px] right-[-12px] p-1 w-[24px] h-[24px]", "text-black bg-white rounded-full", "hover:bg-plumbus")}
+        className={clsx("fixed top-[32px] left-[238px] p-1 w-[24px] h-[24px]", "text-black bg-white rounded-full", "hover:bg-plumbus", {
+          "translate-x-[-230px]": !isOpen,
+        })}
         onClick={toggleSidebar}
         type="button"
       >
@@ -37,9 +39,10 @@ export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => 
       </button>
       <div
         className={clsx(
-          "absolute top-[70px] right-[-12px] flex justify-center align-center w-[24px] h-[24px]",
+          "fixed top-[70px] left-[238px] flex justify-center align-center w-[24px] h-[24px]",
           "text-black bg-white rounded-full",
-          "hover:bg-plumbus"
+          "hover:bg-plumbus",
+          { "translate-x-[-230px]": !isOpen }
         )}
       >
         <ThemeToggle size={15} />

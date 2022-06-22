@@ -12,7 +12,6 @@ import { useCosm } from "contexts/cosmwasm";
 const routes = [
   { text: "Wallets", href: "/wallets" },
   { text: "Guardian View", href: "/guardian" },
-  { text: "Validators", href: "/validators" },
 ];
 
 const Sidebar: React.FC = () => {

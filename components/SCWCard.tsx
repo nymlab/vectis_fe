@@ -8,7 +8,7 @@ import Loader from "./Loader";
 import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
 import ChargeWalletModal from "./modals/ChargeWalletModal";
-import Link from "next/link";
+import { Anchor } from "./Anchor";
 
 type SCWCardProps = {
   address: string;
@@ -58,18 +58,20 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
             {loading ? (
               <Loader />
             ) : (
-              <div className="text-left">
-                <p>Guardians: {walletInfo?.guardians.length}</p>
-                <p>Relayers: {walletInfo?.relayers.length}</p>
+              walletInfo && (
+                <div className="text-left">
+                  <p>Guardians: {walletInfo.guardians.length}</p>
+                  <p>Relayers: {walletInfo.relayers.length}</p>
 
-                <h2 className="mt-5 text-[1.65rem] font-bold flex items-center justify-between">
-                  <TokenAmount token={walletInfo?.balance} />
-                  <p className="flex space-x-2">
-                    {walletInfo?.is_frozen && <IconFreeze />}
-                    {walletInfo?.multisig_address && <IconSignature />}
-                  </p>
-                </h2>
-              </div>
+                  <h2 className="mt-5 text-[1.65rem] font-bold flex items-center justify-between">
+                    <TokenAmount token={walletInfo.balance} />
+                    <p className="flex space-x-2">
+                      {walletInfo?.is_frozen && <IconFreeze />}
+                      {walletInfo?.multisig_address && <IconSignature />}
+                    </p>
+                  </h2>
+                </div>
+              )
             )}
 
             {error && <AlertError>Failed to retrieve SCW infos. {error.message}</AlertError>}
@@ -87,7 +89,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
             </div>
 
             <div className="card-body">
-              <div className="flex justify-end space-x-2 mt-12">
+              <div className="grid grid-cols-2 gap-1">
                 <label
                   htmlFor={`send-modal-${address}`}
                   className={`btn modal-button btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
@@ -95,6 +97,9 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 >
                   Transfer
                 </label>
+                <Anchor className="btn btn-primary btn-sm" href={`/validators?address=${address}`}>
+                  Stake
+                </Anchor>
                 <label
                   htmlFor={`charge-modal-${address}`}
                   className={`btn modal-button btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
@@ -102,21 +107,19 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 >
                   Charge
                 </label>
-                <label className="btn btn-primary btn-sm">
-                  <Link href={`/wallets/manage/${address}`} passHref={true}>
-                    Manage
-                  </Link>
-                </label>
+                <Anchor className="btn btn-primary btn-sm" href={`/wallets/manage/${address}`}>
+                  Manage
+                </Anchor>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {modalSendOpen && (
+      {modalSendOpen && walletInfo && (
         <SendFundsModal walletInfo={walletInfo} walletAddress={address} onSentFunds={doRefresh} onClose={() => setModalSendOpen(false)} />
       )}
-      {modalChargeOpen && (
+      {modalChargeOpen && walletInfo && (
         <ChargeWalletModal walletInfo={walletInfo} walletAddress={address} onChargeDone={doRefresh} onClose={() => setModalChargeOpen(false)} />
       )}
     </>
