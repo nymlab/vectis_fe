@@ -1,0 +1,2 @@
+export const MICRO_DENOM = 1000000;
+export const VALIDATOR_RATE = 10000000000000000;
