@@ -49,7 +49,7 @@ const RedelegateModal: React.FC<Props> = ({ validators, validator, scwallet, del
   };
 
   return (
-    <Modal style={{ overflowY: "initial" }} id={`redelegate-modal-${description?.moniker}`} onClose={closeModal}>
+    <Modal id={`redelegate-modal-${description?.moniker}`} onClose={closeModal}>
       <div className="">
         <h3 className="font-bold text-lg">{description?.moniker}</h3>
         <div className="py-4">

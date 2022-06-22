@@ -12,7 +12,7 @@ import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversio
 import network from "configs/networks";
 
 type SendFundsModalProps = {
-  walletInfo: WalletInfoWithBalance | null;
+  walletInfo: WalletInfoWithBalance;
   walletAddress: string;
   onSentFunds: () => void;
   onClose?: () => void;
@@ -53,7 +53,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
         key: "amountToSend",
         value: amountToSend,
         message: `This SCW doesn't have enough ${convertFromMicroDenom(network.stakingToken)}`,
-        validate: () => parseFloat(amountToSend) < convertMicroDenomToDenom(walletInfo?.balance.amount ?? 0),
+        validate: () => parseFloat(amountToSend) < convertMicroDenomToDenom(walletInfo.balance.amount ?? 0),
       },
     ],
   });
@@ -91,7 +91,7 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
     <Modal id={`send-modal-${walletAddress}`} onClose={handleCloseModal}>
       <h3 className="text-xl font-bold">Send funds to address through wallet</h3>
       <h4 className="text-lg">
-        Available inside wallet: <TokenAmount token={walletInfo?.balance} />
+        Available inside wallet: <TokenAmount token={walletInfo.balance} />
       </h4>
       <div className="flex flex-col items-center">
         {!isSending ? (
