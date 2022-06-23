@@ -9,24 +9,17 @@ import { QueryClientWithExtentions } from "services/stargate";
 
 interface Props {
   validators?: Validator[];
+  delegations: DelegationResponse[];
   scwalletAddr: string;
 }
 
-const DelegationTable: React.FC<Props> = ({ scwalletAddr, validators }) => {
+const DelegationTable: React.FC<Props> = ({ delegations, scwalletAddr, validators }) => {
   const { queryClient } = useCosm();
-  const [delegations, setDelegations] = useState<DelegationResponse[] | null>(null);
   const [validator, setValidator] = useState<Validator | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const changeVisibility = useCallback(() => setIsModalOpen(!isModalOpen), [isModalOpen]);
   const openModal = useCallback((validator: Validator) => [setValidator(validator), setIsModalOpen(true)], []);
-
-  useEffect(() => {
-    if (!queryClient) return;
-    queryClient.staking.delegatorDelegations(scwalletAddr).then(({ delegationResponses }) => setDelegations(delegationResponses));
-  }, [queryClient]);
-
-  if (!scwalletAddr) return null;
 
   return (
     <>
