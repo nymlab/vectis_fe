@@ -3,58 +3,51 @@ import toast from "react-hot-toast";
 import clsx from "clsx";
 import { useCosm } from "contexts/cosmwasm";
 import { executeUndelegation } from "services/vectis";
-import { coin, convertMicroDenomToDenom } from "utils/conversion";
+import { coin } from "utils/conversion";
 import Modal from "components/Modal";
-
-import { DelegationResponse, Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { Coin } from "@cosmjs/proto-signing";
+import { useModal, useStaking } from "stores";
+import ValidatorModal from "./ValidatorModal";
+import TokenAmount from "components/TokenAmount";
 
-interface Props {
-  validator: Validator;
-  delegation: DelegationResponse;
-  scwallet: string;
-  onClose: (modal: string) => void;
-}
-
-const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onClose }) => {
-  const [amount, setAmount] = useState<string>("");
-  const [balance, setBalance] = useState<Coin>(delegation.balance!);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+const UndelegateModal: React.FC = () => {
   const { signingClient, queryClient, address } = useCosm();
-  const { description } = validator;
-
-  const closeModal = useCallback(() => onClose("delegate"), [onClose]);
+  const { delegation, validator, scwalletAddr, refreshDelegations } = useStaking();
+  const { openModal, closeModal } = useModal();
+  const [amount, setAmount] = useState<string>("");
+  const [balance, setBalance] = useState<Coin>(delegation?.balance || coin(0));
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const undelegate = async () => {
     setIsLoading(true);
     try {
-      await toast
-        .promise(executeUndelegation(signingClient, address, scwallet, validator.operatorAddress, Number(amount)), {
+      await toast.promise(
+        (async () => {
+          await executeUndelegation(signingClient, address, scwalletAddr, validator!.operatorAddress, Number(amount));
+          await refreshDelegations(queryClient);
+        })(),
+        {
           loading: "UnDelegating...",
           success: <b>UnDelegation successful!</b>,
-          error: <b>UnDelegation failed</b>,
-        })
-        .catch(console.log);
-      setAmount("0");
-      const { delegationResponse } = await queryClient.staking.delegation(scwallet, validator.operatorAddress);
-      setBalance(delegationResponse?.balance || coin(0));
-    } catch (err) {
-      console.log(err);
-    }
+          error: ({ message }) => message.split("submessages:")[1],
+        }
+      );
+      setBalance(coin(Number(balance.amount) - Number(amount)));
+    } catch (err) {}
+    setAmount("0");
     setIsLoading(false);
   };
 
+  if (!validator || !delegation) return null;
+
   return (
-    <Modal id={`undelegate-modal-${description?.moniker}`} onClose={closeModal}>
+    <Modal id={`undelegate-modal-${validator.description?.moniker}`} onClose={closeModal} defaultOpen>
       <div className="">
-        <h3 className="font-bold text-lg">{description?.moniker}</h3>
+        <h3 className="font-bold text-lg">{validator.description?.moniker}</h3>
         <div className="py-4">
           {balance && (
             <p className="font-bold">
-              Available for undelegation:{" "}
-              <span className="font-normal" data-testid="undelegation-modal-balance">
-                {convertMicroDenomToDenom(balance.amount) + ` ${balance.denom.toUpperCase()}`}
-              </span>
+              Available for undelegation: <TokenAmount token={balance} data-testid="undelegation-modal-balance" />
             </p>
           )}
         </div>
@@ -70,7 +63,7 @@ const UndelegateModal: React.FC<Props> = ({ validator, scwallet, delegation, onC
 
         <div className={clsx("flex items-center", { "justify-end": isLoading, " justify-between": !isLoading })}>
           {!isLoading && (
-            <label htmlFor={`undelegate-modal-${description?.moniker}`} className="btn" onClick={closeModal}>
+            <label htmlFor={`undelegate-modal-${validator.description?.moniker}`} className="btn" onClick={() => openModal(<ValidatorModal />)}>
               back
             </label>
           )}
