@@ -1,13 +1,13 @@
 import create from "zustand";
 
-export const useSidebarStore = create(() => ({ isOpen: true }));
+export const useSidebar = create(() => ({ isOpen: true }));
 
 export const openSidebar = () => {
-  useSidebarStore.setState({ isOpen: true });
+  useSidebar.setState({ isOpen: true });
 };
 export const closeSidebar = () => {
-  useSidebarStore.setState({ isOpen: false });
+  useSidebar.setState({ isOpen: false });
 };
 export const toggleSidebar = () => {
-  useSidebarStore.setState((prev) => ({ isOpen: !prev.isOpen }));
+  useSidebar.setState((prev) => ({ isOpen: !prev.isOpen }));
 };
