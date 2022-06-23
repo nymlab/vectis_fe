@@ -1,55 +1,51 @@
-import React, { useCallback, useState } from "react";
-import toast from "react-hot-toast";
-import clsx from "clsx";
+import React, { useState } from "react";
 import { useCosm } from "contexts/cosmwasm";
+import { useStaking, useModal } from "stores";
 import { executeRedelegation } from "services/vectis";
-import Modal from "components/Modal";
-
-import { DelegationResponse, Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
-import ValidatorSelector from "components/ValidatorSelector";
 import { convertMicroDenomToDenom } from "utils/conversion";
+import clsx from "clsx";
+import toast from "react-hot-toast";
+import Modal from "components/Modal";
+import ValidatorSelector from "components/ValidatorSelector";
+import ValidatorModal from "./ValidatorModal";
 
-interface Props {
-  validators: Validator[];
-  validator: Validator;
-  delegation: DelegationResponse;
-  scwallet: string;
-  onClose: (modal: string) => void;
-}
-
-const RedelegateModal: React.FC<Props> = ({ validators, validator, scwallet, delegation: { balance }, onClose }) => {
+const RedelegateModal: React.FC = () => {
+  const { signingClient, queryClient, address } = useCosm();
+  const { validator, delegation, validators, scwalletAddr, refreshDelegations } = useStaking();
+  const { openModal, closeModal } = useModal();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newValidator, setNewValidator] = useState<string | null>(null);
-  const { signingClient, address } = useCosm();
-  const { description } = validator;
-
-  const closeModal = useCallback(() => onClose("delegate"), [onClose]);
+  const { description } = validator!;
+  const { balance } = delegation!;
 
   const redelegate = async () => {
-    if (!newValidator || !balance) return;
+    if (!newValidator || !balance || !validator) return;
     setIsLoading(true);
-    await toast
-      .promise(
-        executeRedelegation(
-          signingClient,
-          address,
-          scwallet,
-          validator.operatorAddress,
-          newValidator,
-          convertMicroDenomToDenom(balance.amount)
-        ),
+    try {
+      await toast.promise(
+        (async () => {
+          await executeRedelegation(
+            signingClient,
+            address,
+            scwalletAddr,
+            validator!.operatorAddress,
+            newValidator,
+            convertMicroDenomToDenom(balance.amount)
+          );
+          await refreshDelegations(queryClient);
+        })(),
         {
           loading: "Redelegating...",
           success: <b>Redelegation successful!</b>,
-          error: <b>Redelegation failed</b>,
+          error: ({ message }) => message.split("submessages:")[1],
         }
-      )
-      .catch(console.log);
+      );
+    } catch (err) {}
     setIsLoading(false);
   };
 
   return (
-    <Modal id={`redelegate-modal-${description?.moniker}`} onClose={closeModal}>
+    <Modal id={`redelegate-modal-${description?.moniker}`} onClose={closeModal} defaultOpen>
       <div className="">
         <h3 className="font-bold text-lg">{description?.moniker}</h3>
         <div className="py-4">
@@ -62,7 +58,7 @@ const RedelegateModal: React.FC<Props> = ({ validators, validator, scwallet, del
 
         <div className={clsx("flex items-center", { "justify-end": isLoading, " justify-between": !isLoading })}>
           {!isLoading && (
-            <label htmlFor={`redelegate-modal-${description?.moniker}`} className="btn" onClick={closeModal}>
+            <label htmlFor={`redelegate-modal-${description?.moniker}`} className="btn" onClick={() => openModal(<ValidatorModal />)}>
               back
             </label>
           )}

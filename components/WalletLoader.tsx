@@ -2,7 +2,7 @@ import { Popover, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 import { FaCopy, FaPowerOff, FaRedo } from "react-icons/fa";
-import { copy } from "utils/clipboard";
+import { copyToClipboard } from "utils/clipboard";
 import { convertMicroDenomToDenom } from "utils/conversion";
 
 import { WalletButton } from "./buttons/WalletButton";
@@ -65,7 +65,7 @@ export const WalletLoader = () => {
                   </span>
                 )}
               </div>
-              <WalletPanelButton Icon={FaCopy} onClick={() => void copy(address)}>
+              <WalletPanelButton Icon={FaCopy} onClick={() => copyToClipboard(address)}>
                 Copy wallet address
               </WalletPanelButton>
               <WalletPanelButton Icon={FaRedo} onClick={() => connectWallet()}>

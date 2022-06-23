@@ -25,19 +25,14 @@ const ListWallets: NextPage = () => {
 
       <ConnectWallet>
         <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
-        <h1 className="text-5xl font-bold my-8">Your Smart Contract Wallets</h1>
+        <h1 className="text-5xl text-center font-bold my-8">Your Smart Contract Wallets</h1>
 
         {isLoading ? (
           <Loader>Querying your Smart Contract Wallets...</Loader>
         ) : (
-          <div
-            className={`flex flex-col md:grid`}
-            style={{ gridTemplateColumns: `repeat(${Math.min(proxyWallets.length, 3)}, minmax(0, 1fr))` }}
-          >
-            {proxyWallets.map((address, i) => (
-              <div key={i} className="m-5">
-                <SCWCard address={address} onRefresh={refreshBalance} />
-              </div>
+          <div className="grid grid-cols-[repeat(auto-fit,_minmax(384px,_1fr))] w-full p-4 gap-6 max-w-[80%]">
+            {proxyWallets.map((address) => (
+              <SCWCard key={address} address={address} onRefresh={refreshBalance} />
             ))}
           </div>
         )}

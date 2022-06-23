@@ -5,6 +5,7 @@ import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useValidationErrors } from "hooks/useValidationErrors";
 import { useMemo, useState } from "react";
 import { queryProxyWalletInfo, queryProposals } from "services/vectis";
+import { copyToClipboard } from "utils/clipboard";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
 import Loader from "./Loader";
@@ -45,10 +46,6 @@ export default function GuardianView() {
     () => walletActiveProposals.find((p) => p.title.toLowerCase().includes("key")),
     [walletActiveProposals]
   );
-
-  function copyAddress(address: string) {
-    navigator.clipboard?.writeText(address);
-  }
 
   function fetchSCW() {
     if (!checkValidationErrors()) {
@@ -142,7 +139,7 @@ export default function GuardianView() {
               <a
                 className="hover:text-primary hover:underline hover:cursor-pointer transition-colors tooltip"
                 data-tip="Copy wallet address"
-                onClick={() => copyAddress(walletInfo.user_addr)}
+                onClick={() => copyToClipboard(walletInfo.user_addr)}
               >
                 {walletInfo.user_addr}
               </a>

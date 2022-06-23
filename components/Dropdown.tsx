@@ -31,7 +31,7 @@ const Dropdown: React.FC<Props> = ({ initialLabel, options, onChange, full }) =>
       <ul
         className={clsx("menu p-2 shadow bg-base-100 rounded-box absolute", {
           hidden: !isDropdownVisible,
-          "w-full max-h-40 overflow-y-scroll": full,
+          "w-full max-h-52 overflow-y-scroll": full,
         })}
       >
         {options.map((option) => (

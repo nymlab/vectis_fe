@@ -9,6 +9,7 @@ import TokenAmount from "./TokenAmount";
 import SendFundsModal from "./modals/SendFundsModal";
 import ChargeWalletModal from "./modals/ChargeWalletModal";
 import { Anchor } from "./Anchor";
+import { copyToClipboard } from "utils/clipboard";
 
 type SCWCardProps = {
   address: string;
@@ -17,7 +18,7 @@ type SCWCardProps = {
 };
 
 export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
-  const { signingClient, address: walletAddress } = useCosm();
+  const { signingClient, address: userAddr } = useCosm();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -29,16 +30,11 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
 
   useEffect(() => {
     setLoading(true);
-
-    queryProxyWalletInfo(signingClient!, walletAddress, address)
+    queryProxyWalletInfo(signingClient, userAddr, address)
       .then((info) => setWalletInfo(info))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
   }, [address, refresh]);
-
-  function copyAddress() {
-    navigator.clipboard.writeText(address);
-  }
 
   function doRefresh() {
     setRefresh(!refresh);
@@ -48,8 +44,8 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
   return (
     <>
       <div className="perspective transition-shadow relative group">
-        <div className="w-96 h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
-          <div className="card-body w-96 h-56 absolute backface-hidden">
+        <div className="w-96 mx-auto h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
+          <div className="card-body h-56 absolute backface-hidden">
             <h2 className="card-title flex space-x-2 items-center text-left my-3">
               <IconChip />
               <p>{title || walletInfo?.label || "Smart Contract Wallet"}</p>
@@ -77,10 +73,10 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
             {error && <AlertError>Failed to retrieve SCW infos. {error.message}</AlertError>}
           </div>
 
-          <div className="w-96 h-56 absolute rotate-y-180 backface-hidden">
-            <div className="ml-[3px] p-2 mt-10 bg-base-content text-center">
+          <div className="w-full h-56 absolute rotate-y-180 backface-hidden">
+            <div className="w-full p-2 mt-10 bg-base-content text-center">
               <p
-                onClick={copyAddress}
+                onClick={() => copyToClipboard(address)}
                 className="text-center text-base-100 text-[0.6rem] hover:underline hover:text-primary hover:cursor-pointer transition-colors tooltip"
                 data-tip="Copy wallet address"
               >
@@ -97,7 +93,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 >
                   Transfer
                 </label>
-                <Anchor className="btn btn-primary btn-sm" href={`/validators?address=${address}`}>
+                <Anchor className="btn btn-primary btn-sm" href={`/stake?address=${address}`}>
                   Stake
                 </Anchor>
                 <label
