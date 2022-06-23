@@ -1,5 +1,5 @@
 import network from "configs/networks";
-import { MICRO_DENOM, VALIDATOR_RATE } from "./constants";
+import { MICRO_DENOM, REWARDS_RATE, VALIDATOR_RATE } from "./constants";
 
 export function convertMicroDenomToDenom(amount: number | string) {
   if (typeof amount === "string") {
@@ -50,3 +50,7 @@ export function coin(amount: number) {
 export function fromValidationRate(comissionRate: string | number) {
   return (Number(comissionRate) / VALIDATOR_RATE).toFixed(2);
 }
+
+export const fromRewardsRate = (rewardsRate: string | number) => {
+  return (Number(rewardsRate) / REWARDS_RATE).toFixed(2);
+};
