@@ -18,7 +18,6 @@ const ManageWallet: NextPage = () => {
       </Head>
 
       <ConnectWallet>
-        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
         <SCWManageForm proxyWalletAddress={proxyWalletAddress! as string} onRefresh={refreshBalance} />
       </ConnectWallet>
     </>

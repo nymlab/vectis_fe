@@ -287,13 +287,8 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
   return (
     <>
       <h1 className="text-5xl font-bold mt-8">Manage your Smart Contract Wallet</h1>
-      <h2 className="text-xl my-5">
-        Here you can modify the appointed guardians and relayers.
-        <br />
-        Optionally, you can also enable or disable multisig for this wallet.
-      </h2>
 
-      <h2 className="text-3xl font-bold mb-5">Update your label</h2>
+      <h2 className="text-3xl font-bold my-5">Update your label</h2>
       <div className="flex w-full max-w-xl align-middle items-center mb-5">
         <Input
           placeholder={`Label (e.g. Personal Wallet, Business Wallet...)`}
@@ -322,7 +317,12 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         </div>
       )}
 
-      <h2 className="text-3xl font-bold mb-5">Update your guardians</h2>
+      <h2 className="text-3xl font-bold my-5">Update your guardians</h2>
+      <h2 className="text-xl mb-5">
+        Here you can modify the appointed guardians and relayers.
+        <br />
+        Optionally, you can also enable or disable multisig for this wallet.
+      </h2>
       {guardians.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input

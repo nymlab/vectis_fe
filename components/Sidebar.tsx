@@ -10,7 +10,7 @@ import VectisLogo from "./VectisLogo";
 import { useCosm } from "contexts/cosmwasm";
 
 const routes = [
-  { text: "Wallets", href: "/wallets" },
+  { text: "My Wallets", href: "/wallets" },
   { text: "Guardian View", href: "/guardian" },
 ];
 

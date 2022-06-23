@@ -89,9 +89,9 @@ export default function SendFundsModal({ walletInfo, walletAddress, onSentFunds,
 
   return (
     <Modal id={`send-modal-${walletAddress}`} onClose={handleCloseModal}>
-      <h3 className="text-xl font-bold">Send funds to address through wallet</h3>
-      <h4 className="text-lg">
-        Available inside wallet: <TokenAmount token={walletInfo.balance} />
+      <h3 className="text-xl font-bold">Send funds from SCW</h3>
+      <h4 className="text-md">
+        SCW wallet balance: <TokenAmount token={walletInfo.balance} />
       </h4>
       <div className="flex flex-col items-center">
         {!isSending ? (

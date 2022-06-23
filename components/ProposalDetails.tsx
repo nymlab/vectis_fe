@@ -59,7 +59,6 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
       <h3 className="text-2xl font-bold mb-5">Proposal Details</h3>
       <div className="flex flex-col items-center text-xl">
         <p>Title: {proposal.title}</p>
-        <p>Description: {proposal.description}</p>
         {/* <p>Expires: {proposal.expires.at_time}</p> */}
         <p>
           Approval Threshold: {proposal.threshold.absolute_count.weight} positive vote

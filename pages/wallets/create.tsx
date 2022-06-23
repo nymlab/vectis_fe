@@ -14,7 +14,6 @@ const CreateWallet: NextPage = () => {
       </Head>
 
       <ConnectWallet>
-        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
         <SCWCreateForm onRefresh={refreshBalance} />
       </ConnectWallet>
     </>

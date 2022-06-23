@@ -112,7 +112,7 @@ export default function GuardianView() {
           fetchSCW();
         }}
       >
-        <p className="text-2xl my-8">Insert the Smart Contract Wallet address for which you are a guardian of</p>
+        <p className="text-2xl my-8">Please insert the SCW address you are a guardian of:</p>
         <Input
           placeholder="Smart Contract Wallet address"
           onChange={(event) => setProxyWalletAddress(event.target.value)}
@@ -138,7 +138,7 @@ export default function GuardianView() {
               Owner:{" "}
               <a
                 className="hover:text-primary hover:underline hover:cursor-pointer transition-colors tooltip"
-                data-tip="Copy wallet address"
+                data-tip="Copy owner address"
                 onClick={() => copyToClipboard(walletInfo.user_addr)}
               >
                 {walletInfo.user_addr}
@@ -157,7 +157,7 @@ export default function GuardianView() {
                 onClick={() => toggleProposalDetailsModal(walletFreezeProposal)}
               >
                 Proposal to {walletInfo.is_frozen ? "unfreeze" : "freeze"} wallet{" "}
-                {walletFreezeProposal.status === "passed" ? "has passed" : "is active"}
+                {walletFreezeProposal.status === "passed" ? "has passed - click to execute" : "is active"}
               </label>
             )}
             {walletKeyRotationProposal && (
@@ -167,7 +167,7 @@ export default function GuardianView() {
                 data-tip="Show proposal details"
                 onClick={() => toggleProposalDetailsModal(walletKeyRotationProposal)}
               >
-                Proposal to rotate owner key {walletKeyRotationProposal.status === "passed" ? "has passed" : "is active"}
+                Proposal to rotate owner key {walletKeyRotationProposal.status === "passed" ? "has passed - click to execute" : "is active"}
               </label>
             )}
           </div>
