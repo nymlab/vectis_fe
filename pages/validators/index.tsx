@@ -8,13 +8,14 @@ import DelegationTable from "components/DelegationTable";
 import { FaCoins, FaUsers, FaBoxes } from "react-icons/fa";
 import { IntlNumber } from "utils/intl";
 import { convertMicroDenomToDenom } from "utils/conversion";
-import { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import { DelegationResponse, Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { useRouter } from "next/router";
 
 const Validators: NextPage = () => {
   const { query } = useRouter();
   const { queryClient, tmClient } = useCosm();
   const [validators, setValidators] = useState<Validator[] | null>(null);
+  const [delegations, setDelegations] = useState<DelegationResponse[] | null>(null);
   const [numberOfValidators, setNumberOfValidators] = useState<number>(0);
   const [blockHeight, setBlockHeight] = useState<number>(0);
   const { address: scwalletAddr } = query;
@@ -26,10 +27,12 @@ const Validators: NextPage = () => {
     if (!queryClient || !tmClient) return;
     const getValidators = async () => {
       const { validators } = await queryClient.staking.validators("BOND_STATUS_BONDED");
+      const { delegationResponses } = await queryClient.staking.delegatorDelegations(scwalletAddr as string);
       const { block } = await tmClient.block();
       setNumberOfValidators(validators.length);
       setBlockHeight(block.header.height);
       setValidators(validators);
+      setDelegations(delegationResponses);
     };
     getValidators();
   }, [queryClient, tmClient]);
@@ -51,11 +54,15 @@ const Validators: NextPage = () => {
             {bondedTokens && IntlNumber(bondedTokens)}
           </ValidatorCard>
         </section>
-        <div className="card pl-4 rounded-xl bg-base-200 p-2 mb-2 text-xl">
-          <p className="font-bold">Delegations</p>
-        </div>
-        {scwalletAddr && <DelegationTable validators={sortedValidators} scwalletAddr={scwalletAddr as string} />}
-        <div className="divider" />
+        {delegations && delegations.length > 0 && (
+          <>
+            <div className="card pl-4 rounded-xl bg-base-200 p-2 mb-2 text-xl">
+              <p className="font-bold">Delegations</p>
+            </div>
+            <DelegationTable validators={sortedValidators} delegations={delegations} scwalletAddr={scwalletAddr as string} />
+            <div className="divider" />
+          </>
+        )}
         <div className="card pl-4 rounded-xl bg-base-200 p-2 mb-2 text-xl">
           <p className="font-bold">Validators</p>
         </div>
