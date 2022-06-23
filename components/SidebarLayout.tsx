@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import React, { PropsWithChildren } from "react";
-import { toggleSidebar, useSidebarStore } from "stores/sidebar";
+import { toggleSidebar, useSidebar } from "stores";
 import { FaChevronLeft } from "react-icons/fa";
 import ThemeToggle from "./ThemeToggle";
 
 export const SidebarLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
-  const { isOpen } = useSidebarStore();
+  const { isOpen } = useSidebar();
 
   return (
     <aside className={clsx(isOpen ? "min-w-[250px] max-w-[250px]" : "min-w-[20px] max-w-[20px]", "relative z-10")}>
