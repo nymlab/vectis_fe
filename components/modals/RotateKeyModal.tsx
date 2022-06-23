@@ -96,7 +96,9 @@ export default function RotateKeyModal({
 
   return (
     <Modal id={`rotate-key-modal`} onClose={handleCloseModal}>
-      <h3 className="text-xl font-bold mb-5">{proxyWalletInfo?.multisig_address ? "Propose owner key rotation" : "Rotate wallet owner key"}</h3>
+      <h3 className="text-xl font-bold mb-5">
+        {proxyWalletInfo?.multisig_address ? "Propose new wallet controller key" : "Rotate wallet controller key"}
+      </h3>
       <div className="flex flex-col items-center">
         {!isRotating ? (
           <>

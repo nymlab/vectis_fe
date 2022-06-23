@@ -90,7 +90,7 @@ export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, free
           className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${alreadyVoted ? "btn-disabled" : "btn-primary"}`}
           onClick={() => (!freezeProposal ? proposeToggleFreezeStatus() : openVoteModal())}
         >
-          {freezeProposal ? "VOTE" : "PROPOSE"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
+          {freezeProposal ? "VOTE to" : "PROPOSE to"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
         </label>
 
         {voteModalOpen && <VoteModal proposal={freezeProposal!} multisigAddress={proxyWalletInfo.multisig_address!} onVote={fetchVoteList} />}

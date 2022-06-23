@@ -105,7 +105,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                     Charge
                   </label>
                   <Anchor className="btn btn-primary btn-sm" href={`/wallets/manage/${address}`}>
-                    Manage
+                    Top-up
                   </Anchor>
                 </div>
               </div>

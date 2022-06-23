@@ -57,11 +57,11 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
     signingClient
       ?.sendTokens(userAddress, walletAddress, [coin(parseFloat(amountToSend))], "auto")
       .then(() => {
-        setSendSuccess(`Successfully charged ${amountToSend} ${convertFromMicroDenom(network.stakingToken)} into the wallet!`);
+        setSendSuccess(`Successfully sent ${amountToSend} ${convertFromMicroDenom(network.stakingToken)} into the SCW!`);
         setAmountToSend("");
         onChargeDone();
       })
-      .catch((err) => setSendError(`Failed to charge SCW. ${err}`))
+      .catch((err) => setSendError(`Failed to top-up SCW. ${err}`))
       .finally(() => setIsSending(false));
   }
 
@@ -75,8 +75,8 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
 
   return (
     <Modal id={`charge-modal-${walletAddress}`} onClose={handleCloseModal}>
-      <h3 className="text-xl font-bold">Charge your Smart Contract Wallet</h3>
-      <h4 className="text-lg">Available inside your personal wallet: {balance}</h4>
+      <h3 className="text-xl font-bold">Top-up your Smart Contract Wallet</h3>
+      <h4 className="text-md">{balance} is available</h4>
       <div className="flex flex-col items-center">
         {!isSending ? (
           <>
@@ -102,7 +102,7 @@ export default function ChargeWalletModal({ walletInfo, walletAddress, onChargeD
               )}
             </div>
             <div className="btn btn-primary mt-5 text-xl rounded-full" onClick={chargeWallet}>
-              Charge
+              Top-up
             </div>
           </>
         ) : (

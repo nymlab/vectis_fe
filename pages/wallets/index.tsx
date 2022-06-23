@@ -26,7 +26,6 @@ const ListWallets: NextPage = () => {
       </Head>
 
       <ConnectWallet>
-        <p className="text-2xl mt-5">Your personal wallet has {balance}</p>
         <h1 className="text-5xl text-center font-bold my-8">Your Smart Contract Wallets</h1>
 
         {isLoading ? (
