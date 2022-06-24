@@ -19,7 +19,7 @@ export const WalletLoader = () => {
 
   useEffect(() => {
     if (!address) return;
-    getBalance(address).then(setBalance);
+    getBalance(address)?.then(setBalance);
   }, [address]);
 
   return (
