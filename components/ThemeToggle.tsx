@@ -21,7 +21,7 @@ function ThemeToggle({ size }: Props) {
 
   const isDarkMode = useMemo(() => theme === "dark", [theme]);
 
-  const changeTheme = () => {
+  const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
     setLocalTheme(newTheme);
@@ -30,7 +30,7 @@ function ThemeToggle({ size }: Props) {
   };
 
   return (
-    <button onClick={() => changeTheme()} className="cursor-pointer hover:text-gray-300 focus:outline-none dark:focus:ring-gray-700">
+    <button onClick={() => toggleTheme()} className="cursor-pointer hover:text-gray-300 focus:outline-none dark:focus:ring-gray-700">
       <svg
         stroke="currentColor"
         fill="currentColor"

@@ -7,12 +7,17 @@ import { Toaster } from "react-hot-toast";
 import RootModal from "components/modals/RootModal";
 import TranslationsProvider from "contexts/TranslationsContext";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 function VectisApp({ Component, pageProps }: AppProps) {
   const [debug, setDebug] = useState(false);
+  const { push: goToPage } = useRouter();
 
   useEffect(() => {
     window.setDebug = setDebug;
+    if (location.hostname === "vectis.nymlab.it") {
+      goToPage("/coming-soon");
+    }
   }, []);
 
   return (
