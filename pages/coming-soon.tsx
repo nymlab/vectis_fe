@@ -12,7 +12,7 @@ const ComingSoon: NextPageWithLayout = () => {
         <VectisLogo contrast />
         <h1 className="text-5xl font-bold my-10">
           Coming soon on{" "}
-          <a href="https://www.junonetwork.io/" className="link link-hover hover:text-primary">
+          <a href="https://www.junonetwork.io/" rel="noreferrer" className="link link-hover hover:text-primary">
             Juno
           </a>{" "}
           mainnet!
@@ -23,7 +23,7 @@ const ComingSoon: NextPageWithLayout = () => {
             <h2 className="text-2xl mb-5">
               A non-custodial smart contract wallet project to enhance DApp user experience; it supports social recovery, guardianship and
               relaying capability for gas provisioning and auditability. For more details, please see our{" "}
-              <a href="https://github.com/nymlab/vectis/#overview" className="link link-primary link-hover">
+              <a href="https://github.com/nymlab/vectis/#overview" rel="noreferrer" className="link link-primary link-hover">
                 documentation
               </a>
               .
@@ -37,11 +37,11 @@ const ComingSoon: NextPageWithLayout = () => {
               We are close to launching on Juno mainnet.
               <br />
               If you are interested in the project, join our community on{" "}
-              <a href={links.discord} className="link link-hover link-primary" target="_blank">
+              <a href={links.discord} rel="noreferrer" className="link link-hover link-primary" target="_blank">
                 Discord
               </a>
               . You can also check out the preview on Juno testnet at the following link:{" "}
-              <a href="https://testnet.vectis.nymlab.it/" className="link link-hover link-primary">
+              <a href="https://testnet.vectis.nymlab.it/" rel="noreferrer" className="link link-hover link-primary">
                 https://testnet.vectis.nymlab.it
               </a>
             </h2>
