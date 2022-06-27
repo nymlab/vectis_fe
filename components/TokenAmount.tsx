@@ -6,10 +6,10 @@ type TokenAmountProps = {
   fixedLength?: number;
 };
 
-const TokenAmount: React.FC<TokenAmountProps> = ({ token, fixedLength }) => {
+const TokenAmount: React.FC<TokenAmountProps> = ({ token, fixedLength, ...rest }) => {
   const amount = convertMicroDenomToDenom(token.amount);
   return (
-    <span>
+    <span {...rest}>
       {fixedLength ? amount.toFixed(fixedLength) : amount} {convertFromMicroDenom(token.denom)}
     </span>
   );

@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import clsx from "clsx";
 import { useCosm } from "contexts/cosmwasm";
 import { executeUndelegation } from "services/vectis";
-import { coin } from "utils/conversion";
+import { coin, convertDenomToMicroDenom } from "utils/conversion";
 import Modal from "components/Modal";
 import { Coin } from "@cosmjs/proto-signing";
 import { useModal, useStaking } from "stores";
@@ -32,7 +32,7 @@ const UndelegateModal: React.FC = () => {
           error: ({ message }) => message.split("submessages:")[1],
         }
       );
-      setBalance(coin(Number(balance.amount) - Number(amount)));
+      setBalance({ ...balance, amount: String(Number(balance.amount) - Number(convertDenomToMicroDenom(amount))) });
     } catch (err) {}
     setAmount("0");
     setIsLoading(false);
