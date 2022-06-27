@@ -43,7 +43,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
 
   return (
     <>
-      <div className="perspective transition-shadow relative group">
+      <div data-testid="card-wallet" className="perspective transition-shadow relative group">
         <div className="w-96 mx-auto h-56 overflow-visible card bg-base-100 border-2 shadow-xl hover:shadow-2xl transition-transform delay-300 duration-700 preserve-3d group-hover:rotate-y-180">
           <div className="card-body h-56 absolute backface-hidden">
             <h2 className="card-title flex space-x-2 items-center text-left my-3">
@@ -93,7 +93,7 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                 >
                   Transfer
                 </label>
-                <Anchor className="btn btn-primary btn-sm" href={`/stake?address=${address}`}>
+                <Anchor data-testid="stake-button" className="btn btn-primary btn-sm" href={`/stake?address=${address}`}>
                   Stake
                 </Anchor>
                 <label

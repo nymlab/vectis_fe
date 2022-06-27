@@ -3,10 +3,16 @@ import { CustomPageArgs } from "e2e/types/CustomPageArgs";
 import CustomPage from "./custom";
 import KeplrPage from "./keplr";
 
-class ValidatorsPage extends CustomPage {
+class StakingPage extends CustomPage {
   constructor({ context }: CustomPageArgs) {
     super({ context });
-    this.baseUrl = `http://localhost:3000/validators`;
+  }
+
+  async navigate(url?: string): Promise<void> {
+    await super.navigate("http://localhost:3000/wallets");
+    const stakeButton = await this.getLocatorByTestId("stake-button");
+    await stakeButton.first().hover();
+    await stakeButton.first().click();
   }
 
   async getValidatorCards(): Promise<Locator> {
@@ -35,18 +41,16 @@ class ValidatorsPage extends CustomPage {
     await this.navigate();
     await this.clickOnManageButton();
 
-    await this.selectFirstWallet();
-    await this.page!.locator("label", { hasText: new RegExp("^delegate") }).click();
+    await this.page!.locator("button", { hasText: new RegExp("^delegate") }).click();
   }
 
   async clickOnUnDelegate(): Promise<void> {
     await this.navigate();
     await this.clickOnManageButton();
 
-    await this.selectFirstWallet();
     const dropdown = await this.getLocatorByTestId("delegator-group-button-dropdown");
     await dropdown.click();
-    await this.page!.locator("label", { hasText: new RegExp("^undelegate") }).click();
+    await this.page!.locator("button", { hasText: new RegExp("^undelegate") }).click();
   }
 
   async delegate(amount: number) {
@@ -61,4 +65,4 @@ class ValidatorsPage extends CustomPage {
   }
 }
 
-export default ValidatorsPage;
+export default StakingPage;

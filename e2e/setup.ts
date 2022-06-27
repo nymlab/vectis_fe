@@ -1,6 +1,6 @@
 import fs from "fs";
 import { chromium } from "@playwright/test";
-import { KEPLER_EXTENSION, PLAYWRIGHT_PATH } from "./utils/constants";
+import { KEPLER_EXTENSION, PLAYWRIGHT_PATH } from "../e2e/utils/constants";
 import { extractExtensionPackage } from "./utils/extensions";
 import KeplrPage from "./pages/keplr";
 import DashboardPage from "./pages/dashboard";

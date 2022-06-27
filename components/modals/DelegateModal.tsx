@@ -44,7 +44,7 @@ const DelegateModal: React.FC = () => {
   if (!validator) return null;
 
   return (
-    <Modal id={`delegate-modal-${validator.description?.moniker}`} onClose={closeModal} defaultOpen>
+    <Modal id="delegate-modal" onClose={closeModal} defaultOpen>
       <h3 className="font-bold text-lg">{validator.description?.moniker}</h3>
       <div className="py-4">
         <p className="font-bold">Available balance:</p>
