@@ -27,7 +27,7 @@ const ValidatorButton: React.FC = () => {
               </button>
             </>
           )}
-          <button className={clsx("btn", { "rounded-none": isDelegated })} onClick={() => openModal(<DelegateModal />)}>
+          <button className={clsx("btn", { "rounded-br-sm": isDelegated })} onClick={() => openModal(<DelegateModal />)}>
             delegate
           </button>
         </div>
