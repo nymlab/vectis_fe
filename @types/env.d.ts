@@ -7,7 +7,9 @@ declare global {
       page: Page;
     }
     interface ProcessEnv {
+      readonly NEXT_ENV: string;
       readonly NEXT_PUBLIC_NETWORK: string;
+      readonly NEXT_PUBLIC_SENTRY_DSN: string;
       readonly NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS: string;
     }
   }
