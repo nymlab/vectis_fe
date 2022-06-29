@@ -2,6 +2,7 @@ import { AlertError } from "components/Alert";
 import ConnectWallet from "components/ConnectWallet";
 import Loader from "components/Loader";
 import SCWCard from "components/SCWCard";
+import { useTranslations } from "contexts/TranslationsContext";
 import { useVectis } from "contexts/vectis";
 import { useBalance } from "hooks/useBalance";
 import type { NextPage } from "next";
@@ -11,6 +12,7 @@ import { useEffect } from "react";
 
 const ListWallets: NextPage = () => {
   const { proxyWallets, isLoading, error, getWallets } = useVectis();
+  const { t } = useTranslations();
   const { balance, refreshBalance } = useBalance();
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const ListWallets: NextPage = () => {
 
         <Link href="/wallets/create" passHref={true}>
           <button data-testid="create-wallet" className="btn btn-primary text-xl rounded-full my-10">
-            Create new wallet
+            {t("create.wallet")}
           </button>
         </Link>
 
