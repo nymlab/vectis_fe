@@ -33,3 +33,11 @@ export const getSession = (): Session | null => {
 export const deleteSession = (): void => {
   deleteItem("session");
 };
+
+export const getLanguage = (): string | null => {
+  return getItem<string>("lang");
+};
+
+export const setLanguage = (lang: string): void => {
+  return setItem<string>("lang", lang);
+};
