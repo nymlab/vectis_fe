@@ -16,17 +16,17 @@ function VectisApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <SigningCosmWasmProvider>
-      <VectisProvider>
-        <TranslationsProvider debug={debug}>
+    <TranslationsProvider debug={debug}>
+      <SigningCosmWasmProvider>
+        <VectisProvider>
           <Layout>
             <Component {...pageProps} />
             <Toaster position="top-center" reverseOrder={false} />
           </Layout>
           <RootModal />
-        </TranslationsProvider>
-      </VectisProvider>
-    </SigningCosmWasmProvider>
+        </VectisProvider>
+      </SigningCosmWasmProvider>
+    </TranslationsProvider>
   );
 }
 export default VectisApp;

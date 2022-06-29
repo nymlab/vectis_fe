@@ -10,6 +10,7 @@ import { Coin } from "@cosmjs/proto-signing";
 import { Key } from "@keplr-wallet/types";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { encodeSecp256k1Pubkey, Secp256k1Pubkey } from "@cosmjs/amino";
+import useErrorModal from "hooks/useErrorModal";
 
 export interface ICosmWasmContext {
   address: string;
@@ -42,8 +43,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [error, setError] = useState<unknown | null>(null);
-
-  useEffect(() => {}, []);
+  const { showError } = useErrorModal();
 
   useEffect(() => {
     const loadKeplr = async () => {
@@ -80,8 +80,7 @@ export const SigningCosmWasmProvider: React.FC<PropsWithChildren<{}>> = ({ child
       setSigningClient(client);
       setIsReady(true);
     } catch (error) {
-      console.log(error);
-      setError(error);
+      showError(error);
     }
     setIsLoading(false);
   };
