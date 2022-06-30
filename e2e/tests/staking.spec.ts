@@ -3,16 +3,13 @@ import { closeContext, startContext } from "e2e/setup";
 import DashboardPage from "e2e/pages/dashboard";
 import StakingPage from "e2e/pages/staking";
 import WalletsPage from "e2e/pages/wallets";
-import KeplrPage from "e2e/pages/keplr";
 
 test.describe("staking View", () => {
   test.beforeAll(async () => {
     await startContext();
     const walletsPage = new WalletsPage({ context });
-    const keplrPage = new KeplrPage({ context });
     await walletsPage.navigate();
     await walletsPage.createWallet();
-    await keplrPage.waitForEventAndClickApprove();
   });
   test.afterAll(closeContext);
 
@@ -49,11 +46,9 @@ test.describe("staking View", () => {
 
   test("click on delegate should allow user to delegate", async () => {
     const stakingPage = new StakingPage({ context });
-    const keplrPage = new KeplrPage({ context });
     await stakingPage.clickOnDelegate();
     await stakingPage.page!.fill('input[name="delegate"]', "1");
     await stakingPage.page!.locator("button", { hasText: "delegate" }).click();
-    await keplrPage.waitForEventAndClickApprove();
     await stakingPage.page!.waitForResponse((res) => res.request().postDataJSON().params.path === "/cosmos.bank.v1beta1.Query/Balance");
     ("delegate-modal");
   });
@@ -69,14 +64,12 @@ test.describe("staking View", () => {
 
   test("after delegate user should allow to undelagate", async () => {
     const stakingPage = new StakingPage({ context });
-    const keplrPage = new KeplrPage({ context });
     await stakingPage.delegate(2);
     await stakingPage.clickOnUnDelegate();
     const balanceNode = await stakingPage.getLocatorByTestId("undelegation-modal-balance");
     const balanceBefore = parseInt(await balanceNode.innerText(), 10);
     await stakingPage.page!.fill('input[name="undelegate"]', String(balanceBefore / 2));
     await stakingPage.page!.locator("button", { hasText: "undelegate" }).click();
-    await keplrPage.waitForEventAndClickApprove();
     await stakingPage.page!.waitForResponse(
       (res) => res.request().postDataJSON().params.path === "/cosmos.staking.v1beta1.Query/DelegatorDelegations"
     );

@@ -11,9 +11,10 @@ export class CustomPage {
   }
 
   async navigate(url = ""): Promise<void> {
-    const pages = await this.context.pages();
     const matchingUrl = this.baseUrl + url;
-    this.page = pages.length ? pages[0] : await this.context.newPage();
+    const pages = await this.context.pages();
+    const page = pages.find((p) => !p.url().includes("chrome-extension://"));
+    this.page = page ? page : await this.context.newPage();
     await this.page.goto(matchingUrl);
   }
 

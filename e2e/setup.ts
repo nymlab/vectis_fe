@@ -25,11 +25,16 @@ export const startContext = async () => {
 
   const keplrPage = new KeplrPage({ context });
   const dashboardPage = new DashboardPage({ context });
-
+  context.on("page", async (page) => {
+    if (page.url().includes(keplrPage.baseUrl) && !page.url().includes("/register")) {
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(200);
+      await page.click('button:has-text("Approve")');
+    }
+  });
   await keplrPage.importAccount();
   await dashboardPage.navigate();
   await dashboardPage.clickConnectWallet();
-  await keplrPage.addChainAndConnect();
 };
 
 export const closeContext = async () => {

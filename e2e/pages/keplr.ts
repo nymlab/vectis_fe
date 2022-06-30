@@ -60,7 +60,6 @@ class KeplrPage extends CustomPage {
     await this.page.fill('input[name="confirmPassword"]', USER_WALLET.password);
     await this.page.click("text=Next");
     await this.page.click("text=Done");
-    await this.page.close();
   }
 }
 

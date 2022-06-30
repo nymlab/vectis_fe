@@ -1,7 +1,6 @@
 import { Locator } from "@playwright/test";
 import { CustomPageArgs } from "e2e/types/CustomPageArgs";
 import CustomPage from "./custom";
-import KeplrPage from "./keplr";
 
 class StakingPage extends CustomPage {
   constructor({ context }: CustomPageArgs) {
@@ -54,13 +53,10 @@ class StakingPage extends CustomPage {
   }
 
   async delegate(amount: number) {
-    const keplrPage = new KeplrPage({ context });
     await this.clickOnDelegate();
     await this.page!.fill('input[name="delegate"]', String(amount));
     await this.page!.locator("button", { hasText: "delegate" }).click();
     await this.wait(1500);
-    await keplrPage.navigate();
-    await keplrPage.clickApprove();
     await this.page!.waitForResponse((res) => res.request().postDataJSON().params.path === "/cosmos.bank.v1beta1.Query/Balance");
   }
 }
