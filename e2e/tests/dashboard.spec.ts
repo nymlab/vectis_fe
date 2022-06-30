@@ -6,9 +6,7 @@ test.describe("dashboard", () => {
   test.beforeAll(startContext);
   test.afterAll(closeContext);
   test("should appear wallet address in nav button", async () => {
-    const dashboardPage = new DashboardPage({ context });
-    await dashboardPage.navigate();
-    const elem = await dashboardPage.getLocatorByTestId("wallet-connect");
+    const elem = await DashboardPage.getLocatorByTestId("wallet-connect");
     await expect(elem).toHaveText("wallet-user");
   });
 });

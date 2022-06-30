@@ -1,28 +1,25 @@
-import { BrowserContext, Locator, Page } from "@playwright/test";
-import { CustomPageArgs } from "e2e/types/CustomPageArgs";
+import { Locator } from "@playwright/test";
 
 export class CustomPage {
-  context: BrowserContext;
-  page?: Page;
-  baseUrl: string;
-  constructor({ context }: CustomPageArgs) {
-    this.context = context;
-    this.baseUrl = "";
-  }
+  static baseUrl = "http://localhost:3000";
 
-  async navigate(url = ""): Promise<void> {
+  static async navigate(url = ""): Promise<void> {
     const matchingUrl = this.baseUrl + url;
-    const pages = await this.context.pages();
-    const page = pages.find((p) => !p.url().includes("chrome-extension://"));
-    this.page = page ? page : await this.context.newPage();
-    await this.page.goto(matchingUrl);
+    const p = await CustomPage.getPage();
+    await p.goto(matchingUrl);
   }
 
-  async getLocatorByTestId(testId: string): Promise<Locator> {
-    return await this.page!.locator(`[data-testid="${testId}"]`);
+  static async getPage() {
+    const pages = await context.pages();
+    return pages.find((p) => !p.url().includes("chrome-extension://")) || (await context.newPage());
   }
 
-  async wait(ms: number): Promise<void> {
+  static async getLocatorByTestId(testId: string): Promise<Locator> {
+    const p = await CustomPage.getPage();
+    return await p.locator(`[data-testid="${testId}"]`);
+  }
+
+  static async wait(ms: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
