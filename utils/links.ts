@@ -3,7 +3,7 @@ import { SiDiscord } from "react-icons/si";
 
 export const links = {
   nymlab: `https://www.nymlab.it/`,
-  discord: "https://discord.gg/8GV48B2Gfp",
+  discord: "https://discord.gg/xp3vFSAMgS",
   github: "https://github.com/nymlab/vectis",
 };
 
