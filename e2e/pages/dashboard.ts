@@ -10,6 +10,7 @@ class DashboardPage extends CustomPage {
   async clickConnectWallet(): Promise<void> {
     const locator = await this.getLocatorByTestId("wallet-connect");
     await locator.click();
+    await this.page!.waitForTimeout(5000);
   }
 
   async clickNavIndex(index: string): Promise<void> {

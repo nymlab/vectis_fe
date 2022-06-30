@@ -12,6 +12,7 @@ class WalletsPage extends CustomPage {
     await locator.click();
     await this.fillForm();
     await this.page!.locator("button", { hasText: "CREATE" }).click();
+    await this.page!.waitForTimeout(5000);
   }
 
   async fillForm(): Promise<void> {
