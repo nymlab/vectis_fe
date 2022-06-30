@@ -11,6 +11,7 @@ import { Input } from "./Input";
 import Loader from "./Loader";
 import network from "configs/networks";
 import { Anchor } from "./Anchor";
+import TitleWithToolTip from "./TitleWithToolTip";
 
 type SCWCreateFormProps = {
   onRefresh?: () => void;
@@ -168,7 +169,10 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
       <h1 className="text-5xl font-bold my-8">Create your Smart Contract Wallet</h1>
 
-      <h2 className="text-3xl font-bold mb-5">1. Choose your guardian(s)</h2>
+      <TitleWithToolTip
+        title="1. Choose your guardian(s)"
+        textTip="Guardians are trusted by you, they can help you freeze your wallet in the case of device theft and rotate the controlling key to this wallet. These can be updated anytime by you."
+      />
       {guardians.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
@@ -207,7 +211,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           <span className="ml-2">
             <div
               className="tooltip"
-              data-tip="If enabled, amount of guardians signature must be at least equal to the threshold for executing any actions."
+              data-tip="If enabled, amount of guardians signature must be at least equal to the threshold to execute actions. Otherwise any one of the Guardians can execute actions."
             >
               <IconInfo />
             </div>
@@ -235,7 +239,10 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         </div>
       )}
 
-      <h2 className="text-3xl font-bold my-5">2. Choose your relayer(s)</h2>
+      <TitleWithToolTip
+        title="2. Choose your relayer(s)"
+        textTip="OPTIONAL: Relayers can relay transactions signed offline by the wallet's controller key."
+      />
       {relayers.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
@@ -264,7 +271,10 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         ADD RELAYER
       </button>
 
-      <h2 className="text-3xl font-bold my-5">3. Label and fund your wallet</h2>
+      <TitleWithToolTip
+        title="3. Label and fund your wallet"
+        textTip="A descriptive label to help you identify the purpose of this wallet, this information is public"
+      />
       <div className="w-full max-w-xl mb-2">
         <Input
           placeholder={`Label (e.g. My staking wallet...)`}
