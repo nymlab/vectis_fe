@@ -34,4 +34,5 @@ function VectisApp({ Component, pageProps }: AppProps) {
     </TranslationsProvider>
   );
 }
+
 export default VectisApp;

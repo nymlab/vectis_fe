@@ -4,10 +4,15 @@ import VectisLogo from "components/VectisLogo";
 import { ReactElement } from "react";
 import { NextPageWithLayout } from "./_app";
 import { socialsLinks, links } from "utils/links";
+import Head from "next/head";
 
 const ComingSoon: NextPageWithLayout = () => {
   return (
     <>
+      <Head>
+        <title>Vectis | Coming Soon</title>
+      </Head>
+
       <div className="h-screen flex flex-col items-center justify-center">
         <VectisLogo contrast />
         <h1 className="text-5xl font-bold my-10">
