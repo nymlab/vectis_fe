@@ -1,6 +1,9 @@
 import { BrowserContext, Page } from "playwright";
 
 declare global {
+  interface NextPageWithLayout extends React.FC {
+    layout: string;
+  }
   namespace NodeJS {
     interface Global {
       context: BrowserContext;
