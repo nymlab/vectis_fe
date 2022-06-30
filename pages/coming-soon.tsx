@@ -1,8 +1,6 @@
 import { Anchor } from "components/Anchor";
 import ThemeToggle from "components/ThemeToggle";
 import VectisLogo from "components/VectisLogo";
-import { ReactElement } from "react";
-import { NextPageWithLayout } from "./_app";
 import { socialsLinks, links } from "utils/links";
 import Head from "next/head";
 
@@ -64,9 +62,6 @@ const ComingSoon: NextPageWithLayout = () => {
     </>
   );
 };
-
-ComingSoon.getLayout = function getLayout(page: ReactElement) {
-  return <>{page}</>;
-};
+ComingSoon.layout = "NoLayout";
 
 export default ComingSoon;

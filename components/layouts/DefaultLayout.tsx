@@ -1,11 +1,10 @@
 import React, { PropsWithChildren } from "react";
-import clsx from "clsx";
 import Head from "next/head";
 import { FaDesktop } from "react-icons/fa";
 
-import Sidebar from "./Sidebar";
+import Sidebar from "../Sidebar";
 
-export const Layout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+const DefaultLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <div className="overflow-x-hidden min-h-screen min-w-full">
       <Head>
@@ -29,3 +28,5 @@ export const Layout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     </div>
   );
 };
+
+export default DefaultLayout;
