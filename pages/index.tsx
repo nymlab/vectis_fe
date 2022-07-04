@@ -15,8 +15,8 @@ const Home: NextPage = () => {
       <Head>
         <title>Vectis</title>
       </Head>
-      <div className="flex flex-col justify-center items-center max-w-[80%]">
-        <h1 className="text-6xl font-bold">Welcome to Vectis!</h1>
+      <div className="flex flex-col justify-center items-center max-w-[50%]">
+        <h1 className="text-6xl font-bold text-center">Welcome to Vectis!</h1>
         <h2 className="text-xl my-5 text-center">
           A smart contract wallet project to help user manage their funds by allowing for social recovery and guardianship, whilst preserving
           user control. <br /> For more information, please see our{" "}
