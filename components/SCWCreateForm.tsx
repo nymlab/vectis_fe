@@ -6,7 +6,7 @@ import { useState } from "react";
 import { createProxyWallet } from "services/vectis";
 import { convertFromMicroDenom } from "utils/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
-import { IconInfo, IconTrash } from "./Icon";
+import { IconAdd, IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
 import Loader from "./Loader";
 import network from "configs/networks";
@@ -31,23 +31,23 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
 
   const { getValueValidationError, getArrayValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
-      {
-        key: "proxyInitialFunds",
-        value: proxyInitialFunds,
-        message: "This field is mandatory",
-        validate: () => !!proxyInitialFunds,
-      },
+      // {
+      //   key: "proxyInitialFunds",
+      //   value: proxyInitialFunds,
+      //   message: "This field is mandatory",
+      //   validate: () => !!proxyInitialFunds,
+      // },
       {
         key: "proxyInitialFunds",
         value: proxyInitialFunds,
         message: "This field must be >= 0",
-        validate: () => parseFloat(proxyInitialFunds) > 0,
+        validate: () => !proxyInitialFunds || parseFloat(proxyInitialFunds) >= 0,
       },
       {
         key: "proxyInitialFunds",
         message: `You don't have enough ${convertFromMicroDenom(network.stakingToken)}`,
         value: proxyInitialFunds,
-        validate: () => parseFloat(proxyInitialFunds) < parseFloat(balance),
+        validate: () => !proxyInitialFunds || parseFloat(proxyInitialFunds) < parseFloat(balance),
       },
       {
         key: "guardians",
@@ -55,36 +55,36 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         message: "This field is mandatory",
         validate: (g) => !!g,
       },
-      {
-        key: "relayers",
-        value: relayers,
-        message: "This field is mandatory",
-        validate: (r) => !!r,
-      },
+      // {
+      //   key: "relayers",
+      //   value: relayers,
+      //   message: "This field is mandatory",
+      //   validate: (r) => !!r,
+      // },
       {
         key: "guardians",
         value: guardians,
         message: "You can't become your own guardian",
         validate: (g) => g !== address,
       },
-      {
-        key: "relayers",
-        value: relayers,
-        message: "You can't become your own relayer",
-        validate: (r) => r !== address,
-      },
+      // {
+      //   key: "relayers",
+      //   value: relayers,
+      //   message: "You can't become your own relayer",
+      //   validate: (r) => r !== address,
+      // },
       {
         key: "guardians",
         value: guardians,
         message: "Guardian addresses must be unique",
         validate: (g1, i) => !guardians.some((g2, j) => i !== j && g1 === g2),
       },
-      {
-        key: "relayers",
-        value: relayers,
-        message: "Relayer addresses must be unique",
-        validate: (r1, i) => !relayers.some((r2, j) => i !== j && r1 === r2),
-      },
+      // {
+      //   key: "relayers",
+      //   value: relayers,
+      //   message: "Relayer addresses must be unique",
+      //   validate: (r1, i) => !relayers.some((r2, j) => i !== j && r1 === r2),
+      // },
       {
         key: "label",
         value: label,
@@ -119,9 +119,9 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       address,
       pubkey,
       label,
-      guardians,
-      relayers,
-      parseFloat(proxyInitialFunds),
+      guardians.filter((g) => !!g),
+      relayers.filter((r) => !!r),
+      !proxyInitialFunds ? 0 : parseFloat(proxyInitialFunds),
       enableMultisig ? multisigThreshold : 0
     )
       .then(() => {
@@ -174,7 +174,7 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
         textTip="Guardians are trusted by you, they can help you freeze your wallet in the case of device theft and rotate the controlling key to this wallet. These can be updated anytime by you."
       />
       {guardians.map((address, i) => (
-        <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
+        <div className="flex w-full max-w-2xl align-middle items-center space-x-3 mb-2" key={i}>
           <Input
             placeholder={`Guardian #${i + 1} address`}
             name="guardian-#1"
@@ -182,6 +182,11 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
             error={getArrayValidationError("guardians", i)}
             value={address}
           />
+          {i === guardians.length - 1 && (
+            <button className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full" onClick={() => pushGuardian()}>
+              <IconAdd />
+            </button>
+          )}
           {guardians.length > 1 && (
             <button
               className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
@@ -193,9 +198,6 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           )}
         </div>
       ))}
-      <button className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full" onClick={() => pushGuardian()}>
-        ADD GUARDIAN
-      </button>
 
       <div className="form-control">
         <label className="label cursor-pointer">
@@ -240,42 +242,10 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
       )}
 
       <TitleWithToolTip
-        title="2. Choose your relayer(s)"
-        textTip="OPTIONAL: Relayers can relay transactions signed offline by the wallet's controller key."
-      />
-      {relayers.map((address, i) => (
-        <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
-          <Input
-            placeholder={`Relayer #${i + 1} address`}
-            name="relayer-#1"
-            onChange={(event) => setRelayer(i, event.target.value)}
-            error={getArrayValidationError("relayers", i)}
-            value={address}
-          />
-          {relayers.length > 0 && (
-            <button
-              className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
-              type="button"
-              onClick={() => removeRelayer(i)}
-            >
-              <IconTrash />
-            </button>
-          )}
-        </div>
-      ))}
-      <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-xl rounded-full"
-        type="button"
-        onClick={() => pushRelayer()}
-      >
-        ADD RELAYER
-      </button>
-
-      <TitleWithToolTip
-        title="3. Label and fund your wallet"
+        title="2. Choose a label"
         textTip="A descriptive label to help you identify the purpose of this wallet, this information is public"
       />
-      <div className="w-full max-w-xl mb-2">
+      <div className="w-full max-w-2xl mb-2">
         <Input
           placeholder={`Label (e.g. My staking wallet...)`}
           name="wallet-label"
@@ -284,7 +254,41 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           value={label}
         />
       </div>
-      <div className="flex flex-col md:flex-row w-full max-w-xl justify-between mb-8">
+
+      <TitleWithToolTip
+        title="3. Coming soon - Set relayer(s)"
+        textTip="This feature is coming soon to Vectis. Relayers will be able to relay transactions signed offline by the wallet's controller key."
+      />
+      {relayers.map((address, i) => (
+        <div className="flex w-full max-w-2xl align-middle items-center space-x-3 mb-2" key={i}>
+          <Input
+            placeholder={`Relayer #${i + 1} address`}
+            name="relayer-#1"
+            onChange={(event) => setRelayer(i, event.target.value)}
+            error={getArrayValidationError("relayers", i)}
+            value={address}
+            disabled
+          />
+          {i === guardians.length - 1 && (
+            <button className="btn btn-disabled btn-md font-semibold hover:text-base-100 text-xl rounded-full" onClick={() => pushGuardian()}>
+              <IconAdd />
+            </button>
+          )}
+          {relayers.length > 0 && (
+            <button
+              className="btn btn-disabled btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
+              type="button"
+              onClick={() => removeRelayer(i)}
+            >
+              <IconTrash />
+            </button>
+          )}
+        </div>
+      ))}
+
+      <TitleWithToolTip title="4. Fund your wallet (optional)" textTip="You can set the wallet's initial funds here (optional)." />
+
+      <div className="flex flex-col md:flex-row w-full max-w-2xl justify-between mb-8">
         <div className="flex flex-col items-center">
           <div className="relative rounded-full shadow-sm md:mr-2">
             <input
