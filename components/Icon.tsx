@@ -1,47 +1,22 @@
 export function IconInfo() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      className="stroke-current flex-shrink-0 w-6 h-6"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      ></path>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
     </svg>
   );
 }
 
 export function IconSuccess() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="stroke-current flex-shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   );
 }
 
 export function IconWarning() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="stroke-current flex-shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -54,12 +29,7 @@ export function IconWarning() {
 
 export function IconError() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="stroke-current flex-shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -150,6 +120,17 @@ export function IconCheckmark() {
           <path d="M9.86 18a1 1 0 0 1-.73-.32l-4.86-5.17a1 1 0 1 1 1.46-1.37l4.12 4.39 8.41-9.2a1 1 0 1 1 1.48 1.34l-9.14 10a1 1 0 0 1-.73.33z" />
         </g>
       </g>
+    </svg>
+  );
+}
+
+export function IconAdd() {
+  return (
+    <svg width="24px" height="24px" viewBox="0 0 490 490" fill={"#fff"}>
+      <polygon
+        points="222.031,490 267.969,490 267.969,267.969 490,267.969 490,222.031 267.969,222.031 267.969,0 222.031,0
+	222.031,222.031 0,222.031 0,267.969 222.031,267.969 "
+      />
     </svg>
   );
 }

@@ -83,8 +83,10 @@ export async function createProxyWallet(
       }),
     },
     relayers: relayers,
-    proxy_initial_funds: [coin(proxyInitialFunds)],
+    proxy_initial_funds: !!proxyInitialFunds ? [coin(proxyInitialFunds)] : [],
   };
+
+  console.log(createWalletMsg);
 
   // Execute wallet creation
   const res = await factoryClient.createWallet({ createWalletMsg }, "auto", undefined, [

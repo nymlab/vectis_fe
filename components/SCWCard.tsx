@@ -102,10 +102,10 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                     className={`btn modal-button btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
                     onClick={() => setModalChargeOpen(true)}
                   >
-                    Charge
+                    Top-up
                   </label>
                   <Anchor className="btn btn-primary btn-sm" href={`/wallets/manage/${address}`}>
-                    Top-up
+                    Manage
                   </Anchor>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import {
   updateProxyWalletLabel,
 } from "services/vectis";
 import { AlertError, AlertSuccess } from "./Alert";
-import { IconCheckmark, IconInfo, IconTrash } from "./Icon";
+import { IconAdd, IconCheckmark, IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
 import Loader from "./Loader";
 
@@ -331,6 +331,15 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
             error={getGuardianArrayValidationError("guardians", i)}
             value={address}
           />
+          {i === guardians.length - 1 && (
+            <button
+              className="btn btn-primary btn-md font-semibold hover:text-base-100 text-lg rounded-full"
+              onClick={() => pushGuardian()}
+              type="button"
+            >
+              <IconAdd />
+            </button>
+          )}
           {guardians.length > 1 && (
             <button
               className="btn btn-primary btn-circle btn-xl font-semibold hover:text-base-100 text-xl"
@@ -342,13 +351,6 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
           )}
         </div>
       ))}
-      <button
-        className="btn btn-primary btn-md font-semibold hover:text-base-100 text-lg rounded-full"
-        onClick={() => pushGuardian()}
-        type="button"
-      >
-        ADD GUARDIAN
-      </button>
 
       <div className="form-control">
         <label className="label cursor-pointer">
@@ -412,7 +414,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         </div>
       )}
 
-      <h2 className="text-3xl font-bold my-5">Update your relayers</h2>
+      {/* <h2 className="text-3xl font-bold my-5">Update your relayers</h2>
 
       {relayers.map((address, i) => (
         <div className="flex w-full max-w-xl align-middle items-center space-x-3 mb-2" key={i}>
@@ -447,7 +449,7 @@ export default function SCWManageForm({ proxyWalletAddress, onRefresh }: SCWMana
         type="button"
       >
         ADD RELAYER
-      </button>
+      </button> */}
 
       {updateRelayersError && (
         <div className="mt-4 mb-8 flex flex-col w-full max-w-xl">
