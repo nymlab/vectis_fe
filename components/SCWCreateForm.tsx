@@ -2,9 +2,9 @@ import { useCosm } from "contexts/cosmwasm";
 import { useArrayState } from "hooks/useArrayState";
 import { useBalance } from "hooks/useBalance";
 import { useValidationErrors } from "hooks/useValidationErrors";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createProxyWallet } from "services/vectis";
-import { convertFromMicroDenom } from "utils/conversion";
+import { convertFromMicroDenom, convertMicroDenomToDenom } from "utils/conversion";
 import { AlertError, AlertSuccess } from "./Alert";
 import { IconAdd, IconInfo, IconTrash } from "./Icon";
 import { Input } from "./Input";
@@ -12,6 +12,7 @@ import Loader from "./Loader";
 import network from "configs/networks";
 import { Anchor } from "./Anchor";
 import TitleWithToolTip from "./TitleWithToolTip";
+import { FactoryClient } from "@vectis/types/contracts/FactoryContract";
 
 type SCWCreateFormProps = {
   onRefresh?: () => void;
@@ -28,6 +29,17 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
   const [enableMultisig, setEnableMultisig] = useState(false);
   const [multisigThreshold, setMultisigThreshold] = useState(1);
   const [label, setLabel] = useState("");
+
+  const [walletFee, setWalletFee] = useState("");
+
+  useEffect(() => {
+    const factoryContractAddress = process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS;
+    const factoryClient = new FactoryClient(signingClient, address, factoryContractAddress);
+    factoryClient
+      .fee()
+      .then((fee) => setWalletFee(`${convertMicroDenomToDenom(fee.amount)} ${convertFromMicroDenom(fee.denom)}`))
+      .catch(console.error);
+  }, []);
 
   const { getValueValidationError, getArrayValidationError, checkValidationErrors } = useValidationErrors({
     validators: [
@@ -314,7 +326,8 @@ export default function SCWCreateForm({ onRefresh }: SCWCreateFormProps) {
           )}
         </div>
         <button
-          className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"
+          className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow tooltip"
+          data-tip={`An additional ${walletFee} will be charged for this transaction and transferred to the Vectis DAO`}
           type="button"
           onClick={createSCW}
         >

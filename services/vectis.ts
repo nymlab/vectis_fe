@@ -86,8 +86,6 @@ export async function createProxyWallet(
     proxy_initial_funds: !!proxyInitialFunds ? [coin(proxyInitialFunds)] : [],
   };
 
-  console.log(createWalletMsg);
-
   // Execute wallet creation
   const res = await factoryClient.createWallet({ createWalletMsg }, "auto", undefined, [
     coin(proxyInitialFunds + convertMicroDenomToDenom(defaultWalletCreationFee.amount)),
