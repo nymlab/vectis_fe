@@ -38,15 +38,21 @@ const ValidatorModal: React.FC = () => {
     if (!validator || !delegation) return;
     try {
       await toast
-        .promise(executeClaimDelegationReward(signingClient, address, scwalletAddr, validator.operatorAddress), {
-          loading: "Claiming...",
-          success: <b>Claim successful!</b>,
-          error: <b>Claim failed</b>,
-        })
-        .catch(console.log);
+        .promise(
+          (async () => {
+            await executeClaimDelegationReward(signingClient, address, scwalletAddr, validator.operatorAddress);
+            closeModal();
+          })(),
+          {
+            loading: "Claiming...",
+            success: <b>Claim successful!</b>,
+            error: <b>Claim failed</b>,
+          }
+        )
+        .catch(console.error);
       await fetchRewards();
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

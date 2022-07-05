@@ -25,6 +25,7 @@ const UndelegateModal: React.FC = () => {
         (async () => {
           await executeUndelegation(signingClient, address, scwalletAddr, validator!.operatorAddress, Number(amount));
           await refreshDelegations(queryClient);
+          closeModal();
         })(),
         {
           loading: "UnDelegating...",
