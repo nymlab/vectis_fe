@@ -37,6 +37,7 @@ export default function RotateKeyButton({
   }, [keyRotationProposal]);
 
   function fetchVoteList() {
+    setAlreadyVoted(false);
     queryProposalVoteList(signingClient!, proxyWalletInfo.multisig_address!, keyRotationProposal!.id)
       .then((votes) => setAlreadyVoted(!!votes.find((v) => v.voter === userAddress)))
       .catch(console.error);
@@ -56,7 +57,9 @@ export default function RotateKeyButton({
       <>
         <label
           htmlFor={keyRotationProposal ? `vote-modal-${keyRotationProposal.id}` : "rotate-key-modal"}
-          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${alreadyVoted ? "btn-disabled" : "btn-primary"}`}
+          className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
+            alreadyVoted || keyRotationProposal?.status === "passed" ? "btn-disabled" : "btn-primary"
+          }`}
           onClick={() => (!keyRotationProposal ? setRotateKeyModalOpen(true) : openVoteModal())}
         >
           {keyRotationProposal ? "VOTE" : "PROPOSE"} KEY ROTATION
