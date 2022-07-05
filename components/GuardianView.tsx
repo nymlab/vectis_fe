@@ -1,3 +1,4 @@
+import { WalletInfo } from "@vectis/types/contracts/FactoryContract";
 import { AlertError, AlertSuccess } from "components/Alert";
 import { Input } from "components/Input";
 import { useCosm } from "contexts/cosmwasm";
@@ -60,12 +61,7 @@ export default function GuardianView() {
           setError(new Error("You are not a guardian of this Smart Contract Wallet."));
           return;
         }
-        if (info.multisig_address) {
-          queryProposals(signingClient!, info.multisig_address!)
-            .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected")))
-            .catch(console.error);
-        }
-
+        fetchActiveProposals(info);
         setWalletInfo(info);
       })
       .catch((err) => {
@@ -73,6 +69,14 @@ export default function GuardianView() {
         setWalletInfo(null);
       })
       .finally(() => setFetchingSCW(false));
+  }
+
+  function fetchActiveProposals(info: WalletInfo) {
+    if (info.multisig_address) {
+      queryProposals(signingClient!, info.multisig_address!)
+        .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected")))
+        .catch(console.error);
+    }
   }
 
   function toggleProposalDetailsModal(proposal: Proposal) {
@@ -180,6 +184,7 @@ export default function GuardianView() {
               onStart={onFreezeStart}
               onSuccess={onFreezeSuccess}
               onError={onFreezeError}
+              onVote={() => fetchActiveProposals(walletInfo)}
             />
             <RotateKeyButton
               proxyWalletAddress={proxyWalletAddress}
@@ -187,6 +192,7 @@ export default function GuardianView() {
               keyRotationProposal={walletKeyRotationProposal}
               onKeyRotation={onKeyRotation}
               onKeyRotationProposal={fetchSCW}
+              onKeyRotationVote={() => fetchActiveProposals(walletInfo)}
             />
           </div>
 

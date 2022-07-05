@@ -19,7 +19,7 @@ export enum SCWOperation {
 export const SCWProposals = {
   [SCWOperation.ToggleFreeze]: (isFrozen: string | boolean) => ({
     title: `${isFrozen ? "Unfreeze" : "Freeze"} Smart Contract Wallet`,
-    description: isFrozen ? "Unfreeze Smart Contract Wallet" : "Freeze Smart Contract Wallet for security reasons",
+    description: isFrozen ? "Request to unfreeze Smart Contract Wallet" : "Request to freeze Smart Contract Wallet for security reasons",
     message: {
       revert_freeze_status: {},
     },
