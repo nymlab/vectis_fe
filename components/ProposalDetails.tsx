@@ -57,10 +57,13 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
   return (
     <>
       <h3 className="text-2xl font-bold mb-5">Proposal Details</h3>
-      <div className="flex flex-col items-center text-xl">
-        <p>Title: {proposal.title}</p>
-        {/* <p>Expires: {proposal.expires.at_time}</p> */}
+      <div className="flex flex-col items-center text-xl text-center">
+        <p className="font-bold">{proposal.title}</p>
         <p>
+          <span className="text-lg">{proposal.description}</span>
+        </p>
+        {/* <p>Expires: {proposal.expires.at_time}</p> */}
+        <p className="mt-2">
           Approval Threshold: {proposal.threshold.absolute_count.weight} positive vote
           {proposal.threshold.absolute_count.weight === 1 ? "" : "s"}
         </p>

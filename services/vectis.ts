@@ -17,16 +17,16 @@ export enum SCWOperation {
 }
 
 export const SCWProposals = {
-  [SCWOperation.ToggleFreeze]: () => ({
-    title: "Revert freeze status",
-    description: "Need to revert freeze status",
+  [SCWOperation.ToggleFreeze]: (isFrozen: string | boolean) => ({
+    title: `${isFrozen ? "Unfreeze" : "Freeze"} Smart Contract Wallet`,
+    description: isFrozen ? "Unfreeze Smart Contract Wallet" : "Freeze Smart Contract Wallet for security reasons",
     message: {
       revert_freeze_status: {},
     },
   }),
-  [SCWOperation.RotateKey]: (newUserAddress: string) => ({
-    title: "Rotate key",
-    description: "Need to rotate owner key",
+  [SCWOperation.RotateKey]: (newUserAddress: string | boolean) => ({
+    title: "Rotate Smart Contract Wallet key",
+    description: `Rotate Smart Contract Wallet owner key to address ${newUserAddress}`,
     message: {
       rotate_user_key: {
         new_user_address: newUserAddress,
@@ -300,6 +300,7 @@ export async function toggleProxyWalletFreezeStatus(signingClient: SigningCosmWa
  * @param multisigAddress
  * @param operation
  * @param newUserAddress Optional - Provide if operation is ROTATE_KEY
+ * @param isFrozen Optional - Provide if operation is FREEZE
  */
 export async function proposeProxyWalletOperation(
   signingClient: SigningCosmWasmClient,
@@ -307,9 +308,10 @@ export async function proposeProxyWalletOperation(
   proxyWalletAddress: string,
   multisigAddress: string,
   operation: SCWOperation,
-  newUserAddress?: string
+  newUserAddress?: string,
+  isFrozen?: boolean
 ) {
-  const { title, description, message } = SCWProposals[operation](newUserAddress!);
+  const { title, description, message } = SCWProposals[operation](newUserAddress ?? isFrozen!);
   const msg: CosmosMsg = {
     wasm: {
       execute: {

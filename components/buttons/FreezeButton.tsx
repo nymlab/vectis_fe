@@ -60,7 +60,15 @@ export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, free
 
     onStart?.();
     setLoading(true);
-    proposeProxyWalletOperation(signingClient!, userAddress, proxyWalletAddress, proxyWalletInfo.multisig_address!, SCWOperation.ToggleFreeze)
+    proposeProxyWalletOperation(
+      signingClient!,
+      userAddress,
+      proxyWalletAddress,
+      proxyWalletInfo.multisig_address!,
+      SCWOperation.ToggleFreeze,
+      undefined,
+      proxyWalletInfo?.is_frozen
+    )
       .then(() => onSuccess?.(`${proxyWalletInfo?.is_frozen ? "Unfreeze" : "Freeze"} operation was proposed successfully!`))
       .catch((err) => {
         console.error(err);
