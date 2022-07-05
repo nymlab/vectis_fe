@@ -28,6 +28,7 @@ const DelegateModal: React.FC = () => {
         (async () => {
           await executeDelegation(signingClient, address, scwalletAddr, validator!.operatorAddress, Number(amount));
           await refreshDelegations(queryClient);
+          closeModal();
         })(),
         {
           loading: "Delegating...",

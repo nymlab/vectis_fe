@@ -33,6 +33,7 @@ const RedelegateModal: React.FC = () => {
             convertMicroDenomToDenom(balance.amount)
           );
           await refreshDelegations(queryClient);
+          closeModal();
         })(),
         {
           loading: "Redelegating...",
