@@ -11,6 +11,7 @@ type RotateKeyButtonProps = {
   keyRotationProposal?: Proposal;
   onKeyRotation: (newAddr: string) => void;
   onKeyRotationProposal: (newAddr: string) => void;
+  onKeyRotationVote?: () => void;
 };
 
 export default function RotateKeyButton({
@@ -19,6 +20,7 @@ export default function RotateKeyButton({
   keyRotationProposal,
   onKeyRotation,
   onKeyRotationProposal,
+  onKeyRotationVote,
 }: RotateKeyButtonProps) {
   const { signingClient, address: userAddress } = useCosm();
 
@@ -61,7 +63,14 @@ export default function RotateKeyButton({
         </label>
 
         {voteModalOpen && (
-          <VoteModal proposal={keyRotationProposal!} multisigAddress={proxyWalletInfo.multisig_address!} onVote={fetchVoteList} />
+          <VoteModal
+            proposal={keyRotationProposal!}
+            multisigAddress={proxyWalletInfo.multisig_address!}
+            onVote={() => {
+              fetchVoteList();
+              onKeyRotationVote?.();
+            }}
+          />
         )}
 
         {rotateKeyModalOpen && (

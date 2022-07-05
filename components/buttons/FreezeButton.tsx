@@ -18,9 +18,18 @@ type FreezeButtonProps = {
   onStart?: () => void;
   onSuccess?: (msg: string) => void;
   onError?: (err: Error) => void;
+  onVote?: () => void;
 };
 
-export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, freezeProposal, onStart, onSuccess, onError }: FreezeButtonProps) {
+export default function FreezeButton({
+  proxyWalletAddress,
+  proxyWalletInfo,
+  freezeProposal,
+  onStart,
+  onSuccess,
+  onError,
+  onVote,
+}: FreezeButtonProps) {
   const { signingClient, address: userAddress } = useCosm();
   const [loading, setLoading] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
@@ -35,6 +44,7 @@ export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, free
   }, [freezeProposal]);
 
   function fetchVoteList() {
+    setAlreadyVoted(false);
     queryProposalVoteList(signingClient!, proxyWalletInfo.multisig_address!, freezeProposal!.id)
       .then((votes) => setAlreadyVoted(!!votes.find((v) => v.voter === userAddress)))
       .catch(console.error);
@@ -101,7 +111,16 @@ export default function FreezeButton({ proxyWalletAddress, proxyWalletInfo, free
           {freezeProposal ? "VOTE to" : "PROPOSE to"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
         </label>
 
-        {voteModalOpen && <VoteModal proposal={freezeProposal!} multisigAddress={proxyWalletInfo.multisig_address!} onVote={fetchVoteList} />}
+        {voteModalOpen && (
+          <VoteModal
+            proposal={freezeProposal!}
+            multisigAddress={proxyWalletInfo.multisig_address!}
+            onVote={() => {
+              fetchVoteList();
+              onVote?.();
+            }}
+          />
+        )}
       </>
     );
   }
