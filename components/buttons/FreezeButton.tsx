@@ -1,5 +1,4 @@
 import Modal from "components/Modal";
-import VoteModal from "components/modals/VoteModal";
 import ProposalDetails from "components/ProposalDetails";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
