@@ -1,5 +1,7 @@
+import Modal from "components/Modal";
 import RotateKeyModal from "components/modals/RotateKeyModal";
 import VoteModal from "components/modals/VoteModal";
+import ProposalDetails from "components/ProposalDetails";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
@@ -65,15 +67,21 @@ export default function RotateKeyButton({
           {keyRotationProposal ? "VOTE" : "PROPOSE"} KEY ROTATION
         </label>
 
-        {voteModalOpen && (
-          <VoteModal
-            proposal={keyRotationProposal!}
-            multisigAddress={proxyWalletInfo.multisig_address!}
-            onVote={() => {
-              fetchVoteList();
-              onKeyRotationVote?.();
-            }}
-          />
+        {voteModalOpen && keyRotationProposal && (
+          <Modal id={`vote-modal-${keyRotationProposal?.id}`}>
+            <ProposalDetails
+              multisigAddress={proxyWalletInfo?.multisig_address!}
+              proposal={keyRotationProposal!}
+              onVote={() => {
+                fetchVoteList();
+                onKeyRotationVote?.();
+              }}
+              onExecute={() => {
+                setVoteModalOpen(false);
+                onKeyRotationVote?.();
+              }}
+            />
+          </Modal>
         )}
 
         {rotateKeyModalOpen && (

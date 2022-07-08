@@ -1,24 +1,30 @@
+import { Vote } from "@dao-dao/types/contracts/cw-proposal-single";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, VoteInfo } from "contexts/vectis";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { executeProposal, queryProposalVoteList } from "services/vectis";
-import { groupVoteListByVote } from "utils/misc";
-import { AlertError } from "./Alert";
+import { AlertError, AlertSuccess } from "./Alert";
+import { voteProposal } from "services/vectis";
 import Loader from "./Loader";
 import ProposalVotes from "./ProposalVotes";
 
 type ProposalDetailsProps = {
   proposal: Proposal;
   multisigAddress: string;
+  onVote?: (vote: Vote) => void;
   onExecute?: () => void;
 };
 
-export default function ProposalDetails({ proposal, multisigAddress, onExecute }: ProposalDetailsProps) {
+export default function ProposalDetails({ proposal, multisigAddress, onVote, onExecute }: ProposalDetailsProps) {
   const { signingClient, address: userAddress } = useCosm();
 
   const [voteList, setVoteList] = useState<VoteInfo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [fetchingVotes, setFetchingVotes] = useState(false);
+  const [fetchingVotesError, setFetchingVotesError] = useState<Error | null>(null);
+
+  const [voting, setVoting] = useState(false);
+  const [voteCastSuccess, setVoteCastSuccess] = useState("");
+  const [voteCastError, setVoteCastError] = useState<Error | null>(null);
 
   const [isExecuting, setIsExecuting] = useState(false);
   const [executeSuccess, setExecuteSuccess] = useState("");
@@ -29,12 +35,31 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
       return;
     }
 
-    setLoading(true);
+    fetchVotes();
+  }, [proposal, multisigAddress]);
+
+  const userAlreadyVoted = useMemo(() => !!voteList.find((v) => v.voter === userAddress), [voteList]);
+
+  function fetchVotes() {
+    setFetchingVotes(true);
     queryProposalVoteList(signingClient!, multisigAddress, proposal.id)
       .then((votes) => setVoteList(votes))
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
-  }, [proposal.id, multisigAddress]);
+      .catch((err) => setFetchingVotesError(err))
+      .finally(() => setFetchingVotes(false));
+  }
+
+  function castVote(vote: Vote) {
+    setVoteCastError(null);
+    setVoting(true);
+    voteProposal(signingClient!, userAddress, multisigAddress, proposal.id, vote)
+      .then(() => {
+        setVoteCastSuccess("Vote casted successfully!");
+        fetchVotes();
+        onVote?.(vote);
+      })
+      .catch((err) => setVoteCastError(err))
+      .finally(() => setVoting(false));
+  }
 
   function execute() {
     if (!proposal) {
@@ -68,13 +93,14 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
           {proposal.threshold.absolute_count.weight === 1 ? "" : "s"}
         </p>
         <p>Status: {proposal.status}</p>
-        {loading && <Loader>Fetching proposal votes...</Loader>}
-        {!loading && error && (
+
+        {fetchingVotes && <Loader>Fetching proposal votes...</Loader>}
+        {!fetchingVotes && fetchingVotesError && (
           <div className="my-5">
-            <AlertError>{error.message}</AlertError>
+            <AlertError>{fetchingVotesError.message}</AlertError>
           </div>
         )}
-        {!loading && !error && (
+        {!fetchingVotes && !fetchingVotesError && (
           <>
             <h3 className="text-2xl font-bold my-5">Votes</h3>
             <ProposalVotes proposal={proposal} voteList={voteList} />
@@ -90,6 +116,43 @@ export default function ProposalDetails({ proposal, multisigAddress, onExecute }
             {!isExecuting && executeError && (
               <div className="my-5 text-sm">
                 <AlertError>{executeError.message}</AlertError>
+              </div>
+            )}
+          </>
+        )}
+
+        {userAlreadyVoted ? (
+          <div className="mt-5 mb-2">
+            <AlertSuccess>You already voted for this proposal!</AlertSuccess>
+          </div>
+        ) : (
+          <>
+            {voting && <Loader>Casting your vote...</Loader>}
+            {!voting && !voteCastSuccess && (
+              <>
+                <h3 className="text-2xl font-bold my-2">Cast your vote</h3>
+                <div className="flex items-center space-x-5 justify-center my-5">
+                  <button className="btn btn-success" onClick={() => castVote("yes")}>
+                    YES
+                  </button>
+                  <button className="btn btn-error" onClick={() => castVote("no")}>
+                    NO
+                  </button>
+                  <button className="btn" onClick={() => castVote("abstain")}>
+                    ABSTAIN
+                  </button>
+                </div>
+
+                {voteCastError && (
+                  <div className="my-5">
+                    <AlertError>Error: {voteCastError.message}</AlertError>
+                  </div>
+                )}
+              </>
+            )}
+            {voteCastSuccess && (
+              <div className="my-5">
+                <AlertSuccess>{voteCastSuccess}</AlertSuccess>
               </div>
             )}
           </>

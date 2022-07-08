@@ -1,4 +1,6 @@
+import Modal from "components/Modal";
 import VoteModal from "components/modals/VoteModal";
+import ProposalDetails from "components/ProposalDetails";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
@@ -113,15 +115,21 @@ export default function FreezeButton({
           {freezeProposal ? "VOTE to" : "PROPOSE to"} {proxyWalletInfo.is_frozen ? "UNFREEZE" : "FREEZE"}
         </label>
 
-        {voteModalOpen && (
-          <VoteModal
-            proposal={freezeProposal!}
-            multisigAddress={proxyWalletInfo.multisig_address!}
-            onVote={() => {
-              fetchVoteList();
-              onVote?.();
-            }}
-          />
+        {voteModalOpen && freezeProposal && (
+          <Modal id={`vote-modal-${freezeProposal?.id}`}>
+            <ProposalDetails
+              multisigAddress={proxyWalletInfo?.multisig_address!}
+              proposal={freezeProposal!}
+              onVote={() => {
+                fetchVoteList();
+                onVote?.();
+              }}
+              onExecute={() => {
+                setVoteModalOpen(false);
+                onVote?.();
+              }}
+            />
+          </Modal>
         )}
       </>
     );
