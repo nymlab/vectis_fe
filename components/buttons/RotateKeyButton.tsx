@@ -1,6 +1,5 @@
 import Modal from "components/Modal";
 import RotateKeyModal from "components/modals/RotateKeyModal";
-import VoteModal from "components/modals/VoteModal";
 import ProposalDetails from "components/ProposalDetails";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
