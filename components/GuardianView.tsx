@@ -9,6 +9,7 @@ import { queryProxyWalletInfo, queryProposals } from "services/vectis";
 import { copyToClipboard } from "utils/clipboard";
 import FreezeButton from "./buttons/FreezeButton";
 import RotateKeyButton from "./buttons/RotateKeyButton";
+import { IconChip, IconFreeze, IconSignature } from "./Icon";
 import Loader from "./Loader";
 import Modal from "./Modal";
 import ProposalDetails from "./ProposalDetails";
@@ -74,6 +75,10 @@ export default function GuardianView() {
   function fetchActiveProposals(info: WalletInfo) {
     if (info.multisig_address) {
       queryProposals(signingClient!, info.multisig_address!)
+        .then((props) => {
+          console.log(props);
+          return props;
+        })
         .then((props) => setWalletActiveProposals(props.filter((p) => p.status !== "executed" && p.status !== "rejected")))
         .catch(console.error);
     }
@@ -136,7 +141,10 @@ export default function GuardianView() {
 
       {walletInfo && (
         <div className="border-2 rounded-lg p-5 flex flex-col items-center">
-          <h1 className="text-3xl font-bold mb-5">Smart Contract Wallet</h1>
+          <h1 className="text-3xl font-bold mb-5 flex items-center space-x-3">
+            <IconChip />
+            <p>Smart Contract Wallet</p>
+          </h1>
           <div className="flex flex-col items-start text-xl mb-3">
             <p>
               Owner:{" "}
@@ -148,8 +156,15 @@ export default function GuardianView() {
                 {walletInfo.user_addr}
               </a>
             </p>
-            <p>Status: {walletInfo.is_frozen ? "Frozen" : "Not Frozen"}</p>
-            <p>MultiSig Enabled: {walletInfo.multisig_address ? "Yes" : "No"}</p>
+            <p>Label: {walletInfo.label}</p>
+            <p className="flex space-x-1">
+              <span>Status: {walletInfo.is_frozen ? "Frozen" : "Not Frozen"}</span>
+              {walletInfo.is_frozen && <IconFreeze />}
+            </p>
+            <p className="flex space-x-1">
+              <span>MultiSig Enabled: {walletInfo.multisig_address ? "Yes" : "No"}</span>
+              {walletInfo.multisig_address && <IconSignature />}
+            </p>
             <p>
               Balance: <TokenAmount token={walletInfo.balance} />
             </p>
@@ -185,6 +200,7 @@ export default function GuardianView() {
               onSuccess={onFreezeSuccess}
               onError={onFreezeError}
               onVote={() => fetchActiveProposals(walletInfo)}
+              onExecute={fetchSCW}
             />
             <RotateKeyButton
               proxyWalletAddress={proxyWalletAddress}
@@ -193,6 +209,7 @@ export default function GuardianView() {
               onKeyRotation={onKeyRotation}
               onKeyRotationProposal={fetchSCW}
               onKeyRotationVote={() => fetchActiveProposals(walletInfo)}
+              onExecute={fetchSCW}
             />
           </div>
 
