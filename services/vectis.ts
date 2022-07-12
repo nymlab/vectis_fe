@@ -339,7 +339,7 @@ export async function proposeProxyWalletOperation(
  * @param multisigAddress
  */
 export async function queryProposals(signingClient: SigningCosmWasmClient, multisigAddress: string): Promise<Proposal[]> {
-  const queryProps: QueryMsg = { list_proposals: {} };
+  const queryProps: QueryMsg = { list_proposals: { limit: 1000 } };
   const { proposals } = await signingClient.queryContractSmart(multisigAddress, queryProps);
   return proposals;
 }

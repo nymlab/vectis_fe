@@ -13,6 +13,7 @@ type RotateKeyButtonProps = {
   onKeyRotation: (newAddr: string) => void;
   onKeyRotationProposal: (newAddr: string) => void;
   onKeyRotationVote?: () => void;
+  onExecute?: () => void;
 };
 
 export default function RotateKeyButton({
@@ -22,6 +23,7 @@ export default function RotateKeyButton({
   onKeyRotation,
   onKeyRotationProposal,
   onKeyRotationVote,
+  onExecute,
 }: RotateKeyButtonProps) {
   const { signingClient, address: userAddress } = useCosm();
 
@@ -59,7 +61,7 @@ export default function RotateKeyButton({
         <label
           htmlFor={keyRotationProposal ? `vote-modal-${keyRotationProposal.id}` : "rotate-key-modal"}
           className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
-            alreadyVoted || keyRotationProposal?.status === "passed" ? "btn-disabled" : "btn-primary"
+            alreadyVoted && keyRotationProposal?.status !== "passed" ? "btn-disabled" : "btn-primary"
           }`}
           onClick={() => (!keyRotationProposal ? setRotateKeyModalOpen(true) : openVoteModal())}
         >
@@ -77,7 +79,9 @@ export default function RotateKeyButton({
               }}
               onExecute={() => {
                 setVoteModalOpen(false);
+                setAlreadyVoted(false);
                 onKeyRotationVote?.();
+                onExecute?.();
               }}
             />
           </Modal>

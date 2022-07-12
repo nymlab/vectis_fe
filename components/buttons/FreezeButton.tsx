@@ -3,13 +3,7 @@ import ProposalDetails from "components/ProposalDetails";
 import { useCosm } from "contexts/cosmwasm";
 import { Proposal, WalletInfoWithBalance } from "contexts/vectis";
 import { useEffect, useState } from "react";
-import {
-  executeProposal,
-  proposeProxyWalletOperation,
-  queryProposalVoteList,
-  SCWOperation,
-  toggleProxyWalletFreezeStatus,
-} from "services/vectis";
+import { proposeProxyWalletOperation, queryProposalVoteList, SCWOperation, toggleProxyWalletFreezeStatus } from "services/vectis";
 import Loader from "../Loader";
 
 type FreezeButtonProps = {
@@ -20,6 +14,7 @@ type FreezeButtonProps = {
   onSuccess?: (msg: string) => void;
   onError?: (err: Error) => void;
   onVote?: () => void;
+  onExecute?: () => void;
 };
 
 export default function FreezeButton({
@@ -30,6 +25,7 @@ export default function FreezeButton({
   onSuccess,
   onError,
   onVote,
+  onExecute,
 }: FreezeButtonProps) {
   const { signingClient, address: userAddress } = useCosm();
   const [loading, setLoading] = useState(false);
@@ -47,7 +43,9 @@ export default function FreezeButton({
   function fetchVoteList() {
     setAlreadyVoted(false);
     queryProposalVoteList(signingClient!, proxyWalletInfo.multisig_address!, freezeProposal!.id)
-      .then((votes) => setAlreadyVoted(!!votes.find((v) => v.voter === userAddress)))
+      .then((votes) => {
+        setAlreadyVoted(!!votes.find((v) => v.voter === userAddress));
+      })
       .catch(console.error);
   }
 
@@ -107,7 +105,7 @@ export default function FreezeButton({
         <label
           htmlFor={freezeProposal ? `vote-modal-${freezeProposal.id}` : ""}
           className={`btn btn-md hover:text-base-100 text-xl rounded-full flex-grow mx-2 ${
-            alreadyVoted || freezeProposal?.status === "passed" ? "btn-disabled" : "btn-primary"
+            alreadyVoted && freezeProposal?.status !== "passed" ? "btn-disabled" : "btn-primary"
           }`}
           onClick={() => (!freezeProposal ? proposeToggleFreezeStatus() : openVoteModal())}
         >
@@ -125,7 +123,9 @@ export default function FreezeButton({
               }}
               onExecute={() => {
                 setVoteModalOpen(false);
+                setAlreadyVoted(false);
                 onVote?.();
+                onExecute?.();
               }}
             />
           </Modal>
