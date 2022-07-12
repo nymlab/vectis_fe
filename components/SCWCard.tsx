@@ -94,7 +94,11 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                   >
                     Transfer
                   </label>
-                  <Anchor data-testid="stake-button" className="btn btn-primary btn-sm" href={`/stake?address=${address}`}>
+                  <Anchor
+                    data-testid="stake-button"
+                    className={`btn btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
+                    href={`/stake?address=${address}`}
+                  >
                     Stake
                   </Anchor>
                   <label
@@ -104,7 +108,10 @@ export default function SCWCard({ address, title, onRefresh }: SCWCardProps) {
                   >
                     Top-up
                   </label>
-                  <Anchor className="btn btn-primary btn-sm" href={`/wallets/manage/${address}`}>
+                  <Anchor
+                    className={`btn btn-sm ${walletInfo?.is_frozen ? "btn-disabled" : "btn-primary"}`}
+                    href={`/wallets/manage/${address}`}
+                  >
                     Manage
                   </Anchor>
                 </div>
