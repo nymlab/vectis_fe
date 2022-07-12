@@ -31,11 +31,20 @@ const ListWallets: NextPage = () => {
         {isLoading ? (
           <Loader>Querying your Smart Contract Wallets...</Loader>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fit,_minmax(384px,_1fr))] w-full p-4 gap-6 max-w-[80%]">
-            {proxyWallets.map((address) => (
-              <SCWCard key={address} address={address} onRefresh={refreshBalance} />
-            ))}
-          </div>
+          <>
+            {proxyWallets.length === 0 && (
+              <h1 className="text-xl text-center">
+                You don't own a Smart Contract Wallet.
+                <br />
+                Create your first one by clicking the button below!
+              </h1>
+            )}
+            <div className="grid grid-cols-[repeat(auto-fit,_minmax(384px,_1fr))] w-full p-4 gap-6 max-w-[80%]">
+              {proxyWallets.map((address) => (
+                <SCWCard key={address} address={address} onRefresh={refreshBalance} />
+              ))}
+            </div>
+          </>
         )}
 
         <Link href="/wallets/create" passHref={true}>
